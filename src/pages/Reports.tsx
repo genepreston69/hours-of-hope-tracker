@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,8 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDate } from "@/lib/utils";
 import { ServiceEntry } from "@/models/types";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { download, calendar } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+import { Download, Calendar } from "lucide-react";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
@@ -156,7 +155,7 @@ const Reports = () => {
         <h1 className="text-3xl font-bold">Service Reports</h1>
         {sortedEntries.length > 0 && (
           <Button onClick={exportToCSV} className="mt-2 sm:mt-0">
-            <download className="h-4 w-4 mr-2" />
+            <Download className="h-4 w-4 mr-2" />
             Export to CSV
           </Button>
         )}
@@ -225,11 +224,11 @@ const Reports = () => {
                     ) : (
                       <span>Pick a date</span>
                     )}
-                    <calendar className="ml-auto h-4 w-4 opacity-50" />
+                    <Calendar className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
+                  <CalendarComponent
                     mode="single"
                     selected={filters.dateFrom}
                     onSelect={(date) => setFilters({ ...filters, dateFrom: date })}
@@ -255,11 +254,11 @@ const Reports = () => {
                     ) : (
                       <span>Pick a date</span>
                     )}
-                    <calendar className="ml-auto h-4 w-4 opacity-50" />
+                    <Calendar className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
+                  <CalendarComponent
                     mode="single"
                     selected={filters.dateTo}
                     onSelect={(date) => setFilters({ ...filters, dateTo: date })}

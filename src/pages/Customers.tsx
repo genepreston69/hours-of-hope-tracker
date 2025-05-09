@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +23,7 @@ import { toast } from "@/components/ui/sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Customer } from "@/models/types";
 import { generateId, parseCSV } from "@/lib/utils";
-import { download, upload, users } from "lucide-react";
+import { Download, Upload, Users } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -175,17 +174,17 @@ const Customers = () => {
         <h1 className="text-3xl font-bold">Customer Management</h1>
         <div className="flex flex-col sm:flex-row gap-2 mt-2 sm:mt-0">
           <Button variant="outline" onClick={downloadSampleCSV}>
-            <download className="h-4 w-4 mr-2" />
+            <Download className="h-4 w-4 mr-2" />
             Download CSV Template
           </Button>
           <Button onClick={() => setIsImporting(true)}>
-            <upload className="h-4 w-4 mr-2" />
+            <Upload className="h-4 w-4 mr-2" />
             Import Customers
           </Button>
           <Dialog>
             <DialogTrigger asChild>
               <Button>
-                <users className="h-4 w-4 mr-2" />
+                <Users className="h-4 w-4 mr-2" />
                 Add Customer
               </Button>
             </DialogTrigger>
