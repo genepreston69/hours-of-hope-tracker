@@ -3,16 +3,13 @@ import { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CSVServiceEntry, ServiceEntry, LocationOption } from "@/models/types";
-import { parseCSV } from "@/lib/utils";
-import { generateId } from "@/lib/utils";
-import { format, parse } from "date-fns";
+import { CSVServiceEntry, ServiceEntry } from "@/models/types";
 import { toast } from "@/components/ui/sonner";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { AlertCircle, Download, Upload } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-const LOCATION_OPTIONS: LocationOption[] = ["Bluefield", "Charleston", "Huntington", "Parkersburg"];
+import { LOCATION_OPTIONS } from "@/constants/locations";
+import { validateAndParseCSV, createServiceEntriesFromCSV, downloadCSVTemplate } from "./import-service-entries/import-utils";
 
 const ImportServiceEntries = () => {
   const { customers, importServiceEntries } = useAppContext();
@@ -31,94 +28,8 @@ const ImportServiceEntries = () => {
     // Read the file content
     const reader = new FileReader();
     reader.onload = (event) => {
-      try {
-        const csvText = event.target?.result as string;
-        const rows = parseCSV(csvText);
-        
-        // Skip header row
-        const dataRows = rows.slice(1);
-        
-        // Check if file has content
-        if (dataRows.length === 0) {
-          setErrors(["CSV file is empty or contains only headers"]);
-          return;
-        }
-
-        // Parse and validate each row
-        const parsedEntries: CSVServiceEntry[] = [];
-        const newErrors: string[] = [];
-
-        dataRows.forEach((row, index) => {
-          // Check if row has enough columns
-          if (row.length < 5) {
-            newErrors.push(`Row ${index + 2}: Not enough columns`);
-            return;
-          }
-
-          try {
-            // Expected format: date, customer, location, numberOfResidents, hoursWorked, [notes]
-            const dateStr = row[0].trim();
-            const customer = row[1].trim();
-            const location = row[2].trim();
-            const residents = parseInt(row[3].trim(), 10);
-            const hours = parseFloat(row[4].trim());
-            const notes = row.length > 5 ? row[5].trim() : "";
-
-            // Validate date format (MM/DD/YYYY)
-            let dateObj;
-            try {
-              dateObj = parse(dateStr, "MM/dd/yyyy", new Date());
-              if (isNaN(dateObj.getTime())) {
-                throw new Error();
-              }
-            } catch {
-              newErrors.push(`Row ${index + 2}: Invalid date format. Use MM/DD/YYYY.`);
-              return;
-            }
-
-            // Validate customer exists
-            if (!customer) {
-              newErrors.push(`Row ${index + 2}: Missing customer name`);
-              return;
-            }
-            
-            // Validate location is one of the valid options
-            if (!LOCATION_OPTIONS.includes(location as LocationOption)) {
-              newErrors.push(`Row ${index + 2}: Invalid location. Must be one of: ${LOCATION_OPTIONS.join(", ")}`);
-              return;
-            }
-
-            // Validate number of residents
-            if (isNaN(residents) || residents <= 0) {
-              newErrors.push(`Row ${index + 2}: Invalid number of residents`);
-              return;
-            }
-
-            // Validate hours worked
-            if (isNaN(hours) || hours <= 0) {
-              newErrors.push(`Row ${index + 2}: Invalid hours worked`);
-              return;
-            }
-
-            parsedEntries.push({
-              date: dateStr,
-              customer,
-              location,
-              numberOfResidents: residents,
-              hoursWorked: hours,
-              notes
-            });
-          } catch (error) {
-            newErrors.push(`Row ${index + 2}: Failed to parse data - ${error}`);
-          }
-        });
-
-        setPreview(parsedEntries);
-        setErrors(newErrors);
-      } catch (error) {
-        console.error("Error parsing CSV:", error);
-        setErrors(["Failed to parse CSV file. Please check the format."]);
-      }
+      const csvText = event.target?.result as string;
+      validateAndParseCSV(csvText, setErrors, setPreview);
     };
     reader.readAsText(selectedFile);
   };
@@ -135,30 +46,7 @@ const ImportServiceEntries = () => {
     }
 
     try {
-      const serviceEntries: ServiceEntry[] = preview.map(entry => {
-        // Find customer ID by name
-        const customer = customers.find(c => c.name === entry.customer);
-        if (!customer) {
-          throw new Error(`Customer ${entry.customer} not found`);
-        }
-
-        // Parse date from MM/DD/YYYY format
-        const date = parse(entry.date, "MM/dd/yyyy", new Date());
-        
-        return {
-          id: generateId(),
-          date,
-          customerId: customer.id,
-          customerName: customer.name,
-          location: entry.location,
-          numberOfResidents: entry.numberOfResidents,
-          hoursWorked: entry.hoursWorked,
-          totalHours: entry.numberOfResidents * entry.hoursWorked,
-          notes: entry.notes || "",
-          createdAt: new Date()
-        };
-      });
-
+      const serviceEntries = createServiceEntriesFromCSV(preview, customers);
       importServiceEntries(serviceEntries);
       toast.success(`${serviceEntries.length} service entries imported successfully`);
       setFile(null);
@@ -171,27 +59,6 @@ const ImportServiceEntries = () => {
       console.error("Error during import:", error);
       toast.error(`Import failed: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
-  };
-
-  const handleDownloadTemplate = () => {
-    const headers = ["Date (MM/DD/YYYY)", "Customer Name", "Location", "Number of Residents", "Hours Worked", "Notes (optional)"];
-    const exampleData = [
-      "05/01/2023,Community Center,Bluefield,5,3.5,Monthly cleanup event",
-      "05/15/2023,City Park,Charleston,3,2,Gardening service"
-    ];
-    
-    const csvContent = [headers.join(","), ...exampleData].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "service-entries-template.csv");
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
   };
 
   return (
@@ -208,7 +75,7 @@ const ImportServiceEntries = () => {
             <Button 
               variant="outline"
               className="w-full justify-start gap-2"
-              onClick={handleDownloadTemplate}
+              onClick={downloadCSVTemplate}
             >
               <Download className="h-4 w-4" />
               Download CSV Template
