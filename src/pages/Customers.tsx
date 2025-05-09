@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,7 +28,6 @@ import { Download, Upload, Users } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  location: z.string().min(2, "Location must be at least 2 characters"),
   contactName: z.string().optional(),
   contactEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
   contactPhone: z.string().optional(),
@@ -43,7 +43,6 @@ const Customers = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      location: "",
       contactName: "",
       contactEmail: "",
       contactPhone: "",
@@ -54,7 +53,6 @@ const Customers = () => {
     const newCustomer: Customer = {
       id: generateId(),
       name: values.name,
-      location: values.location,
       contactName: values.contactName || undefined,
       contactEmail: values.contactEmail || undefined,
       contactPhone: values.contactPhone || undefined,
@@ -96,10 +94,9 @@ const Customers = () => {
         
         // Check for required columns
         const nameIndex = headers.indexOf("name");
-        const locationIndex = headers.indexOf("location");
         
-        if (nameIndex === -1 || locationIndex === -1) {
-          throw new Error("CSV must contain 'name' and 'location' columns");
+        if (nameIndex === -1) {
+          throw new Error("CSV must contain 'name' column");
         }
         
         // Find optional column indices
@@ -113,14 +110,12 @@ const Customers = () => {
           if (row.length <= 1 && !row[0]) return null;
           
           const name = row[nameIndex]?.trim();
-          const location = row[locationIndex]?.trim();
           
-          if (!name || !location) return null;
+          if (!name) return null;
           
           return {
             id: generateId(),
             name,
-            location,
             contactName: contactNameIndex !== -1 ? row[contactNameIndex]?.trim() : undefined,
             contactEmail: contactEmailIndex !== -1 ? row[contactEmailIndex]?.trim() : undefined,
             contactPhone: contactPhoneIndex !== -1 ? row[contactPhoneIndex]?.trim() : undefined,
@@ -157,7 +152,7 @@ const Customers = () => {
   };
 
   const downloadSampleCSV = () => {
-    const csvContent = "name,location,contactName,contactEmail,contactPhone\nSample Company,Main Street,John Doe,john.doe@example.com,555-123-4567";
+    const csvContent = "name,contactName,contactEmail,contactPhone\nSample Company,John Doe,john.doe@example.com,555-123-4567";
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
@@ -205,20 +200,6 @@ const Customers = () => {
                         <FormLabel>Customer Name*</FormLabel>
                         <FormControl>
                           <Input placeholder="Enter customer name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="location"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Location*</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter location" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -285,7 +266,7 @@ const Customers = () => {
           <DialogHeader>
             <DialogTitle>Import Customers from CSV</DialogTitle>
             <DialogDescription>
-              Upload a CSV file with customer data. The file must contain at least 'name' and 'location' columns.
+              Upload a CSV file with customer data. The file must contain at least 'name' column.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -297,8 +278,8 @@ const Customers = () => {
             <div className="bg-muted p-3 rounded-md text-sm">
               <p className="font-medium">Required CSV Format:</p>
               <p className="mt-1">The first row should contain column headers:</p>
-              <p className="font-mono text-xs mt-1">name,location,contactName,contactEmail,contactPhone</p>
-              <p className="mt-2">Where 'name' and 'location' are required fields.</p>
+              <p className="font-mono text-xs mt-1">name,contactName,contactEmail,contactPhone</p>
+              <p className="mt-2">Where 'name' is a required field.</p>
             </div>
           </div>
           <DialogFooter>
@@ -311,7 +292,7 @@ const Customers = () => {
       <Card>
         <CardHeader>
           <CardTitle>Customers</CardTitle>
-          <CardDescription>Manage your customers and their locations.</CardDescription>
+          <CardDescription>Manage your customers and their contact information.</CardDescription>
         </CardHeader>
         <CardContent>
           {customers.length > 0 ? (
@@ -320,7 +301,6 @@ const Customers = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Customer Name</TableHead>
-                    <TableHead>Location</TableHead>
                     <TableHead>Contact</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -329,7 +309,6 @@ const Customers = () => {
                   {customers.map((customer) => (
                     <TableRow key={customer.id}>
                       <TableCell className="font-medium">{customer.name}</TableCell>
-                      <TableCell>{customer.location}</TableCell>
                       <TableCell>
                         {customer.contactName && (
                           <div>
