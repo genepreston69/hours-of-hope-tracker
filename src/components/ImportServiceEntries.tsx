@@ -86,16 +86,21 @@ const ImportServiceEntries = () => {
                 <AccordionTrigger className="text-sm">CSV File Format Instructions</AccordionTrigger>
                 <AccordionContent>
                   <div className="text-sm space-y-2">
-                    <p>Your CSV file should have the following columns:</p>
+                    <p>Your CSV file should have the following column headers in the first row:</p>
                     <ol className="list-decimal ml-5">
                       <li><strong>Date</strong>: In format MM/DD/YYYY (e.g., 05/15/2023)</li>
-                      <li><strong>Customer Name</strong>: Must match an existing customer name</li>
+                      <li><strong>Customer</strong>: Must match an existing customer name</li>
                       <li><strong>Location</strong>: Must be one of: {LOCATION_OPTIONS.join(", ")}</li>
-                      <li><strong>Number of Residents</strong>: A positive whole number</li>
-                      <li><strong>Hours Worked</strong>: Hours per resident (positive number)</li>
+                      <li><strong>NumberOfResidents</strong>: A positive whole number</li>
+                      <li><strong>HoursWorked</strong>: Hours per resident (positive number)</li>
                       <li><strong>Notes</strong>: Optional additional information</li>
                     </ol>
-                    <p className="mt-2 text-muted-foreground">The first row should be a header row and will be skipped during import.</p>
+                    <p className="mt-2 text-muted-foreground">Example:</p>
+                    <pre className="p-2 bg-muted rounded-md overflow-x-auto text-xs">
+                      Date,Customer,Location,NumberOfResidents,HoursWorked,Notes<br/>
+                      05/01/2023,Community Center,Bluefield,5,3.5,Monthly cleanup event
+                    </pre>
+                    <p className="mt-2 text-muted-foreground">The first row should contain these exact header names and will be skipped during import.</p>
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -182,3 +187,4 @@ const ImportServiceEntries = () => {
 };
 
 export default ImportServiceEntries;
+

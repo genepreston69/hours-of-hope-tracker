@@ -131,7 +131,8 @@ export function createServiceEntriesFromCSV(
 }
 
 export function generateCSVTemplate(): string {
-  const headers = ["Date (MM/DD/YYYY)", "Customer Name", "Location", "Number of Residents", "Hours Worked", "Notes (optional)"];
+  // Update headers to match the exact expected field names
+  const headers = ["Date", "Customer", "Location", "NumberOfResidents", "HoursWorked", "Notes"];
   const exampleData = [
     "05/01/2023,Community Center,Bluefield,5,3.5,Monthly cleanup event",
     "05/15/2023,City Park,Charleston,3,2,Gardening service"
@@ -154,3 +155,4 @@ export function downloadCSVTemplate() {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+
