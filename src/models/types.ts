@@ -14,7 +14,7 @@ export interface ServiceEntry {
   date: Date;
   customerId: string;
   customerName: string;
-  location: string;
+  facilityLocationId: string;
   numberOfResidents: number;
   hoursWorked: number;
   totalHours: number;
@@ -39,7 +39,7 @@ export interface LocationStats {
 export interface CSVServiceEntry {
   date: string;
   customer: string;
-  location: string;
+  facilityLocationId: string;
   numberOfResidents: number;
   hoursWorked: number;
   notes?: string;

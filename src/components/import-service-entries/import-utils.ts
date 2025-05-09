@@ -34,10 +34,10 @@ export function validateAndParseCSV(
       }
 
       try {
-        // Expected format: date, customer, location, numberOfResidents, hoursWorked, [notes]
+        // Expected format: date, customer, facilityLocationId, numberOfResidents, hoursWorked, [notes]
         const dateStr = row[0].trim();
         const customer = row[1].trim();
-        const location = row[2].trim();
+        const facilityLocation = row[2].trim();
         const residents = parseInt(row[3].trim(), 10);
         const hours = parseFloat(row[4].trim());
         const notes = row.length > 5 ? row[5].trim() : "";
@@ -60,9 +60,9 @@ export function validateAndParseCSV(
           return;
         }
         
-        // Validate location is one of the valid options
-        if (!LOCATION_OPTIONS.includes(location as LocationOption)) {
-          newErrors.push(`Row ${index + 2}: Invalid location. Must be one of: ${LOCATION_OPTIONS.join(", ")}`);
+        // Validate facility location is one of the valid options
+        if (!LOCATION_OPTIONS.includes(facilityLocation as LocationOption)) {
+          newErrors.push(`Row ${index + 2}: Invalid facility location. Must be one of: ${LOCATION_OPTIONS.join(", ")}`);
           return;
         }
 
@@ -81,7 +81,7 @@ export function validateAndParseCSV(
         parsedEntries.push({
           date: dateStr,
           customer,
-          location,
+          facilityLocationId: facilityLocation,
           numberOfResidents: residents,
           hoursWorked: hours,
           notes
@@ -120,7 +120,7 @@ export function createServiceEntriesFromCSV(
       date,
       customerId: customer.id,
       customerName: customer.name,
-      location: entry.location,
+      facilityLocationId: entry.facilityLocationId,
       numberOfResidents: entry.numberOfResidents,
       hoursWorked: entry.hoursWorked,
       totalHours: entry.numberOfResidents * entry.hoursWorked,
@@ -132,7 +132,7 @@ export function createServiceEntriesFromCSV(
 
 export function generateCSVTemplate(): string {
   // Use headers that match the database field names
-  const headers = ["Date", "Customer", "Location", "NumberOfResidents", "HoursWorked", "Notes"];
+  const headers = ["Date", "Customer", "FacilityLocation", "NumberOfResidents", "Hours", "Description"];
   const exampleData = [
     "05/01/2023,Community Center,Bluefield,5,3.5,Monthly cleanup event",
     "05/15/2023,City Park,Charleston,3,2,Gardening service"
