@@ -13,10 +13,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "@/components/ui/sonner";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { LocationOption } from "@/models/types";
+
+// Define location options as a constant
+const LOCATION_OPTIONS: LocationOption[] = ["Bluefield", "Charleston", "Huntington", "Parkersburg"];
 
 const formSchema = z.object({
   date: z.date({
@@ -25,8 +29,8 @@ const formSchema = z.object({
   customerId: z.string({
     required_error: "Please select a customer",
   }),
-  location: z.string({
-    required_error: "Please enter a location",
+  location: z.enum(["Bluefield", "Charleston", "Huntington", "Parkersburg"], {
+    required_error: "Please select a location",
   }),
   hoursWorked: z.coerce
     .number()
@@ -74,7 +78,7 @@ const ServiceEntry = () => {
       date: data.date,
       customerId: data.customerId,
       customerName: customer.name,
-      location: data.location, // Use the form's location field instead of customer.location
+      location: data.location,
       hoursWorked: data.hoursWorked,
       numberOfResidents: data.numberOfResidents,
       totalHours: calculatedTotalHours,
@@ -86,7 +90,7 @@ const ServiceEntry = () => {
     form.reset({
       date: new Date(),
       customerId: "",
-      location: "",
+      location: undefined,
       hoursWorked: undefined,
       numberOfResidents: undefined,
       notes: "",
@@ -214,9 +218,33 @@ const ServiceEntry = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Location</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter service location" {...field} />
-                    </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a location">
+                            <div className="flex items-center gap-2">
+                              {field.value && (
+                                <>
+                                  <MapPin className="h-4 w-4" /> {field.value}
+                                </>
+                              )}
+                            </div>
+                          </SelectValue>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {LOCATION_OPTIONS.map((location) => (
+                          <SelectItem key={location} value={location}>
+                            <div className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4" /> {location}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormDescription>
                       Where the service was performed.
                     </FormDescription>

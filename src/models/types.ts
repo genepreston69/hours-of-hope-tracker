@@ -7,6 +7,8 @@ export interface Customer {
   contactPhone?: string;
 }
 
+export type LocationOption = 'Bluefield' | 'Charleston' | 'Huntington' | 'Parkersburg';
+
 export interface ServiceEntry {
   id: string;
   date: Date;
