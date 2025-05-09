@@ -18,9 +18,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { LocationOption } from "@/models/types";
-
-// Define location options as a constant
-const LOCATION_OPTIONS: LocationOption[] = ["Bluefield", "Charleston", "Huntington", "Parkersburg"];
+import { LOCATION_OPTIONS } from "@/constants/locations";
 
 const formSchema = z.object({
   date: z.date({
@@ -29,7 +27,7 @@ const formSchema = z.object({
   customerId: z.string({
     required_error: "Please select a customer",
   }),
-  location: z.enum(["Bluefield", "Charleston", "Huntington", "Parkersburg"], {
+  facilityLocationId: z.enum(["Bluefield", "Charleston", "Huntington", "Parkersburg"], {
     required_error: "Please select a location",
   }),
   hoursWorked: z.coerce
@@ -78,7 +76,8 @@ const ServiceEntryForm = () => {
       date: data.date,
       customerId: data.customerId,
       customerName: customer.name,
-      location: data.location,
+      facilityLocationId: data.facilityLocationId,
+      location: data.facilityLocationId, // Add location for backward compatibility
       hoursWorked: data.hoursWorked,
       numberOfResidents: data.numberOfResidents,
       totalHours: calculatedTotalHours,
@@ -90,7 +89,7 @@ const ServiceEntryForm = () => {
     form.reset({
       date: new Date(),
       customerId: "",
-      location: undefined,
+      facilityLocationId: undefined,
       hoursWorked: undefined,
       numberOfResidents: undefined,
       notes: "",
@@ -211,7 +210,7 @@ const ServiceEntryForm = () => {
 
             <FormField
               control={form.control}
-              name="location"
+              name="facilityLocationId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Location</FormLabel>

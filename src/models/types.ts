@@ -15,6 +15,7 @@ export interface ServiceEntry {
   customerId: string;
   customerName: string;
   facilityLocationId: string;
+  location?: string; // Add this field for backward compatibility
   numberOfResidents: number;
   hoursWorked: number;
   totalHours: number;
