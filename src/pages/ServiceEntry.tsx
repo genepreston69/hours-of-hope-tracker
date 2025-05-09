@@ -25,6 +25,9 @@ const formSchema = z.object({
   customerId: z.string({
     required_error: "Please select a customer",
   }),
+  location: z.string({
+    required_error: "Please enter a location",
+  }),
   hoursWorked: z.coerce
     .number()
     .positive("Hours must be greater than 0")
@@ -71,7 +74,7 @@ const ServiceEntry = () => {
       date: data.date,
       customerId: data.customerId,
       customerName: customer.name,
-      location: customer.location,
+      location: data.location, // Use the form's location field instead of customer.location
       hoursWorked: data.hoursWorked,
       numberOfResidents: data.numberOfResidents,
       totalHours: calculatedTotalHours,
@@ -83,6 +86,7 @@ const ServiceEntry = () => {
     form.reset({
       date: new Date(),
       customerId: "",
+      location: "",
       hoursWorked: undefined,
       numberOfResidents: undefined,
       notes: "",
@@ -186,7 +190,7 @@ const ServiceEntry = () => {
                         {customers.length > 0 ? (
                           customers.map((customer) => (
                             <SelectItem key={customer.id} value={customer.id}>
-                              {customer.name} ({customer.location})
+                              {customer.name}
                             </SelectItem>
                           ))
                         ) : (
@@ -198,6 +202,23 @@ const ServiceEntry = () => {
                     </Select>
                     <FormDescription>
                       Select the customer where service was performed.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Location</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter service location" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Where the service was performed.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
