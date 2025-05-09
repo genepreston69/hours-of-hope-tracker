@@ -35,3 +35,12 @@ export interface LocationStats {
   hours: number;
   residents: number;
 }
+
+export interface CSVServiceEntry {
+  date: string;
+  customer: string;
+  location: string;
+  numberOfResidents: number;
+  hoursWorked: number;
+  notes?: string;
+}
