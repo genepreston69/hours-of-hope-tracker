@@ -39,7 +39,7 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
       console.log("User authenticated, fetching data from Supabase...");
       
       try {
-        // Fetch customers with a delay to ensure auth is properly initialized
+        // Fetch customers
         const { data: customersData, error: customersError } = await supabase
           .from('customers')
           .select('*');

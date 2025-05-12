@@ -33,11 +33,18 @@ export const createServiceActions = (
         description: roundedEntry.notes || ''
       };
       
+      console.log("Adding service entry to Supabase:", supabaseEntry);
+      
       const { error } = await supabase
         .from('service_entries')
         .insert(supabaseEntry);
       
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error when adding entry:", error);
+        throw error;
+      }
+      
+      console.log("Service entry added successfully to Supabase");
       
       setServiceEntries(prev => [...prev, roundedEntry]);
       toast.success("Service entry recorded successfully");
