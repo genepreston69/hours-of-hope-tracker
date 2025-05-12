@@ -8,9 +8,10 @@ import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
 import { LocationStatsCard } from "@/components/dashboard/LocationStats";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
+import { Loader2 } from "lucide-react";
 
 const Dashboard = () => {
-  const { serviceEntries } = useAppContext();
+  const { serviceEntries, isLoading } = useAppContext();
   const [dateFilter, setDateFilter] = useState<DateFilterType>("ytd");
   
   const { filteredStats, filteredLocationStats, recentEntries } = useDashboardData(
@@ -22,6 +23,17 @@ const Dashboard = () => {
   useEffect(() => {
     document.title = "Dashboard | Recovery Resident Service Tracker";
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
+          <p className="text-lg">Loading data from database...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

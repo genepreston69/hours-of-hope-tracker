@@ -7,9 +7,10 @@ import { CustomerList } from "@/components/customers/CustomerList";
 import { CustomerImport } from "@/components/customers/CustomerImport";
 import { CustomerActions } from "@/components/customers/CustomerActions";
 import { EditCustomerDialog } from "@/components/customers/EditCustomerDialog";
+import { Loader2 } from "lucide-react";
 
 const Customers = () => {
-  const { customers, addCustomer, updateCustomer, importCustomers, deleteCustomer } = useAppContext();
+  const { customers, addCustomer, updateCustomer, importCustomers, deleteCustomer, isLoading } = useAppContext();
   const [isImporting, setIsImporting] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [customerToEdit, setCustomerToEdit] = useState<Customer | null>(null);
@@ -34,6 +35,17 @@ const Customers = () => {
     link.click();
     document.body.removeChild(link);
   };
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
+          <p className="text-lg">Loading customers from database...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

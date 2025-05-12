@@ -18,7 +18,7 @@ export function useAppContext() {
 }
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [{ customers, serviceEntries, stats, locationStats }, setCustomers, setServiceEntries] = useAppState();
+  const [{ customers, serviceEntries, stats, locationStats, isLoading }, setCustomers, setServiceEntries] = useAppState();
   
   const customerActions = createCustomerActions(customers, setCustomers, serviceEntries);
   const serviceActions = createServiceActions(serviceEntries, setServiceEntries);
@@ -29,6 +29,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     serviceEntries,
     stats,
     locationStats,
+    isLoading,
     
     // Customer actions
     ...customerActions,

@@ -2,12 +2,15 @@
 import React, { useState, useEffect } from "react";
 import { Customer, ServiceEntry, ServiceStats, LocationStats } from "../models/types";
 import { toast } from "../components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export interface AppStateType {
   customers: Customer[];
   serviceEntries: ServiceEntry[];
   stats: ServiceStats;
   locationStats: LocationStats[];
+  isLoading: boolean;
 }
 
 export function useAppState(): [AppStateType, React.Dispatch<React.SetStateAction<Customer[]>>, React.Dispatch<React.SetStateAction<ServiceEntry[]>>] {
@@ -20,41 +23,82 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
     averageHoursPerResident: 0,
   });
   const [locationStats, setLocationStats] = useState<LocationStats[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { user } = useAuth();
 
-  // Load data from localStorage on component mount
+  // Load data from Supabase when user is authenticated
   useEffect(() => {
-    try {
-      const storedCustomers = localStorage.getItem("customers");
-      const storedEntries = localStorage.getItem("serviceEntries");
-      
-      if (storedCustomers) {
-        setCustomers(JSON.parse(storedCustomers));
+    async function fetchData() {
+      if (!user) {
+        setIsLoading(false);
+        return;
       }
+
+      setIsLoading(true);
       
-      if (storedEntries) {
-        // Convert string dates back to Date objects
-        const parsedEntries = JSON.parse(storedEntries).map((entry: any) => ({
-          ...entry,
-          date: new Date(entry.date),
-          createdAt: new Date(entry.createdAt)
+      try {
+        // Fetch customers
+        const { data: customersData, error: customersError } = await supabase
+          .from('customers')
+          .select('*');
+        
+        if (customersError) {
+          throw customersError;
+        }
+
+        // Transform Supabase customers to app format
+        const transformedCustomers: Customer[] = customersData.map(customer => ({
+          id: customer.id,
+          name: customer.name,
+          contactName: customer.contact_person || undefined,
+          contactEmail: customer.contact_email || undefined,
+          contactPhone: customer.contact_phone || undefined,
+          street: customer.street || undefined,
+          city: customer.city || undefined,
+          state: customer.state || undefined,
+          zip: customer.zip || undefined
         }));
-        setServiceEntries(parsedEntries);
-      }
-    } catch (error) {
-      console.error("Error loading data from localStorage:", error);
-      toast.error("Failed to load saved data");
-    }
-  }, []);
 
-  // Save data to localStorage whenever it changes
-  useEffect(() => {
-    try {
-      localStorage.setItem("customers", JSON.stringify(customers));
-      localStorage.setItem("serviceEntries", JSON.stringify(serviceEntries));
-    } catch (error) {
-      console.error("Error saving data to localStorage:", error);
+        setCustomers(transformedCustomers);
+        
+        // Fetch service entries
+        const { data: entriesData, error: entriesError } = await supabase
+          .from('service_entries')
+          .select(`
+            *,
+            customers(name)
+          `);
+        
+        if (entriesError) {
+          throw entriesError;
+        }
+
+        // Transform Supabase service entries to app format
+        const transformedEntries: ServiceEntry[] = entriesData.map(entry => ({
+          id: entry.id,
+          date: new Date(entry.date),
+          customerId: entry.customer_id,
+          customerName: entry.customers?.name || '',
+          facilityLocationId: entry.facility_location_id,
+          location: entry.facility_location_id, // Will need to fetch location name separately
+          numberOfResidents: entry.volunteer_count,
+          hoursWorked: entry.hours,
+          totalHours: entry.hours,
+          notes: entry.description || undefined,
+          createdAt: new Date(entry.created_at)
+        }));
+
+        setServiceEntries(transformedEntries);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching data from Supabase:", error);
+        toast.error("Failed to load data from the database. Please try again later.");
+        setIsLoading(false);
+      }
     }
-  }, [customers, serviceEntries]);
+
+    fetchData();
+  }, [user]);
 
   // Calculate statistics whenever service entries change
   useEffect(() => {
@@ -104,7 +148,7 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
   }, [serviceEntries]);
 
   return [
-    { customers, serviceEntries, stats, locationStats },
+    { customers, serviceEntries, stats, locationStats, isLoading },
     setCustomers,
     setServiceEntries
   ];
