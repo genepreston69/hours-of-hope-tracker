@@ -24,7 +24,7 @@ import { toast } from "@/components/ui/sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Customer } from "@/models/types";
 import { generateId, parseCSV } from "@/lib/utils";
-import { Download, Upload, Users } from "lucide-react";
+import { Download, Edit, Upload, Users } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -34,12 +34,24 @@ const formSchema = z.object({
 });
 
 const Customers = () => {
-  const { customers, addCustomer, importCustomers, deleteCustomer } = useAppContext();
+  const { customers, addCustomer, updateCustomer, importCustomers, deleteCustomer } = useAppContext();
   const [isImporting, setIsImporting] = useState(false);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [customerToEdit, setCustomerToEdit] = useState<Customer | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      contactName: "",
+      contactEmail: "",
+      contactPhone: "",
+    },
+  });
+
+  const editForm = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -60,6 +72,29 @@ const Customers = () => {
 
     addCustomer(newCustomer);
     form.reset();
+  };
+
+  const onEditSubmit = (values: z.infer<typeof formSchema>) => {
+    if (customerToEdit) {
+      updateCustomer(customerToEdit.id, {
+        name: values.name,
+        contactName: values.contactName || undefined,
+        contactEmail: values.contactEmail || undefined,
+        contactPhone: values.contactPhone || undefined,
+      });
+      setIsEditDialogOpen(false);
+    }
+  };
+
+  const handleEditCustomer = (customer: Customer) => {
+    setCustomerToEdit(customer);
+    editForm.reset({
+      name: customer.name,
+      contactName: customer.contactName || "",
+      contactEmail: customer.contactEmail || "",
+      contactPhone: customer.contactPhone || "",
+    });
+    setIsEditDialogOpen(true);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -261,6 +296,84 @@ const Customers = () => {
         </div>
       </div>
 
+      {/* Edit Customer Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Edit Customer</DialogTitle>
+            <DialogDescription>
+              Update the customer details below.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...editForm}>
+            <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
+              <FormField
+                control={editForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Customer Name*</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter customer name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={editForm.control}
+                name="contactName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contact Person</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Contact person name (optional)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={editForm.control}
+                name="contactEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contact Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Contact email (optional)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={editForm.control}
+                name="contactPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contact Phone</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Contact phone (optional)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter className="mt-4">
+                <Button variant="outline" type="button" onClick={() => setIsEditDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Update Customer</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={isImporting} onOpenChange={setIsImporting}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -322,25 +435,34 @@ const Customers = () => {
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="sm">Delete</Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This will permanently delete this customer. This action cannot be undone if the customer has existing service entries.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDeleteCustomer(customer.id)}>
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        <div className="flex justify-end gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => handleEditCustomer(customer)}
+                          >
+                            <Edit className="h-4 w-4 mr-1" /> Edit
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="destructive" size="sm">Delete</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently delete this customer. This action cannot be undone if the customer has existing service entries.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDeleteCustomer(customer.id)}>
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

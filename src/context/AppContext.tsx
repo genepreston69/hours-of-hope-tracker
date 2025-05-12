@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Customer, ServiceEntry, ServiceStats, LocationStats } from "../models/types";
 import { toast } from "../components/ui/sonner";
@@ -9,6 +8,7 @@ interface AppContextType {
   stats: ServiceStats;
   locationStats: LocationStats[];
   addCustomer: (customer: Customer) => void;
+  updateCustomer: (id: string, updatedCustomer: Partial<Customer>) => void;
   addServiceEntry: (entry: ServiceEntry) => void;
   importCustomers: (customers: Customer[]) => void;
   importServiceEntries: (entries: ServiceEntry[]) => void;
@@ -125,6 +125,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toast.success("Customer added successfully");
   };
 
+  const updateCustomer = (id: string, updatedCustomer: Partial<Customer>) => {
+    setCustomers(prev => 
+      prev.map(customer => 
+        customer.id === id ? { ...customer, ...updatedCustomer } : customer
+      )
+    );
+    toast.success("Customer updated successfully");
+  };
+
   const addServiceEntry = (entry: ServiceEntry) => {
     setServiceEntries(prev => [...prev, entry]);
     toast.success("Service entry recorded successfully");
@@ -179,6 +188,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     stats,
     locationStats,
     addCustomer,
+    updateCustomer,
     addServiceEntry,
     importCustomers,
     importServiceEntries,
