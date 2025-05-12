@@ -106,10 +106,13 @@ export function createServiceEntriesFromCSV(
   customers: { id: string; name: string }[]
 ): ServiceEntry[] {
   return preview.map(entry => {
-    // Find customer ID by name
-    const customer = customers.find(c => c.name === entry.customer);
+    // Find customer ID by name - using case-insensitive match with trimmed whitespace
+    const customer = customers.find(c => 
+      c.name.trim().toLowerCase() === entry.customer.trim().toLowerCase()
+    );
+    
     if (!customer) {
-      throw new Error(`Customer ${entry.customer} not found`);
+      throw new Error(`Customer "${entry.customer}" not found`);
     }
 
     // Parse date from MM/DD/YYYY format

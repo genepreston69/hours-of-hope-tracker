@@ -89,7 +89,7 @@ const ImportServiceEntries = () => {
                     <p>Your CSV file should have the following column headers in the first row:</p>
                     <ol className="list-decimal ml-5">
                       <li><strong>Date</strong>: In format MM/DD/YYYY (e.g., 05/15/2023)</li>
-                      <li><strong>Customer</strong>: Must match an existing customer name</li>
+                      <li><strong>Customer</strong>: Must match an existing customer name exactly</li>
                       <li><strong>FacilityLocation</strong>: Must be one of: {LOCATION_OPTIONS.join(", ")}</li>
                       <li><strong>NumberOfResidents</strong>: A positive whole number</li>
                       <li><strong>Hours</strong>: Hours per resident (positive number)</li>
@@ -101,6 +101,13 @@ const ImportServiceEntries = () => {
                       05/01/2023,Community Center,Bluefield,5,3.5,Monthly cleanup event
                     </pre>
                     <p className="mt-2 text-muted-foreground">The first row should contain these exact header names and will be skipped during import.</p>
+                    <Alert variant="warning" className="mt-3">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Important</AlertTitle>
+                      <AlertDescription>
+                        Customer names must match exactly with existing customers in the system (case-sensitive).
+                      </AlertDescription>
+                    </Alert>
                   </div>
                 </AccordionContent>
               </AccordionItem>
