@@ -14,7 +14,7 @@ type DateFilter = "mtd" | "ytd";
 
 const Dashboard = () => {
   const { serviceEntries, stats } = useAppContext();
-  const [dateFilter, setDateFilter] = useState<DateFilter>("mtd");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("ytd");
   const [filteredEntries, setFilteredEntries] = useState<ServiceEntry[]>([]);
   const [filteredStats, setFilteredStats] = useState(stats);
   const [filteredLocationStats, setFilteredLocationStats] = useState(useAppContext().locationStats);
