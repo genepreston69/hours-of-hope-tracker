@@ -53,11 +53,11 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
           contactName: customer.contact_person || undefined,
           contactEmail: customer.contact_email || undefined,
           contactPhone: customer.contact_phone || undefined,
-          // Handle potentially missing fields in database
-          street: customer.street || undefined,
-          city: customer.city || undefined,
-          state: customer.state || undefined,
-          zip: customer.zip || undefined
+          // The address fields don't exist in the Supabase database yet
+          street: undefined,
+          city: undefined,
+          state: undefined,
+          zip: undefined
         }));
 
         setCustomers(transformedCustomers);
