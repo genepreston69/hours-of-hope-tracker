@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
@@ -101,7 +100,7 @@ const ImportServiceEntries = () => {
                       05/01/2023,Community Center,Bluefield,5,3.5,Monthly cleanup event
                     </pre>
                     <p className="mt-2 text-muted-foreground">The first row should contain these exact header names and will be skipped during import.</p>
-                    <Alert variant="warning" className="mt-3">
+                    <Alert className="mt-3">
                       <AlertCircle className="h-4 w-4" />
                       <AlertTitle>Important</AlertTitle>
                       <AlertDescription>
