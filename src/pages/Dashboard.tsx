@@ -10,11 +10,11 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CalendarClock } from "lucide-react";
 
 // Define filter types
-type DateFilter = "all" | "mtd" | "ytd";
+type DateFilter = "mtd" | "ytd";
 
 const Dashboard = () => {
   const { serviceEntries, stats } = useAppContext();
-  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("mtd");
   const [filteredEntries, setFilteredEntries] = useState<ServiceEntry[]>([]);
   const [filteredStats, setFilteredStats] = useState(stats);
   const [filteredLocationStats, setFilteredLocationStats] = useState(useAppContext().locationStats);
@@ -37,14 +37,11 @@ const Dashboard = () => {
       filtered = serviceEntries.filter(entry => 
         new Date(entry.date) >= firstDayOfMonth
       );
-    } else if (dateFilter === "ytd") {
+    } else {
       // Year to Date: Only entries from the beginning of the current year
       filtered = serviceEntries.filter(entry => 
         new Date(entry.date) >= firstDayOfYear
       );
-    } else {
-      // All entries
-      filtered = [...serviceEntries];
     }
     
     // Sort entries by date (newest first)
@@ -115,7 +112,6 @@ const Dashboard = () => {
           <CalendarClock className="h-5 w-5 text-muted-foreground" />
           <span className="text-sm font-medium">Filter:</span>
           <ToggleGroup type="single" value={dateFilter} onValueChange={(value) => value && setDateFilter(value as DateFilter)}>
-            <ToggleGroupItem value="all" size="sm">All Time</ToggleGroupItem>
             <ToggleGroupItem value="mtd" size="sm">Month to Date</ToggleGroupItem>
             <ToggleGroupItem value="ytd" size="sm">Year to Date</ToggleGroupItem>
           </ToggleGroup>
