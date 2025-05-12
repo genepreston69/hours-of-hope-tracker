@@ -18,7 +18,12 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
+            <img 
+              src="/lovable-uploads/f4dd29f5-c1ea-4bf3-88c3-f13573496fe7.png" 
+              alt="Recovery Point Logo" 
+              className="h-10 w-auto" 
+            />
             <h1 className="text-xl font-bold text-primary">Recovery Service Tracker</h1>
           </div>
 

@@ -1,4 +1,3 @@
-
 import { useAppContext } from "@/context/AppContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -61,9 +60,9 @@ const Dashboard = () => {
       setFilteredLocationStats([]);
     } else {
       const totalEntries = filtered.length;
-      const totalHours = filtered.reduce((sum, entry) => sum + entry.totalHours, 0);
+      const totalHours = Math.round(filtered.reduce((sum, entry) => sum + entry.totalHours, 0));
       const totalResidents = filtered.reduce((sum, entry) => sum + entry.numberOfResidents, 0);
-      const averageHoursPerResident = totalResidents > 0 ? totalHours / totalResidents : 0;
+      const averageHoursPerResident = totalResidents > 0 ? Math.round(totalHours / totalResidents) : 0;
       
       setFilteredStats({
         totalEntries,
@@ -89,6 +88,11 @@ const Dashboard = () => {
         locationStat.entries += 1;
         locationStat.hours += entry.totalHours;
         locationStat.residents += entry.numberOfResidents;
+      });
+      
+      // Round hours in location stats
+      locationMap.forEach(stat => {
+        stat.hours = Math.round(stat.hours);
       });
       
       setFilteredLocationStats(Array.from(locationMap.values()));
@@ -151,7 +155,7 @@ const Dashboard = () => {
             <CardTitle className="text-sm font-medium text-muted-foreground">Avg. Hours per Resident</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{filteredStats.averageHoursPerResident.toFixed(1)}</div>
+            <div className="text-3xl font-bold">{filteredStats.averageHoursPerResident.toFixed(0)}</div>
           </CardContent>
         </Card>
       </div>
@@ -173,7 +177,7 @@ const Dashboard = () => {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Location: {entry.location}</span>
-                      <span className="font-medium">{entry.totalHours} hours ({entry.numberOfResidents} residents)</span>
+                      <span className="font-medium">{Math.round(entry.totalHours)} hours ({entry.numberOfResidents} residents)</span>
                     </div>
                   </div>
                 ))}

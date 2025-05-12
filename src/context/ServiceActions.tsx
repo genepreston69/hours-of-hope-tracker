@@ -14,7 +14,13 @@ export const createServiceActions = (
 ): ServiceActionsType => {
   
   const addServiceEntry = (entry: ServiceEntry) => {
-    setServiceEntries(prev => [...prev, entry]);
+    // Round the total hours to the nearest hour before saving
+    const roundedEntry = {
+      ...entry,
+      totalHours: Math.round(entry.totalHours)
+    };
+    
+    setServiceEntries(prev => [...prev, roundedEntry]);
     toast.success("Service entry recorded successfully");
   };
 
@@ -25,9 +31,15 @@ export const createServiceActions = (
 
   const importServiceEntries = (newEntries: ServiceEntry[]) => {
     setServiceEntries(prev => {
-      // Filter out duplicates based on id
+      // Filter out duplicates based on id and round total hours
       const existingIds = new Set(prev.map(e => e.id));
-      const uniqueEntries = newEntries.filter(e => !existingIds.has(e.id));
+      const uniqueEntries = newEntries
+        .filter(e => !existingIds.has(e.id))
+        .map(entry => ({
+          ...entry,
+          totalHours: Math.round(entry.totalHours)
+        }));
+      
       toast.success(`Imported ${uniqueEntries.length} service entries`);
       return [...prev, ...uniqueEntries];
     });
