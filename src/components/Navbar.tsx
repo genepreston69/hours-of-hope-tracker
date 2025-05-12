@@ -3,16 +3,25 @@ import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
+import { LogOut, User } from "lucide-react";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const navItems = [
     { name: "Dashboard", path: "/" },
-    { name: "Enter Service Hours", path: "/service-entry" },
-    { name: "Manage Customers", path: "/customers" },
-    { name: "Reports", path: "/reports" },
+    ...(user ? [
+      { name: "Enter Service Hours", path: "/service-entry" },
+      { name: "Manage Customers", path: "/customers" },
+      { name: "Reports", path: "/reports" },
+    ] : []),
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b">
@@ -45,10 +54,46 @@ const Navbar = () => {
                 {item.name}
               </NavLink>
             ))}
+            
+            {user ? (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleSignOut}
+                className="ml-2"
+              >
+                <LogOut className="h-4 w-4 mr-2" /> Sign Out
+              </Button>
+            ) : (
+              <NavLink to="/auth">
+                <Button variant="outline" size="sm" className="ml-2">
+                  <User className="h-4 w-4 mr-2" /> Sign In
+                </Button>
+              </NavLink>
+            )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center">
+            {user ? (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleSignOut}
+                className="mr-2"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="sr-only">Sign Out</span>
+              </Button>
+            ) : (
+              <NavLink to="/auth" className="mr-2">
+                <Button variant="outline" size="sm">
+                  <User className="h-4 w-4" />
+                  <span className="sr-only">Sign In</span>
+                </Button>
+              </NavLink>
+            )}
+            
             <Button
               variant="ghost"
               size="sm"
