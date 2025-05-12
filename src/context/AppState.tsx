@@ -37,14 +37,18 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
       setIsLoading(true);
       
       try {
+        console.log("Fetching data from Supabase...");
         // Fetch customers
         const { data: customersData, error: customersError } = await supabase
           .from('customers')
           .select('*');
         
         if (customersError) {
+          console.error("Error fetching customers:", customersError);
           throw customersError;
         }
+
+        console.log("Customers data:", customersData);
 
         // Transform Supabase customers to app format
         const transformedCustomers: Customer[] = customersData.map(customer => ({
@@ -71,8 +75,11 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
           `);
         
         if (entriesError) {
+          console.error("Error fetching service entries:", entriesError);
           throw entriesError;
         }
+
+        console.log("Service entries data:", entriesData);
 
         // Transform Supabase service entries to app format
         const transformedEntries: ServiceEntry[] = entriesData.map(entry => ({
@@ -90,10 +97,11 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
         }));
 
         setServiceEntries(transformedEntries);
-        setIsLoading(false);
+        console.log("Data loading complete");
       } catch (error) {
         console.error("Error fetching data from Supabase:", error);
         toast.error("Failed to load data from the database. Please try again later.");
+      } finally {
         setIsLoading(false);
       }
     }
