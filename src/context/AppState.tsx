@@ -58,7 +58,6 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
           contactName: customer.contact_person || '',
           contactEmail: customer.contact_email || '',
           contactPhone: customer.contact_phone || '',
-          // These fields don't exist in the database schema
           street: '',
           city: '',
           state: '',
@@ -70,10 +69,7 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
         // Fetch service entries
         const { data: entriesData, error: entriesError } = await supabase
           .from('service_entries')
-          .select(`
-            *,
-            customers(name)
-          `);
+          .select('*, customers(name)');
         
         if (entriesError) {
           console.error("Error fetching service entries:", entriesError);
@@ -81,6 +77,7 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
         }
 
         console.log(`Fetched ${entriesData?.length || 0} service entries from Supabase`);
+        console.log("Sample entry data:", entriesData && entriesData.length > 0 ? entriesData[0] : "No entries found");
 
         // Transform Supabase service entries to app format
         const transformedEntries: ServiceEntry[] = entriesData?.map(entry => ({
@@ -99,6 +96,29 @@ export function useAppState(): [AppStateType, React.Dispatch<React.SetStateActio
 
         setServiceEntries(transformedEntries);
         console.log("Data loading complete");
+        
+        // Fetch facility locations to map IDs to names
+        if (transformedEntries.length > 0) {
+          const { data: locationsData, error: locationsError } = await supabase
+            .from('facility_locations')
+            .select('*');
+          
+          if (!locationsError && locationsData) {
+            console.log(`Fetched ${locationsData.length} facility locations`);
+            const locationMap = new Map();
+            locationsData.forEach(loc => {
+              locationMap.set(loc.id, loc.name);
+            });
+            
+            // Update service entries with location names
+            const entriesWithLocations = transformedEntries.map(entry => ({
+              ...entry,
+              location: locationMap.get(entry.facilityLocationId) || entry.facilityLocationId
+            }));
+            
+            setServiceEntries(entriesWithLocations);
+          }
+        }
       } catch (error) {
         console.error("Error fetching data from Supabase:", error);
         toast.error("Failed to load data from the database. Please try again later.");

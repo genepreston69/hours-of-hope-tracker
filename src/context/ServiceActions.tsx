@@ -78,17 +78,22 @@ export const createServiceActions = (
         id: entry.id,
         date: entry.date.toISOString().split('T')[0],
         customer_id: entry.customerId,
-        facility_location_id: entry.facilityLocationId,
+        facility_location_id: entry.facilityLocationId || entry.location, // Make sure facility_location_id is a UUID
         volunteer_count: entry.numberOfResidents,
         hours: Math.round(entry.totalHours),
         description: entry.notes || ''
       }));
       
+      console.log("Importing service entries to Supabase:", supabaseEntries);
+      
       const { error } = await supabase
         .from('service_entries')
         .insert(supabaseEntries);
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error importing service entries:", error);
+        throw error;
+      }
       
       setServiceEntries(prev => {
         // Filter out duplicates based on id
