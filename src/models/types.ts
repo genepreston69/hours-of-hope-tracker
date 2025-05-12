@@ -5,6 +5,10 @@ export interface Customer {
   contactName?: string;
   contactEmail?: string;
   contactPhone?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
 }
 
 export type LocationOption = 'Bluefield' | 'Charleston' | 'Huntington' | 'Parkersburg';

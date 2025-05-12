@@ -24,7 +24,7 @@ const Customers = () => {
   };
 
   const downloadSampleCSV = () => {
-    const csvContent = "name,contactName,contactEmail,contactPhone\nSample Company,John Doe,john.doe@example.com,555-123-4567";
+    const csvContent = "name,contactName,contactEmail,contactPhone,street,city,state,zip\nSample Company,John Doe,john.doe@example.com,555-123-4567,123 Main St,Anytown,WV,12345";
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);

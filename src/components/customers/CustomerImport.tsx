@@ -58,6 +58,10 @@ export const CustomerImport = ({ isOpen, onClose, onImportCustomers }: CustomerI
         const contactNameIndex = headers.indexOf("contactname");
         const contactEmailIndex = headers.indexOf("contactemail");
         const contactPhoneIndex = headers.indexOf("contactphone");
+        const streetIndex = headers.indexOf("street");
+        const cityIndex = headers.indexOf("city");
+        const stateIndex = headers.indexOf("state");
+        const zipIndex = headers.indexOf("zip");
         
         // Parse data rows (skipping header)
         const customersData: Customer[] = csvData.slice(1).map((row) => {
@@ -74,6 +78,10 @@ export const CustomerImport = ({ isOpen, onClose, onImportCustomers }: CustomerI
             contactName: contactNameIndex !== -1 ? row[contactNameIndex]?.trim() : undefined,
             contactEmail: contactEmailIndex !== -1 ? row[contactEmailIndex]?.trim() : undefined,
             contactPhone: contactPhoneIndex !== -1 ? row[contactPhoneIndex]?.trim() : undefined,
+            street: streetIndex !== -1 ? row[streetIndex]?.trim() : undefined,
+            city: cityIndex !== -1 ? row[cityIndex]?.trim() : undefined,
+            state: stateIndex !== -1 ? row[stateIndex]?.trim() : undefined,
+            zip: zipIndex !== -1 ? row[zipIndex]?.trim() : undefined,
           };
         }).filter(Boolean) as Customer[];
         
@@ -120,7 +128,7 @@ export const CustomerImport = ({ isOpen, onClose, onImportCustomers }: CustomerI
           <div className="bg-muted p-3 rounded-md text-sm">
             <p className="font-medium">Required CSV Format:</p>
             <p className="mt-1">The first row should contain column headers:</p>
-            <p className="font-mono text-xs mt-1">name,contactName,contactEmail,contactPhone</p>
+            <p className="font-mono text-xs mt-1">name,contactName,contactEmail,contactPhone,street,city,state,zip</p>
             <p className="mt-2">Where 'name' is a required field.</p>
           </div>
         </div>

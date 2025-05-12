@@ -24,6 +24,10 @@ export const EditCustomerDialog = ({
       contactName: values.contactName || undefined,
       contactEmail: values.contactEmail || undefined,
       contactPhone: values.contactPhone || undefined,
+      street: values.street || undefined,
+      city: values.city || undefined,
+      state: values.state || undefined,
+      zip: values.zip || undefined,
     });
     onClose();
   };
@@ -44,6 +48,10 @@ export const EditCustomerDialog = ({
             contactName: customer.contactName || "",
             contactEmail: customer.contactEmail || "",
             contactPhone: customer.contactPhone || "",
+            street: customer.street || "",
+            city: customer.city || "",
+            state: customer.state || "",
+            zip: customer.zip || "",
           }}
           buttonText="Update Customer"
           onCancel={onClose}

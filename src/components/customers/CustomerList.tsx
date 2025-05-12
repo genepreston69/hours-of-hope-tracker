@@ -3,7 +3,7 @@ import { Customer } from "@/models/types";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Edit } from "lucide-react";
+import { Edit, Building } from "lucide-react";
 
 interface CustomerListProps {
   customers: Customer[];
@@ -27,6 +27,7 @@ export const CustomerList = ({ customers, onEditCustomer, onDeleteCustomer }: Cu
           <TableRow>
             <TableHead>Customer Name</TableHead>
             <TableHead>Contact</TableHead>
+            <TableHead>Address</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -43,6 +44,25 @@ export const CustomerList = ({ customers, onEditCustomer, onDeleteCustomer }: Cu
                         {customer.contactEmail}
                       </p>
                     )}
+                  </div>
+                )}
+              </TableCell>
+              <TableCell>
+                {(customer.street || customer.city || customer.state || customer.zip) && (
+                  <div className="flex items-start">
+                    <Building className="h-4 w-4 mt-1 mr-2 text-muted-foreground" />
+                    <div>
+                      {customer.street && <p className="text-sm">{customer.street}</p>}
+                      {(customer.city || customer.state || customer.zip) && (
+                        <p className="text-sm">
+                          {[
+                            customer.city, 
+                            customer.state, 
+                            customer.zip
+                          ].filter(Boolean).join(", ")}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 )}
               </TableCell>
