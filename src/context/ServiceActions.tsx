@@ -85,18 +85,20 @@ export const createServiceActions = (
           throw new Error(`Invalid UUID format for entry: ${entry.id}`);
         }
         
-        // Verify that facilityLocationId is a valid UUID
-        if (!entry.facilityLocationId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
-          console.error("Invalid facility location ID:", entry.facilityLocationId);
-          console.error("Location name:", entry.location);
-          throw new Error(`Invalid UUID format for location ID: ${entry.facilityLocationId} (location name: ${entry.location})`);
+        // Ensure location is a valid UUID (or map from name if needed)
+        let locationId = entry.facilityLocationId;
+        if (typeof locationId === 'string' && !locationId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+          locationId = getLocationIdByName(locationId) || '';
+          if (!locationId) {
+            throw new Error(`Invalid location name: ${entry.facilityLocationId}`);
+          }
         }
         
         return {
           id: entry.id,
           date: entry.date.toISOString().split('T')[0],
           customer_id: entry.customerId,
-          facility_location_id: entry.facilityLocationId,
+          facility_location_id: locationId,
           volunteer_count: entry.numberOfResidents,
           hours: Math.round(entry.totalHours),
           description: entry.notes || ''

@@ -8,7 +8,7 @@ export const formSchema = z.object({
   customerId: z.string({
     required_error: "Please select a customer",
   }),
-  facilityLocationId: z.enum(["Bluefield", "Charleston", "Huntington", "Parkersburg"], {
+  facilityLocationId: z.string({
     required_error: "Please select a location",
   }),
   startTime: z.string().optional(),

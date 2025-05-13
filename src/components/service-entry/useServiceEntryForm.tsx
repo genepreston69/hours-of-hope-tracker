@@ -6,6 +6,7 @@ import { toast } from "@/components/ui/sonner";
 import { useAppContext } from "@/context/AppContext";
 import { generateId } from "@/lib/utils";
 import { formSchema, ServiceEntryFormValues } from "./types";
+import { getLocationIdByName } from "@/constants/locations";
 
 export const useServiceEntryForm = () => {
   const { customers, addServiceEntry, getCustomerById } = useAppContext();
@@ -55,6 +56,13 @@ export const useServiceEntryForm = () => {
       return;
     }
 
+    // Get the location ID from the location name
+    const locationId = getLocationIdByName(data.facilityLocationId);
+    if (!locationId) {
+      toast.error(`Could not find location ID for ${data.facilityLocationId}`);
+      return;
+    }
+
     // Calculate hours based on time fields if both are provided
     let hoursWorked = data.hoursWorked || 0;
     if (data.startTime && data.endTime) {
@@ -71,8 +79,8 @@ export const useServiceEntryForm = () => {
       date: data.date,
       customerId: data.customerId,
       customerName: customer.name,
-      facilityLocationId: data.facilityLocationId,
-      location: data.facilityLocationId, // Add location for backward compatibility
+      facilityLocationId: locationId, // Use the UUID instead of the name
+      location: data.facilityLocationId, // Keep the location name for display
       hoursWorked: hoursWorked,
       numberOfResidents: data.numberOfResidents,
       totalHours: calculatedTotalHours,

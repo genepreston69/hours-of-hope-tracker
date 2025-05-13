@@ -1,34 +1,30 @@
 
-import { LocationOption } from "@/models/types";
+// Export location options as an array of strings
+export const LOCATION_OPTIONS = ['Bluefield', 'Charleston', 'Huntington', 'Parkersburg'];
 
-// Define location options with their UUIDs from the database
-export interface LocationWithId {
-  id: string;
-  name: LocationOption;
-}
+// Map of location names to their IDs
+const LOCATION_ID_MAP: Record<string, string> = {
+  'Bluefield': '1b4da965-3045-42c3-99ec-8ff6c21d3d5a',
+  'Charleston': 'd98cb6b7-eac2-4f9e-a97d-4d67fe9afcad',
+  'Huntington': '72e5c533-28a6-423e-902b-0eebd60ef355',
+  'Parkersburg': 'a92e56f0-2184-4c7d-a5a8-afe81a4d64bc'
+};
 
-// Define location options as a constant for reuse
-export const LOCATION_OPTIONS: LocationOption[] = ["Bluefield", "Charleston", "Huntington", "Parkersburg"];
+/**
+ * Get the UUID for a location name
+ * @param locationName The name of the location
+ * @returns The UUID for the location or undefined if not found
+ */
+export const getLocationIdByName = (locationName: string): string | undefined => {
+  return LOCATION_ID_MAP[locationName];
+};
 
-// Map location names to their UUIDs
-export const LOCATIONS_WITH_IDS: LocationWithId[] = [
-  { id: "ee721c56-9178-4544-9d5c-7465f5ae9a69", name: "Bluefield" },
-  { id: "d98cb6b7-eac2-4f9e-a97d-4d67fe9afcad", name: "Charleston" },
-  { id: "72e5c533-28a6-423e-902b-0eebd60ef355", name: "Huntington" },
-  { id: "a92e56f0-2184-4c7d-a5a8-afe81a4d64bc", name: "Parkersburg" }
-];
-
-// Helper function to find location ID by name
-export function getLocationIdByName(name: string): string | undefined {
-  // Case-insensitive lookup and handle trimmed whitespace
-  const location = LOCATIONS_WITH_IDS.find(
-    loc => loc.name.toLowerCase() === name.trim().toLowerCase()
-  );
-  return location?.id;
-}
-
-// Helper function to find location name by ID
-export function getLocationNameById(id: string): string | undefined {
-  const location = LOCATIONS_WITH_IDS.find(loc => loc.id === id);
-  return location?.name;
-}
+/**
+ * Get the name for a location ID
+ * @param locationId The UUID of the location
+ * @returns The name for the location or undefined if not found
+ */
+export const getLocationNameById = (locationId: string): string | undefined => {
+  const entry = Object.entries(LOCATION_ID_MAP).find(([_, id]) => id === locationId);
+  return entry ? entry[0] : undefined;
+};
