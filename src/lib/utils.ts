@@ -20,6 +20,15 @@ export function generateId(): string {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
+export function generateUUID(): string {
+  // This generates a valid UUID v4 format string
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, 
+        v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 export function parseCSV(csvText: string): string[][] {
   const lines = csvText.split(/\r?\n/);
   return lines.map(line => {

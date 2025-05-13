@@ -1,7 +1,7 @@
 
 import { CSVServiceEntry, LocationOption, ServiceEntry } from "@/models/types";
 import { parse } from "date-fns";
-import { generateId, parseCSV } from "@/lib/utils";
+import { generateUUID, parseCSV } from "@/lib/utils";
 import { LOCATION_OPTIONS, getLocationIdByName } from "@/constants/locations";
 import { toast } from "@/components/ui/sonner";
 
@@ -136,7 +136,7 @@ export function createServiceEntriesFromCSV(
     }
     
     return {
-      id: generateId(),
+      id: generateUUID(), // Now using the UUID generator instead of generateId()
       date,
       customerId: customer.id,
       customerName: customer.name,

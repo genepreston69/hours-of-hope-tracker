@@ -76,17 +76,27 @@ export const createServiceActions = (
     try {
       console.log("Starting import of service entries:", newEntries);
 
-      // Each entry should already have a valid UUID for facilityLocationId from createServiceEntriesFromCSV
+      // Each entry should already have a valid UUID for facilityLocationId
       
       // Transform to Supabase format
       const supabaseEntries = newEntries.map(entry => {
-        console.log("Processing entry:", entry);
+        console.log("Processing entry for import:", entry);
+        
+        // Verify that the ID is a valid UUID format
+        if (!entry.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+          throw new Error(`Invalid UUID format for entry: ${entry.id}`);
+        }
+        
+        // Verify that facilityLocationId is a valid UUID
+        if (!entry.facilityLocationId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+          throw new Error(`Invalid UUID format for location ID: ${entry.facilityLocationId}`);
+        }
         
         return {
           id: entry.id,
           date: entry.date.toISOString().split('T')[0],
           customer_id: entry.customerId,
-          facility_location_id: entry.facilityLocationId, // Should be a valid UUID
+          facility_location_id: entry.facilityLocationId,
           volunteer_count: entry.numberOfResidents,
           hours: Math.round(entry.totalHours),
           description: entry.notes || ''
