@@ -75,15 +75,43 @@ export const createServiceActions = (
     try {
       console.log("Starting import of service entries:", newEntries);
       
-      // Transform to Supabase format
+      // First, get facility locations to match location names to UUIDs
+      const { data: locationData, error: locationError } = await supabase
+        .from('facility_locations')
+        .select('id, name');
+      
+      if (locationError) {
+        console.error("Error fetching facility locations:", locationError);
+        throw new Error("Could not fetch facility locations for mapping");
+      }
+
+      // Create a mapping of location names to UUIDs
+      const locationMap = new Map();
+      if (locationData) {
+        locationData.forEach(loc => {
+          locationMap.set(loc.name.toLowerCase(), loc.id);
+        });
+      }
+      
+      console.log("Location name to ID mapping:", Object.fromEntries([...locationMap.entries()]));
+      
+      // Transform to Supabase format with proper location IDs
       const supabaseEntries = newEntries.map(entry => {
         console.log("Processing entry:", entry);
+        
+        // Try to find the UUID for the location name
+        const locationId = locationMap.get(entry.facilityLocationId.toLowerCase());
+        
+        if (!locationId) {
+          console.warn(`No UUID found for location "${entry.facilityLocationId}". Creating entry with string value.`);
+        }
+        
         return {
           id: entry.id,
           date: entry.date.toISOString().split('T')[0],
           customer_id: entry.customerId,
-          // Use the string location field if facilityLocationId is not a valid UUID
-          facility_location_id: entry.facilityLocationId,
+          // Use the UUID if found, otherwise use the string name (may fail if DB requires UUID)
+          facility_location_id: locationId || entry.facilityLocationId,
           volunteer_count: entry.numberOfResidents,
           hours: Math.round(entry.totalHours),
           description: entry.notes || ''

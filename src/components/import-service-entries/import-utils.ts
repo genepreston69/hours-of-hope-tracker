@@ -60,9 +60,9 @@ export function validateAndParseCSV(
           return;
         }
         
-        // Validate facility location is one of the valid options
-        if (!LOCATION_OPTIONS.includes(facilityLocationId as LocationOption)) {
-          newErrors.push(`Row ${index + 2}: Invalid facility location. Must be one of: ${LOCATION_OPTIONS.join(", ")}`);
+        // Accept either a predefined location name or any string value - validation will happen later
+        if (!facilityLocationId) {
+          newErrors.push(`Row ${index + 2}: Missing facility location`);
           return;
         }
 
@@ -121,8 +121,6 @@ export function createServiceEntriesFromCSV(
     // Parse date from MM/DD/YYYY format
     const date = parse(entry.date, "MM/dd/yyyy", new Date());
     
-    // Create entry with location as both facilityLocationId and location
-    // This allows the import to work with both the new UUID-based system and the string-based system
     return {
       id: generateId(),
       date,

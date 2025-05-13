@@ -3,6 +3,9 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ServiceEntryForm from "@/components/ServiceEntryForm";
 import ImportServiceEntries from "@/components/ImportServiceEntries";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { LOCATION_OPTIONS } from "@/constants/locations";
 
 const ServiceEntry = () => {
   const [activeTab, setActiveTab] = useState<string>("manual-entry");
@@ -25,6 +28,15 @@ const ServiceEntry = () => {
           <ImportServiceEntries />
         </TabsContent>
       </Tabs>
+      
+      <Alert className="mt-6" variant="outline">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Import Instructions</AlertTitle>
+        <AlertDescription>
+          When importing service entries, make sure your facility locations match one of: {LOCATION_OPTIONS.join(", ")}. 
+          If you're experiencing import errors, check your CSV file for correct formatting and valid location names.
+        </AlertDescription>
+      </Alert>
     </div>
   );
 };

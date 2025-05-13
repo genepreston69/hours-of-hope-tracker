@@ -92,7 +92,7 @@ const ImportServiceEntries = () => {
                     <ol className="list-decimal ml-5">
                       <li><strong>Date</strong>: In format MM/DD/YYYY (e.g., 05/15/2023)</li>
                       <li><strong>Customer</strong>: Must match an existing customer name exactly</li>
-                      <li><strong>FacilityLocation</strong>: Must be one of: {LOCATION_OPTIONS.join(", ")}</li>
+                      <li><strong>FacilityLocation</strong>: Should be one of: {LOCATION_OPTIONS.join(", ")}</li>
                       <li><strong>NumberOfResidents</strong>: A positive whole number</li>
                       <li><strong>Hours</strong>: Hours per resident (positive number)</li>
                       <li><strong>Description</strong>: Optional additional information</li>
@@ -107,7 +107,10 @@ const ImportServiceEntries = () => {
                       <AlertCircle className="h-4 w-4" />
                       <AlertTitle>Important</AlertTitle>
                       <AlertDescription>
-                        Customer names must match exactly with existing customers in the system (case-sensitive).
+                        <ul className="list-disc pl-4 space-y-1">
+                          <li>Customer names must match exactly with existing customers (case-insensitive).</li>
+                          <li>Facility locations should be one of the options listed above.</li>
+                        </ul>
                       </AlertDescription>
                     </Alert>
                   </div>
