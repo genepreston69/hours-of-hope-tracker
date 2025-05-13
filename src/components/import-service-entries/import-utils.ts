@@ -105,6 +105,8 @@ export function createServiceEntriesFromCSV(
   preview: CSVServiceEntry[],
   customers: { id: string; name: string }[]
 ): ServiceEntry[] {
+  console.log("Creating service entries with:", { preview, customers });
+  
   return preview.map(entry => {
     // Find customer ID by name - using case-insensitive match with trimmed whitespace
     const customer = customers.find(c => 
@@ -112,12 +114,15 @@ export function createServiceEntriesFromCSV(
     );
     
     if (!customer) {
+      console.error(`Customer not found: "${entry.customer}". Available customers:`, customers.map(c => c.name));
       throw new Error(`Customer "${entry.customer}" not found`);
     }
 
     // Parse date from MM/DD/YYYY format
     const date = parse(entry.date, "MM/dd/yyyy", new Date());
     
+    // Create entry with location as both facilityLocationId and location
+    // This allows the import to work with both the new UUID-based system and the string-based system
     return {
       id: generateId(),
       date,

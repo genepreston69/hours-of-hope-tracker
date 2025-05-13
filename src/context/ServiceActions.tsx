@@ -73,16 +73,22 @@ export const createServiceActions = (
 
   const importServiceEntries = async (newEntries: ServiceEntry[]) => {
     try {
+      console.log("Starting import of service entries:", newEntries);
+      
       // Transform to Supabase format
-      const supabaseEntries = newEntries.map(entry => ({
-        id: entry.id,
-        date: entry.date.toISOString().split('T')[0],
-        customer_id: entry.customerId,
-        facility_location_id: entry.facilityLocationId || entry.location, // Make sure facility_location_id is a UUID
-        volunteer_count: entry.numberOfResidents,
-        hours: Math.round(entry.totalHours),
-        description: entry.notes || ''
-      }));
+      const supabaseEntries = newEntries.map(entry => {
+        console.log("Processing entry:", entry);
+        return {
+          id: entry.id,
+          date: entry.date.toISOString().split('T')[0],
+          customer_id: entry.customerId,
+          // Use the string location field if facilityLocationId is not a valid UUID
+          facility_location_id: entry.facilityLocationId,
+          volunteer_count: entry.numberOfResidents,
+          hours: Math.round(entry.totalHours),
+          description: entry.notes || ''
+        };
+      });
       
       console.log("Importing service entries to Supabase:", supabaseEntries);
       
@@ -94,6 +100,8 @@ export const createServiceActions = (
         console.error("Error importing service entries:", error);
         throw error;
       }
+      
+      console.log("Import successful. Adding entries to state.");
       
       setServiceEntries(prev => {
         // Filter out duplicates based on id

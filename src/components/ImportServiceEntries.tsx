@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
@@ -45,7 +46,9 @@ const ImportServiceEntries = () => {
     }
 
     try {
+      console.log("Creating service entries from CSV with customers:", customers);
       const serviceEntries = createServiceEntriesFromCSV(preview, customers);
+      console.log("Created service entries:", serviceEntries);
       importServiceEntries(serviceEntries);
       toast.success(`${serviceEntries.length} service entries imported successfully`);
       setFile(null);

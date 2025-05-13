@@ -100,7 +100,7 @@ export type Database = {
           created_at: string | null
           customer_id: string
           date: string
-          description: string
+          description: string | null
           facility_location_id: string
           hours: number
           id: string
@@ -111,18 +111,18 @@ export type Database = {
           created_at?: string | null
           customer_id: string
           date: string
-          description: string
+          description?: string | null
           facility_location_id: string
           hours: number
           id?: string
           updated_at?: string | null
-          volunteer_count?: number
+          volunteer_count: number
         }
         Update: {
           created_at?: string | null
           customer_id?: string
           date?: string
-          description?: string
+          description?: string | null
           facility_location_id?: string
           hours?: number
           id?: string
