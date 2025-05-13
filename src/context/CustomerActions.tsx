@@ -23,7 +23,7 @@ export const createCustomerActions = (
       const supabaseCustomer = {
         id: customer.id,
         name: customer.name,
-        contact_person: customer.contactName || null,
+        contact_person: customer.contactName || '',
         contact_email: customer.contactEmail || null,
         contact_phone: customer.contactPhone || null,
         street: customer.street || null,
@@ -52,7 +52,7 @@ export const createCustomerActions = (
       const supabaseCustomer: Record<string, any> = {};
       
       if (updatedCustomer.name) supabaseCustomer.name = updatedCustomer.name;
-      if (updatedCustomer.contactName !== undefined) supabaseCustomer.contact_person = updatedCustomer.contactName || null;
+      if (updatedCustomer.contactName !== undefined) supabaseCustomer.contact_person = updatedCustomer.contactName || '';
       if (updatedCustomer.contactEmail !== undefined) supabaseCustomer.contact_email = updatedCustomer.contactEmail || null;
       if (updatedCustomer.contactPhone !== undefined) supabaseCustomer.contact_phone = updatedCustomer.contactPhone || null;
       if (updatedCustomer.street !== undefined) supabaseCustomer.street = updatedCustomer.street || null;
