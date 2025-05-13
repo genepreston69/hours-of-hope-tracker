@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ServiceEntryForm from "@/components/ServiceEntryForm";
+import { ServiceEntryForm } from "@/components/service-entry";
 import ImportServiceEntries from "@/components/ImportServiceEntries";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
