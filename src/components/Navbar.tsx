@@ -31,9 +31,10 @@ const Navbar = () => {
           <div className="flex items-center gap-3">
             <img 
               src="/lovable-uploads/f4dd29f5-c1ea-4bf3-88c3-f13573496fe7.png" 
-              alt="Recovery Point Logo" 
+              alt="Service Community Logo" 
               className="h-10 w-auto" 
             />
+            <span className="font-semibold text-lg hidden sm:block">Service Community</span>
           </div>
 
           {/* Desktop Menu */}
