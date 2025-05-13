@@ -127,7 +127,7 @@ export function createServiceEntriesFromCSV(
     // Parse date from MM/DD/YYYY format
     const date = parse(entry.date, "MM/dd/yyyy", new Date());
     
-    // Convert location name to ID
+    // Convert location name to ID using the utility function
     const locationId = getLocationIdByName(entry.facilityLocationId);
     
     if (!locationId) {
@@ -135,12 +135,14 @@ export function createServiceEntriesFromCSV(
       throw new Error(`Location "${entry.facilityLocationId}" not found or invalid`);
     }
     
+    console.log(`Mapped location "${entry.facilityLocationId}" to ID: ${locationId}`);
+    
     return {
-      id: generateUUID(), // Now using the UUID generator instead of generateId()
+      id: generateUUID(),
       date,
       customerId: customer.id,
       customerName: customer.name,
-      facilityLocationId: locationId, // Use the UUID from our mapping
+      facilityLocationId: locationId,
       location: entry.facilityLocationId, // Store the display name
       numberOfResidents: entry.numberOfResidents,
       hoursWorked: entry.hoursWorked,

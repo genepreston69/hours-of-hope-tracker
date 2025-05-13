@@ -12,13 +12,12 @@ const ValidationSummary = ({ totalRows, validRows, invalidRows }: ValidationSumm
   const allValid = validRows === totalRows && totalRows > 0;
   
   return (
-    <Card className="p-4 border-l-4 bg-muted/30 space-y-2" 
-      style={{ borderLeftColor: allValid ? 'var(--success)' : 'var(--warning)' }}>
+    <Card className={`p-4 border-l-4 bg-muted/30 space-y-2 ${allValid ? 'border-green-500' : 'border-yellow-500'}`}>
       <div className="flex items-center gap-2">
         {allValid ? (
-          <CheckCircle className="h-5 w-5 text-success" />
+          <CheckCircle className="h-5 w-5 text-green-500" />
         ) : (
-          <AlertCircle className="h-5 w-5 text-warning" />
+          <AlertCircle className="h-5 w-5 text-yellow-500" />
         )}
         <h3 className="font-medium">Validation Summary</h3>
       </div>
@@ -30,7 +29,7 @@ const ValidationSummary = ({ totalRows, validRows, invalidRows }: ValidationSumm
         </div>
         <div>
           <p className="text-muted-foreground text-sm">Valid</p>
-          <p className="font-medium text-lg text-success">{validRows}</p>
+          <p className="font-medium text-lg text-green-500">{validRows}</p>
         </div>
         <div>
           <p className="text-muted-foreground text-sm">Invalid</p>
@@ -39,9 +38,9 @@ const ValidationSummary = ({ totalRows, validRows, invalidRows }: ValidationSumm
       </div>
       
       {allValid ? (
-        <p className="text-sm text-success">All rows are valid and ready for import.</p>
+        <p className="text-sm text-green-500">All rows are valid and ready for import.</p>
       ) : invalidRows > 0 ? (
-        <p className="text-sm text-warning">Please fix the errors before importing.</p>
+        <p className="text-sm text-yellow-500">Please fix the errors before importing.</p>
       ) : (
         <p className="text-sm">Validation complete. Review the data before importing.</p>
       )}
