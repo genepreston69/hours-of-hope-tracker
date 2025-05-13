@@ -2,7 +2,7 @@
 import { CSVServiceEntry, LocationOption, ServiceEntry } from "@/models/types";
 import { parse } from "date-fns";
 import { generateId, parseCSV } from "@/lib/utils";
-import { LOCATION_OPTIONS } from "@/constants/locations";
+import { LOCATION_OPTIONS, getLocationIdByName } from "@/constants/locations";
 import { toast } from "@/components/ui/sonner";
 
 export function validateAndParseCSV(
@@ -37,7 +37,7 @@ export function validateAndParseCSV(
         // Expected format: date, customer, facilityLocationId, numberOfResidents, hoursWorked, [notes]
         const dateStr = row[0].trim();
         const customer = row[1].trim();
-        const facilityLocationId = row[2].trim();
+        const locationName = row[2].trim();
         const residents = parseInt(row[3].trim(), 10);
         const hours = parseFloat(row[4].trim());
         const notes = row.length > 5 ? row[5].trim() : "";
@@ -60,9 +60,15 @@ export function validateAndParseCSV(
           return;
         }
         
-        // Accept either a predefined location name or any string value - validation will happen later
-        if (!facilityLocationId) {
+        // Validate location name
+        if (!locationName) {
           newErrors.push(`Row ${index + 2}: Missing facility location`);
+          return;
+        }
+
+        // Check if the location name is in our predefined list
+        if (!LOCATION_OPTIONS.some(loc => loc.toLowerCase() === locationName.toLowerCase())) {
+          newErrors.push(`Row ${index + 2}: Invalid facility location "${locationName}". Must be one of: ${LOCATION_OPTIONS.join(", ")}`);
           return;
         }
 
@@ -81,7 +87,7 @@ export function validateAndParseCSV(
         parsedEntries.push({
           date: dateStr,
           customer,
-          facilityLocationId,
+          facilityLocationId: locationName, // Store the name, we'll convert to ID later
           numberOfResidents: residents,
           hoursWorked: hours,
           notes
@@ -121,13 +127,21 @@ export function createServiceEntriesFromCSV(
     // Parse date from MM/DD/YYYY format
     const date = parse(entry.date, "MM/dd/yyyy", new Date());
     
+    // Convert location name to ID
+    const locationId = getLocationIdByName(entry.facilityLocationId);
+    
+    if (!locationId) {
+      console.error(`Location not found: "${entry.facilityLocationId}"`);
+      throw new Error(`Location "${entry.facilityLocationId}" not found or invalid`);
+    }
+    
     return {
       id: generateId(),
       date,
       customerId: customer.id,
       customerName: customer.name,
-      facilityLocationId: entry.facilityLocationId,
-      location: entry.facilityLocationId, // For backward compatibility
+      facilityLocationId: locationId, // Use the UUID from our mapping
+      location: entry.facilityLocationId, // Store the display name
       numberOfResidents: entry.numberOfResidents,
       hoursWorked: entry.hoursWorked,
       totalHours: entry.numberOfResidents * entry.hoursWorked,

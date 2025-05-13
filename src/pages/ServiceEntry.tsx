@@ -34,6 +34,7 @@ const ServiceEntry = () => {
         <AlertTitle>Import Instructions</AlertTitle>
         <AlertDescription>
           When importing service entries, make sure your facility locations match one of: {LOCATION_OPTIONS.join(", ")}. 
+          The system will automatically map these names to the correct IDs in the database.
           If you're experiencing import errors, check your CSV file for correct formatting and valid location names.
         </AlertDescription>
       </Alert>

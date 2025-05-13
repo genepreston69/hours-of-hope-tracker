@@ -2,6 +2,7 @@
 import { ServiceEntry } from "../models/types";
 import { toast } from "../components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { getLocationIdByName } from "@/constants/locations";
 
 export interface ServiceActionsType {
   addServiceEntry: (entry: ServiceEntry) => Promise<void>;
@@ -74,44 +75,18 @@ export const createServiceActions = (
   const importServiceEntries = async (newEntries: ServiceEntry[]) => {
     try {
       console.log("Starting import of service entries:", newEntries);
-      
-      // First, get facility locations to match location names to UUIDs
-      const { data: locationData, error: locationError } = await supabase
-        .from('facility_locations')
-        .select('id, name');
-      
-      if (locationError) {
-        console.error("Error fetching facility locations:", locationError);
-        throw new Error("Could not fetch facility locations for mapping");
-      }
 
-      // Create a mapping of location names to UUIDs
-      const locationMap = new Map();
-      if (locationData) {
-        locationData.forEach(loc => {
-          locationMap.set(loc.name.toLowerCase(), loc.id);
-        });
-      }
+      // Each entry should already have a valid UUID for facilityLocationId from createServiceEntriesFromCSV
       
-      console.log("Location name to ID mapping:", Object.fromEntries([...locationMap.entries()]));
-      
-      // Transform to Supabase format with proper location IDs
+      // Transform to Supabase format
       const supabaseEntries = newEntries.map(entry => {
         console.log("Processing entry:", entry);
-        
-        // Try to find the UUID for the location name
-        const locationId = locationMap.get(entry.facilityLocationId.toLowerCase());
-        
-        if (!locationId) {
-          console.warn(`No UUID found for location "${entry.facilityLocationId}". Creating entry with string value.`);
-        }
         
         return {
           id: entry.id,
           date: entry.date.toISOString().split('T')[0],
           customer_id: entry.customerId,
-          // Use the UUID if found, otherwise use the string name (may fail if DB requires UUID)
-          facility_location_id: locationId || entry.facilityLocationId,
+          facility_location_id: entry.facilityLocationId, // Should be a valid UUID
           volunteer_count: entry.numberOfResidents,
           hours: Math.round(entry.totalHours),
           description: entry.notes || ''
@@ -146,7 +121,7 @@ export const createServiceActions = (
       });
     } catch (error) {
       console.error("Error importing service entries:", error);
-      toast.error("Failed to import service entries");
+      toast.error(`Failed to import service entries: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
