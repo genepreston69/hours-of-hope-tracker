@@ -29,7 +29,7 @@ const ServiceEntry = () => {
         </TabsContent>
       </Tabs>
       
-      <Alert className="mt-6" variant="outline">
+      <Alert className="mt-6" variant="default">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Import Instructions</AlertTitle>
         <AlertDescription>
