@@ -11,7 +11,7 @@ const ServiceEntry = () => {
   const [activeTab, setActiveTab] = useState<string>("manual-entry");
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto" style={{ "--success": "hsl(143, 85%, 48%)", "--warning": "hsl(48, 96%, 53%)" }}>
       <h1 className="text-3xl font-bold mb-6">Enter Service Hours</h1>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
