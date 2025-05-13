@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAppContext } from "@/context/AppContext";
@@ -36,8 +35,8 @@ const formSchema = z.object({
     .max(24, "Hours cannot exceed 24"),
   numberOfResidents: z.coerce
     .number()
-    .int("Number of residents must be a whole number")
-    .positive("Number of residents must be greater than 0"),
+    .int("Number of volunteers must be a whole number")
+    .positive("Number of volunteers must be greater than 0"),
   notes: z.string().optional(),
 });
 
@@ -121,7 +120,7 @@ const ServiceEntryForm = () => {
       <CardHeader>
         <CardTitle>New Service Entry</CardTitle>
         <CardDescription>
-          Record hours worked by recovery residents for a customer.
+          Record hours worked by recovery volunteers for a customer.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -262,12 +261,12 @@ const ServiceEntryForm = () => {
                         step={0.5}
                         min={0.5}
                         max={24}
-                        placeholder="Hours per resident"
+                        placeholder="Hours per volunteer"
                         {...field}
                       />
                     </FormControl>
                     <FormDescription>
-                      Hours worked per resident.
+                      Hours worked per volunteer.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -279,17 +278,17 @@ const ServiceEntryForm = () => {
                 name="numberOfResidents"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of Residents</FormLabel>
+                    <FormLabel>Number of Volunteers</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         min={1}
-                        placeholder="Number of residents"
+                        placeholder="Number of volunteers"
                         {...field}
                       />
                     </FormControl>
                     <FormDescription>
-                      How many residents participated.
+                      How many volunteers participated.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

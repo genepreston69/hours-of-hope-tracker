@@ -25,7 +25,7 @@ export const RecentEntries = ({ entries }: RecentEntriesProps) => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Location: {entry.location}</span>
-                  <span className="font-medium">{Math.round(entry.totalHours)} hours ({entry.numberOfResidents} residents)</span>
+                  <span className="font-medium">{Math.round(entry.totalHours)} hours ({entry.numberOfResidents} volunteers)</span>
                 </div>
               </div>
             ))}

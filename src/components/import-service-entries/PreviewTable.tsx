@@ -18,7 +18,7 @@ const PreviewTable = ({ preview }: PreviewTableProps) => {
               <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Date</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Customer</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Facility Location</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Residents</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Volunteers</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Hours</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Total Hours</th>
             </tr>

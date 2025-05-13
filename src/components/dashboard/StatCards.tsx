@@ -20,7 +20,7 @@ export const StatCards = ({ stats }: StatCardsProps) => {
       
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Total Residents</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Total Volunteers</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold">{stats.totalResidents.toLocaleString()}</div>
@@ -38,7 +38,7 @@ export const StatCards = ({ stats }: StatCardsProps) => {
       
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Avg. Hours per Resident</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Avg. Hours per Volunteer</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold">{stats.averageHoursPerResident.toFixed(0)}</div>
