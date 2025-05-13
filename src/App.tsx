@@ -11,6 +11,7 @@ import Reports from "./pages/Reports";
 import Layout from "./components/Layout";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import Index from "./pages/Index";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppProvider } from "./context/AppContext";
 import { useAuth } from "./hooks/use-auth";
@@ -34,14 +35,19 @@ const App = () => (
         <AppProvider>
           <Routes>
             <Route element={<Layout />}>
-              {/* Public route */}
+              {/* Public routes */}
               <Route element={<ProtectedRoute requireAuth={false} />}>
                 <Route path="/auth" element={<Auth />} />
               </Route>
               
+              {/* Root path now forwards to dashboard without requiring auth */}
+              <Route path="/" element={<Index />} />
+              
+              {/* Public dashboard route */}
+              <Route path="/dashboard" element={<Dashboard />} />
+              
               {/* Protected routes - require authentication */}
               <Route element={<ProtectedRoute />}>
-                <Route path="/" element={<Dashboard />} />
                 <Route path="/service-entry" element={<ServiceEntry />} />
                 <Route path="/customers" element={<Customers />} />
                 <Route path="/reports" element={<Reports />} />

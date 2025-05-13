@@ -23,17 +23,17 @@ const Dashboard = () => {
 
   // Set document title
   useEffect(() => {
-    document.title = "Dashboard | Recovery Resident Service Tracker";
+    document.title = "Dashboard | Recovery Volunteer Service Tracker";
   }, []);
 
   // Log state to help with debugging
   useEffect(() => {
     if (user) {
       console.log("User is authenticated on Dashboard:", user.email);
-      console.log(`Dashboard has ${serviceEntries.length} service entries`);
     } else {
-      console.log("No authenticated user on Dashboard");
+      console.log("No authenticated user on Dashboard - showing public view");
     }
+    console.log(`Dashboard has ${serviceEntries.length} service entries`);
   }, [user, serviceEntries]);
 
   if (isLoading) {
@@ -52,20 +52,34 @@ const Dashboard = () => {
     return (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <Button asChild className="mt-2 sm:mt-0">
-            <Link to="/service-entry">Enter New Service Hours</Link>
-          </Button>
+          <h1 className="text-3xl font-bold">Recovery Volunteer Service Tracker</h1>
+          {user ? (
+            <Button asChild className="mt-2 sm:mt-0">
+              <Link to="/service-entry">Enter New Service Hours</Link>
+            </Button>
+          ) : (
+            <Button asChild className="mt-2 sm:mt-0">
+              <Link to="/auth">Sign In to Enter Hours</Link>
+            </Button>
+          )}
         </div>
         
         <div className="flex items-center justify-center h-[40vh] flex-col space-y-4 border rounded-lg p-10 bg-muted/20">
-          <p className="text-xl">No service entries found</p>
+          <p className="text-xl">Welcome to the Recovery Volunteer Service Tracker</p>
           <p className="text-muted-foreground text-center">
-            Add your first service entry to see your dashboard stats
+            {user 
+              ? "Add your first service entry to see your dashboard stats" 
+              : "Sign in to access all features and record volunteer service hours"}
           </p>
-          <Button asChild>
-            <Link to="/service-entry">Add Service Entry</Link>
-          </Button>
+          {user ? (
+            <Button asChild>
+              <Link to="/service-entry">Add Service Entry</Link>
+            </Button>
+          ) : (
+            <Button asChild>
+              <Link to="/auth">Sign In</Link>
+            </Button>
+          )}
         </div>
       </div>
     );
@@ -74,10 +88,16 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <Button asChild className="mt-2 sm:mt-0">
-          <Link to="/service-entry">Enter New Service Hours</Link>
-        </Button>
+        <h1 className="text-3xl font-bold">Recovery Volunteer Service Tracker</h1>
+        {user ? (
+          <Button asChild className="mt-2 sm:mt-0">
+            <Link to="/service-entry">Enter New Service Hours</Link>
+          </Button>
+        ) : (
+          <Button asChild className="mt-2 sm:mt-0">
+            <Link to="/auth">Sign In to Enter Hours</Link>
+          </Button>
+        )}
       </div>
       
       <DateFilter dateFilter={dateFilter} setDateFilter={setDateFilter} />

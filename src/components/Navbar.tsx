@@ -10,8 +10,9 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
 
+  // Define navigation items based on authentication status
   const navItems = [
-    { name: "Dashboard", path: "/" },
+    { name: "Dashboard", path: "/dashboard" },
     ...(user ? [
       { name: "Enter Service Hours", path: "/service-entry" },
       { name: "Manage Customers", path: "/customers" },
@@ -49,7 +50,7 @@ const Navbar = () => {
                       : "text-gray-600 hover:bg-muted hover:text-gray-900"
                   )
                 }
-                end={item.path === "/"}
+                end={item.path === "/dashboard"}
               >
                 {item.name}
               </NavLink>
@@ -156,7 +157,7 @@ const Navbar = () => {
                     : "text-gray-600 hover:bg-muted hover:text-gray-900"
                 )
               }
-              end={item.path === "/"}
+              end={item.path === "/dashboard"}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.name}
