@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Download, Upload, Users } from "lucide-react";
 import { CustomerForm, CustomerFormData } from "./CustomerForm";
 import { Customer } from "@/models/types";
-import { generateId } from "@/lib/utils";
+import { v4 as uuidv4 } from 'uuid';
 
 interface CustomerActionsProps {
   onAddCustomer: (customer: Customer) => void;
@@ -15,7 +15,7 @@ interface CustomerActionsProps {
 export const CustomerActions = ({ onAddCustomer, onOpenImport, onDownloadTemplate }: CustomerActionsProps) => {
   const handleSubmit = (values: CustomerFormData) => {
     const newCustomer: Customer = {
-      id: generateId(),
+      id: uuidv4(), // Using UUID v4 to generate a valid UUID
       name: values.name,
       contactName: values.contactName || undefined,
       contactEmail: values.contactEmail || undefined,
