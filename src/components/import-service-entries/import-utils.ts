@@ -66,8 +66,12 @@ export function validateAndParseCSV(
           return;
         }
 
-        // Check if the location name is in our predefined list
-        if (!LOCATION_OPTIONS.some(loc => loc.toLowerCase() === locationName.toLowerCase())) {
+        // Check if the location name is in our predefined list - use case-insensitive comparison
+        const locationMatch = LOCATION_OPTIONS.find(
+          loc => loc.toLowerCase() === locationName.toLowerCase()
+        );
+        
+        if (!locationMatch) {
           newErrors.push(`Row ${index + 2}: Invalid facility location "${locationName}". Must be one of: ${LOCATION_OPTIONS.join(", ")}`);
           return;
         }
@@ -87,7 +91,7 @@ export function validateAndParseCSV(
         parsedEntries.push({
           date: dateStr,
           customer,
-          facilityLocationId: locationName, // Store the name, we'll convert to ID later
+          facilityLocationId: locationMatch, // Store the exact match from our options
           numberOfResidents: residents,
           hoursWorked: hours,
           notes
@@ -127,15 +131,25 @@ export function createServiceEntriesFromCSV(
     // Parse date from MM/DD/YYYY format
     const date = parse(entry.date, "MM/dd/yyyy", new Date());
     
-    // Convert location name to ID using the utility function
-    const locationId = getLocationIdByName(entry.facilityLocationId);
+    // Get the exact location name from our options for consistent casing
+    const exactLocationName = LOCATION_OPTIONS.find(
+      loc => loc.toLowerCase() === entry.facilityLocationId.toLowerCase()
+    ) as LocationOption;
     
-    if (!locationId) {
-      console.error(`Location not found: "${entry.facilityLocationId}"`);
-      throw new Error(`Location "${entry.facilityLocationId}" not found or invalid`);
+    if (!exactLocationName) {
+      console.error(`Location not found in options: "${entry.facilityLocationId}"`);
+      throw new Error(`Location "${entry.facilityLocationId}" not found in valid options`);
     }
     
-    console.log(`Mapped location "${entry.facilityLocationId}" to ID: ${locationId}`);
+    // Convert location name to ID using the utility function
+    const locationId = getLocationIdByName(exactLocationName);
+    
+    if (!locationId) {
+      console.error(`Location ID not found for: "${exactLocationName}"`);
+      throw new Error(`Location ID for "${exactLocationName}" not found or invalid`);
+    }
+    
+    console.log(`Mapped location "${entry.facilityLocationId}" (normalized to "${exactLocationName}") to ID: ${locationId}`);
     
     return {
       id: generateUUID(),
@@ -143,7 +157,7 @@ export function createServiceEntriesFromCSV(
       customerId: customer.id,
       customerName: customer.name,
       facilityLocationId: locationId,
-      location: entry.facilityLocationId, // Store the display name
+      location: exactLocationName, // Store the normalized display name
       numberOfResidents: entry.numberOfResidents,
       hoursWorked: entry.hoursWorked,
       totalHours: entry.numberOfResidents * entry.hoursWorked,

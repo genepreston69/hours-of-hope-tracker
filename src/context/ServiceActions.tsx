@@ -76,8 +76,6 @@ export const createServiceActions = (
     try {
       console.log("Starting import of service entries:", newEntries);
 
-      // Each entry should already have a valid UUID for facilityLocationId
-      
       // Transform to Supabase format
       const supabaseEntries = newEntries.map(entry => {
         console.log("Processing entry for import:", entry);
@@ -89,7 +87,9 @@ export const createServiceActions = (
         
         // Verify that facilityLocationId is a valid UUID
         if (!entry.facilityLocationId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
-          throw new Error(`Invalid UUID format for location ID: ${entry.facilityLocationId}`);
+          console.error("Invalid facility location ID:", entry.facilityLocationId);
+          console.error("Location name:", entry.location);
+          throw new Error(`Invalid UUID format for location ID: ${entry.facilityLocationId} (location name: ${entry.location})`);
         }
         
         return {
