@@ -15,6 +15,7 @@ export const useDashboardData = (
     averageHoursPerResident: 0,
   });
   const [filteredLocationStats, setFilteredLocationStats] = useState<LocationStats[]>([]);
+  const [latestEntriesByLocation, setLatestEntriesByLocation] = useState<ServiceEntry[]>([]);
 
   useEffect(() => {
     const now = new Date();
@@ -50,6 +51,7 @@ export const useDashboardData = (
         averageHoursPerResident: 0,
       });
       setFilteredLocationStats([]);
+      setLatestEntriesByLocation([]);
     } else {
       const totalEntries = filtered.length;
       const totalHours = Math.round(filtered.reduce((sum, entry) => sum + entry.totalHours, 0));
@@ -88,6 +90,20 @@ export const useDashboardData = (
       });
       
       setFilteredLocationStats(Array.from(locationMap.values()));
+      
+      // Find the latest entry for each location
+      const latestByLocation = new Map<string, ServiceEntry>();
+      
+      filtered.forEach(entry => {
+        if (!entry.location) return;
+        
+        if (!latestByLocation.has(entry.location) || 
+            new Date(entry.date) > new Date(latestByLocation.get(entry.location)!.date)) {
+          latestByLocation.set(entry.location, entry);
+        }
+      });
+      
+      setLatestEntriesByLocation(Array.from(latestByLocation.values()));
     }
   }, [serviceEntries, dateFilter]);
 
@@ -97,6 +113,7 @@ export const useDashboardData = (
   return {
     filteredStats,
     filteredLocationStats,
-    recentEntries
+    recentEntries,
+    latestEntriesByLocation
   };
 };

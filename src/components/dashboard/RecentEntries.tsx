@@ -11,8 +11,8 @@ export const RecentEntries = ({ entries }: RecentEntriesProps) => {
   return (
     <Card className="col-span-1">
       <CardHeader>
-        <CardTitle>Recent Service Entries</CardTitle>
-        <CardDescription>The 5 most recent service entries</CardDescription>
+        <CardTitle>Last Service Entry by Location</CardTitle>
+        <CardDescription>Most recent service entry for each location</CardDescription>
       </CardHeader>
       <CardContent>
         {entries.length > 0 ? (
@@ -24,8 +24,8 @@ export const RecentEntries = ({ entries }: RecentEntriesProps) => {
                   <span className="text-muted-foreground">{formatDate(entry.date)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Location: {entry.location}</span>
-                  <span className="font-medium">{Math.round(entry.totalHours)} hours ({entry.numberOfResidents} volunteers)</span>
+                  <span className="font-medium">Location: {entry.location}</span>
+                  <span>{Math.round(entry.totalHours)} hours ({entry.numberOfResidents} volunteers)</span>
                 </div>
               </div>
             ))}

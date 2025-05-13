@@ -16,7 +16,7 @@ const Dashboard = () => {
   const [dateFilter, setDateFilter] = useState<DateFilterType>("ytd");
   const { user } = useAuth();
   
-  const { filteredStats, filteredLocationStats, recentEntries } = useDashboardData(
+  const { filteredStats, filteredLocationStats, latestEntriesByLocation } = useDashboardData(
     serviceEntries,
     dateFilter
   );
@@ -104,7 +104,7 @@ const Dashboard = () => {
       <StatCards stats={filteredStats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentEntries entries={recentEntries} />
+        <RecentEntries entries={latestEntriesByLocation} />
         <LocationStatsCard locationStats={filteredLocationStats} />
       </div>
     </div>
