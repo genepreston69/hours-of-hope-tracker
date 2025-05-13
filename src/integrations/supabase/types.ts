@@ -11,25 +11,37 @@ export type Database = {
     Tables: {
       customers: {
         Row: {
+          city: string | null
           contact_email: string | null
           contact_person: string
           contact_phone: string | null
           id: string
           name: string
+          state: string | null
+          street: string | null
+          zip: string | null
         }
         Insert: {
+          city?: string | null
           contact_email?: string | null
           contact_person: string
           contact_phone?: string | null
           id?: string
           name: string
+          state?: string | null
+          street?: string | null
+          zip?: string | null
         }
         Update: {
+          city?: string | null
           contact_email?: string | null
           contact_person?: string
           contact_phone?: string | null
           id?: string
           name?: string
+          state?: string | null
+          street?: string | null
+          zip?: string | null
         }
         Relationships: []
       }

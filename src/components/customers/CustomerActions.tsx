@@ -20,6 +20,10 @@ export const CustomerActions = ({ onAddCustomer, onOpenImport, onDownloadTemplat
       contactName: values.contactName || undefined,
       contactEmail: values.contactEmail || undefined,
       contactPhone: values.contactPhone || undefined,
+      street: values.street || undefined,
+      city: values.city || undefined,
+      state: values.state || undefined,
+      zip: values.zip || undefined,
     };
 
     onAddCustomer(newCustomer);
