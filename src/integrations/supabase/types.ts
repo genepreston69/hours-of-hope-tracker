@@ -101,9 +101,11 @@ export type Database = {
           customer_id: string
           date: string
           description: string | null
+          end_time: string | null
           facility_location_id: string
           hours: number
           id: string
+          start_time: string | null
           updated_at: string | null
           volunteer_count: number
         }
@@ -112,9 +114,11 @@ export type Database = {
           customer_id: string
           date: string
           description?: string | null
+          end_time?: string | null
           facility_location_id: string
           hours: number
           id?: string
+          start_time?: string | null
           updated_at?: string | null
           volunteer_count: number
         }
@@ -123,9 +127,11 @@ export type Database = {
           customer_id?: string
           date?: string
           description?: string | null
+          end_time?: string | null
           facility_location_id?: string
           hours?: number
           id?: string
+          start_time?: string | null
           updated_at?: string | null
           volunteer_count?: number
         }

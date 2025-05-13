@@ -6,6 +6,7 @@ import { DateField } from "./DateField";
 import { CustomerField } from "./CustomerField";
 import { LocationField } from "./LocationField";
 import { NumberFields } from "./NumberFields";
+import { TimeFields } from "./TimeFields";
 import { NotesField } from "./NotesField";
 import { TotalHoursDisplay } from "./TotalHoursDisplay";
 import { useServiceEntryForm } from "./useServiceEntryForm";
@@ -27,6 +28,7 @@ const ServiceEntryForm = () => {
             <DateField control={form.control} />
             <CustomerField control={form.control} customers={customers} />
             <LocationField control={form.control} />
+            <TimeFields control={form.control} />
             <NumberFields control={form.control} />
             <TotalHoursDisplay totalHours={totalHours} />
             <NotesField control={form.control} />
