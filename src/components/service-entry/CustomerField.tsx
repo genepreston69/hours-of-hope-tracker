@@ -11,6 +11,11 @@ interface CustomerFieldProps {
 }
 
 export const CustomerField = ({ control, customers }: CustomerFieldProps) => {
+  // Sort customers alphabetically by name
+  const sortedCustomers = [...customers].sort((a, b) => 
+    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+  );
+
   return (
     <FormField
       control={control}
@@ -28,8 +33,8 @@ export const CustomerField = ({ control, customers }: CustomerFieldProps) => {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {customers.length > 0 ? (
-                customers.map((customer) => (
+              {sortedCustomers.length > 0 ? (
+                sortedCustomers.map((customer) => (
                   <SelectItem key={customer.id} value={customer.id}>
                     {customer.name}
                   </SelectItem>
