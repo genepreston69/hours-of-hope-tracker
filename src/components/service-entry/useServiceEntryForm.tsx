@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/sonner";
 import { useAppContext } from "@/context/AppContext";
-import { generateId } from "@/lib/utils";
+import { v4 as uuidv4 } from "uuid";
 import { formSchema, ServiceEntryFormValues } from "./types";
 import { getLocationIdByName } from "@/constants/locations";
 
@@ -75,7 +75,7 @@ export const useServiceEntryForm = () => {
     );
 
     const serviceEntry = {
-      id: generateId(),
+      id: uuidv4(), // Use proper UUID generation
       date: data.date,
       customerId: data.customerId,
       customerName: customer.name,

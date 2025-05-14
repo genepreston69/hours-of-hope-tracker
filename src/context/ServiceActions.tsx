@@ -3,6 +3,7 @@ import { ServiceEntry } from "../models/types";
 import { toast } from "../components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getLocationIdByName } from "@/constants/locations";
+import { v4 as uuidv4 } from "uuid";
 
 export interface ServiceActionsType {
   addServiceEntry: (entry: ServiceEntry) => Promise<void>;
@@ -17,15 +18,19 @@ export const createServiceActions = (
   
   const addServiceEntry = async (entry: ServiceEntry) => {
     try {
+      // Generate a proper UUID for the service entry
+      const entryId = uuidv4();
+      
       // Round the total hours to the nearest hour before saving
       const roundedEntry = {
         ...entry,
+        id: entryId, // Use the proper UUID
         totalHours: Math.round(entry.totalHours)
       };
       
       // Transform to Supabase format
       const supabaseEntry = {
-        id: roundedEntry.id,
+        id: entryId, // Use the proper UUID
         date: roundedEntry.date.toISOString().split('T')[0],
         customer_id: roundedEntry.customerId,
         facility_location_id: roundedEntry.facilityLocationId,
