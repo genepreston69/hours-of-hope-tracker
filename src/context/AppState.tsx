@@ -1,17 +1,12 @@
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { Customer, ServiceEntry, ServiceStats, LocationStats } from "../models/types";
-import { toast } from "../components/ui/sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { AppStateType } from "./AppStateTypes";
+import { useDataFetching } from "./useDataFetching";
+import { useStatsCalculation } from "./useStatsCalculation";
 import { useAuth } from "@/hooks/use-auth";
 
-export interface AppStateType {
-  customers: Customer[];
-  serviceEntries: ServiceEntry[];
-  stats: ServiceStats;
-  locationStats: LocationStats[];
-  isLoading: boolean;
-}
+export { AppStateType } from "./AppStateTypes";
 
 export function useAppState(): [
   AppStateType, 
@@ -31,168 +26,31 @@ export function useAppState(): [
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { user } = useAuth();
 
-  // Function to fetch data from Supabase
-  const fetchData = useCallback(async () => {
-    if (!user) {
-      console.log("No user authenticated, skipping data fetch");
-      setIsLoading(false);
-      return;
-    }
+  // Import the data fetching functionality
+  const { fetchData } = useDataFetching(user);
 
+  // Manual data refresh function
+  const refreshData = useCallback(async () => {
+    console.log("Manual data refresh requested");
     setIsLoading(true);
-    console.log("User authenticated, fetching data from Supabase...");
-    
     try {
-      // Fetch customers
-      const { data: customersData, error: customersError } = await supabase
-        .from('customers')
-        .select('*');
-      
-      if (customersError) {
-        console.error("Error fetching customers:", customersError);
-        throw customersError;
-      }
-
-      console.log(`Fetched ${customersData?.length || 0} customers from Supabase`);
-
-      // Transform Supabase customers to app format
-      const transformedCustomers: Customer[] = customersData?.map(customer => ({
-        id: customer.id,
-        name: customer.name,
-        contactName: customer.contact_person || '',
-        contactEmail: customer.contact_email || '',
-        contactPhone: customer.contact_phone || '',
-        street: customer.street || '',
-        city: customer.city || '',
-        state: customer.state || '',
-        zip: customer.zip || ''
-      })) || [];
-
-      setCustomers(transformedCustomers);
-      
-      // Fetch service entries
-      const { data: entriesData, error: entriesError } = await supabase
-        .from('service_entries')
-        .select('*, customers(name)');
-      
-      if (entriesError) {
-        console.error("Error fetching service entries:", entriesError);
-        throw entriesError;
-      }
-
-      console.log(`Fetched ${entriesData?.length || 0} service entries from Supabase`);
-      console.log("Sample entry data:", entriesData && entriesData.length > 0 ? entriesData[0] : "No entries found");
-
-      // Transform Supabase service entries to app format
-      const transformedEntries: ServiceEntry[] = entriesData?.map(entry => ({
-        id: entry.id,
-        date: new Date(entry.date),
-        customerId: entry.customer_id,
-        customerName: entry.customers?.name || '',
-        facilityLocationId: entry.facility_location_id || '',
-        location: entry.facility_location_id || '', // Will need to fetch location name separately
-        numberOfResidents: entry.volunteer_count || 0,
-        hoursWorked: entry.hours || 0,
-        totalHours: entry.hours || 0,
-        notes: entry.description || '',
-        createdAt: new Date(entry.created_at || new Date())
-      })) || [];
-
-      // Fetch facility locations to map IDs to names
-      if (transformedEntries.length > 0) {
-        const { data: locationsData, error: locationsError } = await supabase
-          .from('facility_locations')
-          .select('*');
-        
-        if (!locationsError && locationsData) {
-          console.log(`Fetched ${locationsData.length} facility locations`);
-          const locationMap = new Map();
-          locationsData.forEach(loc => {
-            locationMap.set(loc.id, loc.name);
-          });
-          
-          // Update service entries with location names
-          const entriesWithLocations = transformedEntries.map(entry => ({
-            ...entry,
-            location: locationMap.get(entry.facilityLocationId) || entry.facilityLocationId
-          }));
-          
-          setServiceEntries(entriesWithLocations);
-        } else {
-          setServiceEntries(transformedEntries);
-        }
-      } else {
-        setServiceEntries([]);
-      }
-      
-      console.log("Data loading complete");
+      const { customers: newCustomers, serviceEntries: newServiceEntries } = await fetchData();
+      setCustomers(newCustomers);
+      setServiceEntries(newServiceEntries);
     } catch (error) {
-      console.error("Error fetching data from Supabase:", error);
-      toast.error("Failed to load data from the database. Please try again later.");
+      console.error("Error during data refresh:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
-
-  // Manual data refresh function
-  const refreshData = async () => {
-    console.log("Manual data refresh requested");
-    return fetchData();
-  };
+  }, [fetchData]);
 
   // Load data from Supabase when user is authenticated
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]); // Run this effect when user changes
+  React.useEffect(() => {
+    refreshData();
+  }, [refreshData]); // Run this effect when user changes
 
-  // Calculate statistics whenever service entries change
-  useEffect(() => {
-    console.log(`Calculating stats from ${serviceEntries.length} service entries`);
-    
-    if (serviceEntries.length === 0) {
-      setStats({
-        totalEntries: 0,
-        totalHours: 0,
-        totalResidents: 0,
-        averageHoursPerResident: 0,
-      });
-      setLocationStats([]);
-      return;
-    }
-
-    const totalEntries = serviceEntries.length;
-    const totalHours = serviceEntries.reduce((sum, entry) => sum + (entry.totalHours || 0), 0);
-    const totalResidents = serviceEntries.reduce((sum, entry) => sum + (entry.numberOfResidents || 0), 0);
-    const averageHoursPerResident = totalResidents > 0 ? totalHours / totalResidents : 0;
-
-    setStats({
-      totalEntries,
-      totalHours,
-      totalResidents,
-      averageHoursPerResident,
-    });
-
-    // Calculate location stats
-    const locationMap = new Map<string, LocationStats>();
-    
-    serviceEntries.forEach(entry => {
-      if (!locationMap.has(entry.location)) {
-        locationMap.set(entry.location, {
-          location: entry.location,
-          entries: 0,
-          hours: 0,
-          residents: 0
-        });
-      }
-      
-      const locationStat = locationMap.get(entry.location)!;
-      locationStat.entries += 1;
-      locationStat.hours += entry.totalHours || 0;
-      locationStat.residents += entry.numberOfResidents || 0;
-    });
-    
-    setLocationStats(Array.from(locationMap.values()));
-  }, [serviceEntries]);
+  // Use the stats calculation hook
+  useStatsCalculation(serviceEntries, setStats, setLocationStats);
 
   return [
     { customers, serviceEntries, stats, locationStats, isLoading },
