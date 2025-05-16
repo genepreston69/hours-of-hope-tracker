@@ -28,11 +28,10 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      {/* Wrap BrowserRouter with AppProvider to ensure all routes have access to AppContext */}
       <BrowserRouter>
         <AppProvider>
+          <Toaster />
+          <Sonner />
           <Routes>
             <Route element={<Layout />}>
               {/* Public routes */}
