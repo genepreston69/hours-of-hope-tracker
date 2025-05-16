@@ -39,6 +39,14 @@ const Dashboard = () => {
     console.log(`Dashboard has ${serviceEntries.length} service entries`);
   }, [user, serviceEntries]);
 
+  // Auto-refresh data when component mounts
+  useEffect(() => {
+    if (refreshData && !isLoading) {
+      console.log("Auto refreshing dashboard data on mount");
+      handleRefresh();
+    }
+  }, []);
+
   // Function to manually refresh data
   const handleRefresh = async () => {
     if (refreshing) return;

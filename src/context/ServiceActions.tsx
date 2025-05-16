@@ -13,7 +13,8 @@ export interface ServiceActionsType {
 
 export const createServiceActions = (
   serviceEntries: ServiceEntry[],
-  setServiceEntries: React.Dispatch<React.SetStateAction<ServiceEntry[]>>
+  setServiceEntries: React.Dispatch<React.SetStateAction<ServiceEntry[]>>,
+  refreshData: () => Promise<void>
 ): ServiceActionsType => {
   
   const addServiceEntry = async (entry: ServiceEntry) => {
@@ -56,7 +57,7 @@ export const createServiceActions = (
       setServiceEntries(prev => [...prev, roundedEntry]);
       
       // Also fetch the latest entries to ensure we're in sync with the database
-      await refreshServiceEntries(setServiceEntries);
+      await refreshData();
       
       console.log("Data refreshed after submission");
     } catch (error) {
@@ -76,75 +77,14 @@ export const createServiceActions = (
       if (error) throw error;
       
       setServiceEntries(prev => prev.filter(entry => entry.id !== id));
+      
+      // Refresh data after deletion
+      await refreshData();
+      
       toast.success("Service entry deleted");
     } catch (error) {
       console.error("Error deleting service entry:", error);
       toast.error("Failed to delete service entry");
-    }
-  };
-
-  const refreshServiceEntries = async (
-    setEntries: React.Dispatch<React.SetStateAction<ServiceEntry[]>>
-  ) => {
-    try {
-      console.log("Refreshing service entries from database...");
-      
-      const { data: entriesData, error: entriesError } = await supabase
-        .from('service_entries')
-        .select('*, customers(name)');
-      
-      if (entriesError) {
-        console.error("Error fetching service entries:", entriesError);
-        return;
-      }
-
-      console.log(`Fetched ${entriesData?.length || 0} service entries from Supabase`);
-      
-      // Transform Supabase service entries to app format
-      const transformedEntries: ServiceEntry[] = entriesData?.map(entry => ({
-        id: entry.id,
-        date: new Date(entry.date),
-        customerId: entry.customer_id,
-        customerName: entry.customers?.name || '',
-        facilityLocationId: entry.facility_location_id || '',
-        location: entry.facility_location_id || '', // Will update with location name
-        numberOfResidents: entry.volunteer_count || 0,
-        hoursWorked: entry.hours || 0,
-        totalHours: entry.hours || 0,
-        notes: entry.description || '',
-        createdAt: new Date(entry.created_at || new Date())
-      })) || [];
-
-      // Fetch facility locations to map IDs to names
-      if (transformedEntries.length > 0) {
-        const { data: locationsData, error: locationsError } = await supabase
-          .from('facility_locations')
-          .select('*');
-        
-        if (!locationsError && locationsData) {
-          console.log(`Fetched ${locationsData.length} facility locations`);
-          const locationMap = new Map();
-          locationsData.forEach(loc => {
-            locationMap.set(loc.id, loc.name);
-          });
-          
-          // Update service entries with location names
-          const entriesWithLocations = transformedEntries.map(entry => ({
-            ...entry,
-            location: locationMap.get(entry.facilityLocationId) || entry.facilityLocationId
-          }));
-          
-          setEntries(entriesWithLocations);
-        } else {
-          setEntries(transformedEntries);
-        }
-      } else {
-        setEntries([]);
-      }
-      
-      console.log("Service entries refresh complete");
-    } catch (error) {
-      console.error("Error refreshing service entries:", error);
     }
   };
 
@@ -208,8 +148,8 @@ export const createServiceActions = (
         return [...prev, ...uniqueEntries];
       });
       
-      // Refresh entries after import to ensure we're in sync with the database
-      await refreshServiceEntries(setServiceEntries);
+      // Refresh data after import to ensure we're in sync with the database
+      await refreshData();
       
     } catch (error) {
       console.error("Error importing service entries:", error);

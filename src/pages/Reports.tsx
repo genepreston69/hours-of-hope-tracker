@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDate } from "@/lib/utils";
 import { ServiceEntry } from "@/models/types";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Download, Calendar } from "lucide-react";
+import { Download, Calendar, RefreshCw, Loader2 } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { toast } from "@/components/ui/sonner";
 
 type ReportFilters = {
   location: string;
@@ -23,14 +24,39 @@ type ReportFilters = {
 };
 
 const Reports = () => {
-  const { serviceEntries, customers, locationStats, deleteServiceEntry } = useAppContext();
+  const { serviceEntries, customers, locationStats, deleteServiceEntry, refreshData } = useAppContext();
   const [currentTab, setCurrentTab] = useState("all");
+  const [refreshing, setRefreshing] = useState(false);
   const [filters, setFilters] = useState<ReportFilters>({
     location: "all",
     customer: "all",
     dateFrom: undefined,
     dateTo: undefined,
   });
+
+  // Auto-refresh data when component mounts
+  useEffect(() => {
+    if (refreshData) {
+      console.log("Auto refreshing reports data on mount");
+      handleRefresh();
+    }
+  }, []);
+
+  // Function to refresh data manually
+  const handleRefresh = async () => {
+    if (refreshing || !refreshData) return;
+    
+    setRefreshing(true);
+    try {
+      await refreshData();
+      toast.success("Report data refreshed");
+    } catch (error) {
+      console.error("Error refreshing report data:", error);
+      toast.error("Failed to refresh report data");
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   // Extract unique locations and customers for filtering
   const locations = Array.from(new Set(serviceEntries.map((entry) => entry.location)));
@@ -153,12 +179,29 @@ const Reports = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
         <h1 className="text-3xl font-bold">Service Reports</h1>
-        {sortedEntries.length > 0 && (
-          <Button onClick={exportToCSV} className="mt-2 sm:mt-0">
-            <Download className="h-4 w-4 mr-2" />
-            Export to CSV
-          </Button>
-        )}
+        <div className="flex items-center gap-2 mt-2 sm:mt-0">
+          {refreshData && (
+            <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
+              {refreshing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Refreshing...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Refresh Data
+                </>
+              )}
+            </Button>
+          )}
+          {sortedEntries.length > 0 && (
+            <Button onClick={exportToCSV} className="mt-2 sm:mt-0">
+              <Download className="h-4 w-4 mr-2" />
+              Export to CSV
+            </Button>
+          )}
+        </div>
       </div>
 
       <Card>

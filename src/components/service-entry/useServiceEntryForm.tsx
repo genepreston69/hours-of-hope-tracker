@@ -10,7 +10,7 @@ import { getLocationIdByName } from "@/constants/locations";
 import { useNavigate } from "react-router-dom";
 
 export const useServiceEntryForm = () => {
-  const { customers, addServiceEntry, getCustomerById } = useAppContext();
+  const { customers, addServiceEntry, getCustomerById, refreshData } = useAppContext();
   const [totalHours, setTotalHours] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -114,7 +114,13 @@ export const useServiceEntryForm = () => {
       setTotalHours(null);
       
       // Show success message
-      toast.success("Service entry recorded and data refreshed");
+      toast.success("Service entry recorded successfully");
+      
+      // Ensure data is refreshed before navigating
+      if (refreshData) {
+        console.log("Explicitly refreshing data after service entry submission");
+        await refreshData();
+      }
       
       // Navigate to dashboard to see the updated data
       navigate("/dashboard");
