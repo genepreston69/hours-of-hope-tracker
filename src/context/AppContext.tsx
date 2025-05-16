@@ -1,9 +1,10 @@
 
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import { Customer, ServiceEntry, ServiceStats, LocationStats } from "../models/types";
 import { useAppState, AppStateType } from "./AppState";
 import { createCustomerActions, CustomerActionsType } from "./CustomerActions";
 import { createServiceActions, ServiceActionsType } from "./ServiceActions";
+import { toast } from "@/components/ui/sonner";
 
 interface AppContextExtendedType extends AppStateType, CustomerActionsType, ServiceActionsType {
   refreshData: () => Promise<void>;
@@ -33,9 +34,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       console.log("AppContext: Data refresh completed successfully");
     } catch (error) {
       console.error("AppContext: Error refreshing data:", error);
+      toast.error("Failed to refresh data from the server");
       throw error;
     }
   };
+
+  // Auto-refresh data once when the provider mounts
+  useEffect(() => {
+    const initialDataLoad = async () => {
+      try {
+        console.log("AppContext: Initial data load");
+        await handleRefreshData();
+      } catch (error) {
+        console.error("AppContext: Error during initial data load:", error);
+      }
+    };
+    
+    initialDataLoad();
+  }, []);
 
   const value: AppContextExtendedType = {
     // State

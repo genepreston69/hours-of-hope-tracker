@@ -12,11 +12,13 @@ import { Loader2, RefreshCw } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
   const { serviceEntries, isLoading, refreshData } = useAppContext();
   const [dateFilter, setDateFilter] = useState<DateFilterType>("ytd");
   const [refreshing, setRefreshing] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
   const { user } = useAuth();
   
   const { filteredStats, filteredLocationStats, latestEntriesByLocation } = useDashboardData(
@@ -42,7 +44,7 @@ const Dashboard = () => {
   // Auto-refresh data when component mounts
   useEffect(() => {
     const refreshDashboardData = async () => {
-      if (refreshData && !isLoading) {
+      if (refreshData && !refreshing) {
         setRefreshing(true);
         try {
           console.log("Dashboard: Auto refreshing data on mount");
@@ -52,12 +54,13 @@ const Dashboard = () => {
           console.error("Dashboard: Error refreshing data on mount:", error);
         } finally {
           setRefreshing(false);
+          setInitialLoad(false);
         }
       }
     };
     
     refreshDashboardData();
-  }, [refreshData, isLoading]);
+  }, [refreshData]);
 
   // Function to manually refresh data
   const handleRefresh = async () => {
@@ -79,12 +82,36 @@ const Dashboard = () => {
     }
   };
 
-  if (isLoading) {
+  // Show a persistent loading state during initial load
+  if (initialLoad || isLoading) {
     return (
-      <div className="flex items-center justify-center h-[60vh]">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
-          <p className="text-lg">Loading data from database...</p>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+          <h1 className="text-3xl font-bold">Service Community</h1>
+          <div className="h-10 w-40">
+            <Skeleton className="h-10 w-full" />
+          </div>
+        </div>
+        
+        <div className="h-12">
+          <Skeleton className="h-full w-full" />
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-24">
+              <Skeleton className="h-full w-full" />
+            </div>
+          ))}
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="h-64">
+            <Skeleton className="h-full w-full" />
+          </div>
+          <div className="h-64">
+            <Skeleton className="h-full w-full" />
+          </div>
         </div>
       </div>
     );
