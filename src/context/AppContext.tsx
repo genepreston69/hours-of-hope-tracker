@@ -25,6 +25,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const customerActions = createCustomerActions(customers, setCustomers, serviceEntries);
   const serviceActions = createServiceActions(serviceEntries, setServiceEntries, refreshData);
 
+  // Create a more consistent refreshData function that ensures all data is refreshed
+  const handleRefreshData = async () => {
+    console.log("AppContext: Refreshing all data");
+    try {
+      await refreshData();
+      console.log("AppContext: Data refresh completed successfully");
+    } catch (error) {
+      console.error("AppContext: Error refreshing data:", error);
+      throw error;
+    }
+  };
+
   const value: AppContextExtendedType = {
     // State
     customers,
@@ -39,8 +51,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     // Service actions
     ...serviceActions,
     
-    // Data refresh function
-    refreshData
+    // Data refresh function with better consistency
+    refreshData: handleRefreshData
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

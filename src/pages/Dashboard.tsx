@@ -32,20 +32,32 @@ const Dashboard = () => {
   // Log state to help with debugging
   useEffect(() => {
     if (user) {
-      console.log("User is authenticated on Dashboard:", user.email);
+      console.log("Dashboard: User is authenticated:", user.email);
     } else {
-      console.log("No authenticated user on Dashboard - showing public view");
+      console.log("Dashboard: No authenticated user - showing public view");
     }
-    console.log(`Dashboard has ${serviceEntries.length} service entries`);
+    console.log(`Dashboard: Has ${serviceEntries.length} service entries`);
   }, [user, serviceEntries]);
 
   // Auto-refresh data when component mounts
   useEffect(() => {
-    if (refreshData && !isLoading) {
-      console.log("Auto refreshing dashboard data on mount");
-      handleRefresh();
-    }
-  }, []);
+    const refreshDashboardData = async () => {
+      if (refreshData && !isLoading) {
+        setRefreshing(true);
+        try {
+          console.log("Dashboard: Auto refreshing data on mount");
+          await refreshData();
+          console.log("Dashboard: Data refresh completed");
+        } catch (error) {
+          console.error("Dashboard: Error refreshing data on mount:", error);
+        } finally {
+          setRefreshing(false);
+        }
+      }
+    };
+    
+    refreshDashboardData();
+  }, [refreshData, isLoading]);
 
   // Function to manually refresh data
   const handleRefresh = async () => {
@@ -53,12 +65,14 @@ const Dashboard = () => {
     
     setRefreshing(true);
     try {
+      console.log("Dashboard: Manual refresh initiated");
       if (refreshData) {
         await refreshData();
         toast.success("Data refreshed successfully");
+        console.log("Dashboard: Manual refresh completed");
       }
     } catch (error) {
-      console.error("Error refreshing data:", error);
+      console.error("Dashboard: Error refreshing data:", error);
       toast.error("Failed to refresh data");
     } finally {
       setRefreshing(false);

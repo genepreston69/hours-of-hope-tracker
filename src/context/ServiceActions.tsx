@@ -56,7 +56,8 @@ export const createServiceActions = (
       // Immediately update the local state with the new entry
       setServiceEntries(prev => [...prev, roundedEntry]);
       
-      // Also fetch the latest entries to ensure we're in sync with the database
+      // Always refresh data to ensure consistency across the app
+      console.log("Explicitly refreshing data after service entry submission");
       await refreshData();
       
       console.log("Data refreshed after submission");
@@ -76,9 +77,11 @@ export const createServiceActions = (
       
       if (error) throw error;
       
+      // Update local state first for immediate UI feedback
       setServiceEntries(prev => prev.filter(entry => entry.id !== id));
       
-      // Refresh data after deletion
+      // Then refresh data to ensure consistency across the app
+      console.log("Refreshing data after deletion");
       await refreshData();
       
       toast.success("Service entry deleted");
@@ -148,7 +151,8 @@ export const createServiceActions = (
         return [...prev, ...uniqueEntries];
       });
       
-      // Refresh data after import to ensure we're in sync with the database
+      // Always refresh data after import to ensure consistency
+      console.log("Refreshing data after import");
       await refreshData();
       
     } catch (error) {

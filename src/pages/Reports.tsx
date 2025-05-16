@@ -36,11 +36,23 @@ const Reports = () => {
 
   // Auto-refresh data when component mounts
   useEffect(() => {
-    if (refreshData) {
-      console.log("Auto refreshing reports data on mount");
-      handleRefresh();
-    }
-  }, []);
+    const refreshReportData = async () => {
+      if (refreshData) {
+        setRefreshing(true);
+        try {
+          console.log("Reports: Auto refreshing report data on mount");
+          await refreshData();
+          console.log("Reports: Data refresh completed");
+        } catch (error) {
+          console.error("Reports: Error refreshing data on mount:", error);
+        } finally {
+          setRefreshing(false);
+        }
+      }
+    };
+    
+    refreshReportData();
+  }, [refreshData]);
 
   // Function to refresh data manually
   const handleRefresh = async () => {
@@ -48,10 +60,12 @@ const Reports = () => {
     
     setRefreshing(true);
     try {
+      console.log("Reports: Manual refresh initiated");
       await refreshData();
       toast.success("Report data refreshed");
+      console.log("Reports: Manual refresh completed");
     } catch (error) {
-      console.error("Error refreshing report data:", error);
+      console.error("Reports: Error refreshing report data:", error);
       toast.error("Failed to refresh report data");
     } finally {
       setRefreshing(false);

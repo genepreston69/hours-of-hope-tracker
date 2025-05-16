@@ -98,7 +98,10 @@ export const useServiceEntryForm = () => {
         createdAt: new Date(),
       };
 
+      console.log("Submitting service entry:", serviceEntry);
       await addServiceEntry(serviceEntry);
+      
+      console.log("Service entry submitted successfully");
       
       form.reset({
         date: new Date(),
@@ -116,14 +119,20 @@ export const useServiceEntryForm = () => {
       // Show success message
       toast.success("Service entry recorded successfully");
       
-      // Ensure data is refreshed before navigating
-      if (refreshData) {
-        console.log("Explicitly refreshing data after service entry submission");
-        await refreshData();
+      try {
+        // Ensure data is refreshed before navigating
+        console.log("Explicitly refreshing data before navigation");
+        if (refreshData) {
+          await refreshData();
+          console.log("Data refresh completed, navigating to dashboard");
+        }
+      } catch (refreshError) {
+        console.error("Error refreshing data before navigation:", refreshError);
+        // Continue with navigation even if refresh fails
+      } finally {
+        // Navigate to dashboard regardless of refresh status
+        navigate("/dashboard");
       }
-      
-      // Navigate to dashboard to see the updated data
-      navigate("/dashboard");
     } catch (error) {
       console.error("Error submitting service entry:", error);
       toast.error("Failed to record service entry. Please try again.");
