@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/components/ui/sonner";
@@ -8,8 +8,9 @@ export const useDashboard = () => {
   const { serviceEntries, isLoading: contextLoading, refreshData } = useAppContext();
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
-  const [stableLoading, setStableLoading] = useState(true); // Added stable loading state
+  const [stableLoading, setStableLoading] = useState(true);
   const { user } = useAuth();
+  const refreshAttemptedRef = useRef(false);
   
   // Set document title
   useEffect(() => {
@@ -28,28 +29,50 @@ export const useDashboard = () => {
 
   // Auto-refresh data when component mounts with debounce to prevent flashing
   useEffect(() => {
+    let isMounted = true;
+    
     const refreshDashboardData = async () => {
-      if (refreshData && !refreshing) {
+      // Only refresh if not already refreshing and not already attempted
+      if (refreshData && !refreshing && !refreshAttemptedRef.current) {
+        refreshAttemptedRef.current = true;
         setRefreshing(true);
+        
         try {
           console.log("Dashboard: Auto refreshing data on mount");
           await refreshData();
           console.log("Dashboard: Data refresh completed");
         } catch (error) {
           console.error("Dashboard: Error refreshing data on mount:", error);
-          toast.error("Failed to refresh data");
+          if (isMounted) {
+            toast.error("Failed to refresh data");
+          }
         } finally {
           // Use a small timeout to prevent UI flashing
           setTimeout(() => {
-            setRefreshing(false);
-            setInitialLoad(false);
-            setStableLoading(false);
+            if (isMounted) {
+              setRefreshing(false);
+              setInitialLoad(false);
+              setStableLoading(false);
+            }
           }, 300);
         }
+      } else if (!refreshing) {
+        // If we can't refresh, still update loading states
+        setTimeout(() => {
+          if (isMounted) {
+            setInitialLoad(false);
+            setStableLoading(false);
+          }
+        }, 300);
       }
     };
     
     refreshDashboardData();
+    
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      isMounted = false;
+    };
   }, [refreshData, refreshing]);
 
   // Function to manually refresh data

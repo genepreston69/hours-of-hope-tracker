@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
@@ -9,9 +8,12 @@ import { DashboardLoader } from "@/components/dashboard/DashboardLoader";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useDashboard } from "@/hooks/use-dashboard";
+import { useState, useEffect } from "react";
 
 const Dashboard = () => {
   const [dateFilter, setDateFilter] = useState<DateFilterType>("ytd");
+  const [mounted, setMounted] = useState(false);
+  
   const { 
     serviceEntries, 
     isLoadingData, 
@@ -21,13 +23,24 @@ const Dashboard = () => {
     user
   } = useDashboard();
   
-  const { filteredStats, filteredLocationStats, latestEntriesByLocation } = useDashboardData(
-    serviceEntries,
-    dateFilter
-  );
+  // Set mounted state after initial render to ensure stable component lifecycle
+  useEffect(() => {
+    setMounted(true);
+    return () => {
+      setMounted(false);
+    };
+  }, []);
+  
+  // Only process dashboard data after component is mounted
+  const { filteredStats, filteredLocationStats, latestEntriesByLocation } = 
+    mounted ? useDashboardData(serviceEntries, dateFilter) : 
+    { filteredStats: { totalEntries: 0, totalHours: 0, totalResidents: 0, averageHoursPerResident: 0 }, 
+      filteredLocationStats: [], 
+      latestEntriesByLocation: [] 
+    };
 
-  // Show a persistent loading state during loading
-  if (isLoadingData) {
+  // Show loading state during loading
+  if (isLoadingData || !mounted) {
     return <DashboardLoader />;
   }
   
