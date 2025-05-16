@@ -2,7 +2,7 @@
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
-import { LocationStatsCard } from "@/components/dashboard/LocationStatsCard";
+import { LocationStats } from "@/components/dashboard/LocationStats";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { DashboardLoader } from "@/components/dashboard/DashboardLoader";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
@@ -50,7 +50,7 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentEntries entries={dashboardData.latestEntriesByLocation} />
-        <LocationStatsCard locationStats={dashboardData.filteredLocationStats} />
+        <LocationStats locationStats={dashboardData.filteredLocationStats} />
       </div>
     </div>
   );
