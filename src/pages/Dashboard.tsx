@@ -12,7 +12,6 @@ import { useState, useEffect } from "react";
 
 const Dashboard = () => {
   const [dateFilter, setDateFilter] = useState<DateFilterType>("ytd");
-  const [mounted, setMounted] = useState(false);
   
   const { 
     serviceEntries, 
@@ -23,24 +22,8 @@ const Dashboard = () => {
     user
   } = useDashboard();
   
-  // Set mounted state after initial render to ensure stable component lifecycle
-  useEffect(() => {
-    setMounted(true);
-    return () => {
-      setMounted(false);
-    };
-  }, []);
-  
-  // Only process dashboard data after component is mounted
-  const { filteredStats, filteredLocationStats, latestEntriesByLocation } = 
-    mounted ? useDashboardData(serviceEntries, dateFilter) : 
-    { filteredStats: { totalEntries: 0, totalHours: 0, totalResidents: 0, averageHoursPerResident: 0 }, 
-      filteredLocationStats: [], 
-      latestEntriesByLocation: [] 
-    };
-
   // Show loading state during loading
-  if (isLoadingData || !mounted) {
+  if (isLoadingData) {
     return <DashboardLoader />;
   }
   
@@ -48,6 +31,10 @@ const Dashboard = () => {
   if (serviceEntries.length === 0) {
     return <EmptyDashboard user={user} />;
   }
+
+  // Only process dashboard data after we're sure we have data and aren't loading
+  const { filteredStats, filteredLocationStats, latestEntriesByLocation } = 
+    useDashboardData(serviceEntries, dateFilter);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
