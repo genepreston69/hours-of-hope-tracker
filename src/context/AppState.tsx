@@ -6,7 +6,8 @@ import { useDataFetching } from "./useDataFetching";
 import { useStatsCalculation } from "./useStatsCalculation";
 import { useAuth } from "@/hooks/use-auth";
 
-export { AppStateType } from "./AppStateTypes";
+// Use 'export type' for re-exporting types when isolatedModules is enabled
+export type { AppStateType } from "./AppStateTypes";
 
 export function useAppState(): [
   AppStateType, 
