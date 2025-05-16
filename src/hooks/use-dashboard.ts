@@ -8,6 +8,7 @@ export const useDashboard = () => {
   const { serviceEntries, isLoading: contextLoading, refreshData } = useAppContext();
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [stableLoading, setStableLoading] = useState(true); // Added stable loading state
   const { user } = useAuth();
   
   // Set document title
@@ -25,7 +26,7 @@ export const useDashboard = () => {
     console.log(`Dashboard: Has ${serviceEntries.length} service entries`);
   }, [user, serviceEntries]);
 
-  // Auto-refresh data when component mounts
+  // Auto-refresh data when component mounts with debounce to prevent flashing
   useEffect(() => {
     const refreshDashboardData = async () => {
       if (refreshData && !refreshing) {
@@ -38,8 +39,12 @@ export const useDashboard = () => {
           console.error("Dashboard: Error refreshing data on mount:", error);
           toast.error("Failed to refresh data");
         } finally {
-          setRefreshing(false);
-          setInitialLoad(false);
+          // Use a small timeout to prevent UI flashing
+          setTimeout(() => {
+            setRefreshing(false);
+            setInitialLoad(false);
+            setStableLoading(false);
+          }, 300);
         }
       }
     };
@@ -68,7 +73,7 @@ export const useDashboard = () => {
   };
 
   // Enhanced loading check to ensure we wait for both initial and context loading
-  const isLoadingData = initialLoad || contextLoading || refreshing;
+  const isLoadingData = stableLoading || contextLoading || refreshing;
 
   return {
     serviceEntries,

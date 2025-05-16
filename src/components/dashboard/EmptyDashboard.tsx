@@ -9,7 +9,7 @@ interface EmptyDashboardProps {
 
 export const EmptyDashboard = ({ user }: EmptyDashboardProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-300">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
         <h1 className="text-3xl font-bold">Service Community</h1>
         {user ? (
