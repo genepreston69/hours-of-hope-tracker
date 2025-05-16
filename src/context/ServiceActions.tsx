@@ -52,11 +52,17 @@ export const createServiceActions = (
       
       console.log("Service entry added successfully to Supabase");
       
+      // Immediately update the local state with the new entry
       setServiceEntries(prev => [...prev, roundedEntry]);
-      toast.success("Service entry recorded successfully");
+      
+      // Also fetch the latest entries to ensure we're in sync with the database
+      await refreshServiceEntries(setServiceEntries);
+      
+      console.log("Data refreshed after submission");
     } catch (error) {
       console.error("Error adding service entry:", error);
       toast.error("Failed to record service entry");
+      throw error; // Re-throw to allow the form to handle the error
     }
   };
 
@@ -74,6 +80,71 @@ export const createServiceActions = (
     } catch (error) {
       console.error("Error deleting service entry:", error);
       toast.error("Failed to delete service entry");
+    }
+  };
+
+  const refreshServiceEntries = async (
+    setEntries: React.Dispatch<React.SetStateAction<ServiceEntry[]>>
+  ) => {
+    try {
+      console.log("Refreshing service entries from database...");
+      
+      const { data: entriesData, error: entriesError } = await supabase
+        .from('service_entries')
+        .select('*, customers(name)');
+      
+      if (entriesError) {
+        console.error("Error fetching service entries:", entriesError);
+        return;
+      }
+
+      console.log(`Fetched ${entriesData?.length || 0} service entries from Supabase`);
+      
+      // Transform Supabase service entries to app format
+      const transformedEntries: ServiceEntry[] = entriesData?.map(entry => ({
+        id: entry.id,
+        date: new Date(entry.date),
+        customerId: entry.customer_id,
+        customerName: entry.customers?.name || '',
+        facilityLocationId: entry.facility_location_id || '',
+        location: entry.facility_location_id || '', // Will update with location name
+        numberOfResidents: entry.volunteer_count || 0,
+        hoursWorked: entry.hours || 0,
+        totalHours: entry.hours || 0,
+        notes: entry.description || '',
+        createdAt: new Date(entry.created_at || new Date())
+      })) || [];
+
+      // Fetch facility locations to map IDs to names
+      if (transformedEntries.length > 0) {
+        const { data: locationsData, error: locationsError } = await supabase
+          .from('facility_locations')
+          .select('*');
+        
+        if (!locationsError && locationsData) {
+          console.log(`Fetched ${locationsData.length} facility locations`);
+          const locationMap = new Map();
+          locationsData.forEach(loc => {
+            locationMap.set(loc.id, loc.name);
+          });
+          
+          // Update service entries with location names
+          const entriesWithLocations = transformedEntries.map(entry => ({
+            ...entry,
+            location: locationMap.get(entry.facilityLocationId) || entry.facilityLocationId
+          }));
+          
+          setEntries(entriesWithLocations);
+        } else {
+          setEntries(transformedEntries);
+        }
+      } else {
+        setEntries([]);
+      }
+      
+      console.log("Service entries refresh complete");
+    } catch (error) {
+      console.error("Error refreshing service entries:", error);
     }
   };
 
@@ -136,6 +207,10 @@ export const createServiceActions = (
         toast.success(`Imported ${uniqueEntries.length} service entries`);
         return [...prev, ...uniqueEntries];
       });
+      
+      // Refresh entries after import to ensure we're in sync with the database
+      await refreshServiceEntries(setServiceEntries);
+      
     } catch (error) {
       console.error("Error importing service entries:", error);
       toast.error(`Failed to import service entries: ${error instanceof Error ? error.message : "Unknown error"}`);

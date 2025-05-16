@@ -10,9 +10,10 @@ import { TimeFields } from "./TimeFields";
 import { NotesField } from "./NotesField";
 import { TotalHoursDisplay } from "./TotalHoursDisplay";
 import { useServiceEntryForm } from "./useServiceEntryForm";
+import { Loader2 } from "lucide-react";
 
 const ServiceEntryForm = () => {
-  const { form, onSubmit, totalHours, customers } = useServiceEntryForm();
+  const { form, onSubmit, totalHours, customers, isSubmitting } = useServiceEntryForm();
 
   return (
     <Card>
@@ -33,8 +34,19 @@ const ServiceEntryForm = () => {
             <TotalHoursDisplay totalHours={totalHours} />
             <NotesField control={form.control} />
 
-            <Button type="submit" disabled={customers.length === 0}>
-              Submit Service Entry
+            <Button 
+              type="submit" 
+              disabled={customers.length === 0 || isSubmitting}
+              className="w-full"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                "Submit Service Entry"
+              )}
             </Button>
             {customers.length === 0 && (
               <p className="text-sm text-muted-foreground">

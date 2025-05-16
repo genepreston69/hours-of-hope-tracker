@@ -5,9 +5,11 @@ import { useAppState, AppStateType } from "./AppState";
 import { createCustomerActions, CustomerActionsType } from "./CustomerActions";
 import { createServiceActions, ServiceActionsType } from "./ServiceActions";
 
-interface AppContextType extends AppStateType, CustomerActionsType, ServiceActionsType {}
+interface AppContextExtendedType extends AppStateType, CustomerActionsType, ServiceActionsType {
+  refreshData?: () => Promise<void>;
+}
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const AppContext = createContext<AppContextExtendedType | undefined>(undefined);
 
 export function useAppContext() {
   const context = useContext(AppContext);
@@ -18,12 +20,12 @@ export function useAppContext() {
 }
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [{ customers, serviceEntries, stats, locationStats, isLoading }, setCustomers, setServiceEntries] = useAppState();
+  const [{ customers, serviceEntries, stats, locationStats, isLoading }, setCustomers, setServiceEntries, refreshData] = useAppState();
   
   const customerActions = createCustomerActions(customers, setCustomers, serviceEntries);
   const serviceActions = createServiceActions(serviceEntries, setServiceEntries);
 
-  const value: AppContextType = {
+  const value: AppContextExtendedType = {
     // State
     customers,
     serviceEntries,
@@ -35,7 +37,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ...customerActions,
     
     // Service actions
-    ...serviceActions
+    ...serviceActions,
+    
+    // Data refresh function
+    refreshData
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
