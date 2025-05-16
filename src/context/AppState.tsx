@@ -47,8 +47,21 @@ export function useAppState(): [
 
   // Load data from Supabase when user is authenticated
   React.useEffect(() => {
-    refreshData();
-  }, [refreshData]); // Run this effect when user changes
+    const initialLoad = async () => {
+      setIsLoading(true);
+      try {
+        const { customers: initialCustomers, serviceEntries: initialEntries } = await fetchData();
+        setCustomers(initialCustomers);
+        setServiceEntries(initialEntries);
+      } catch (error) {
+        console.error("Error during initial data load:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    initialLoad();
+  }, [fetchData]); // Run this effect when user changes
 
   // Use the stats calculation hook
   useStatsCalculation(serviceEntries, setStats, setLocationStats);

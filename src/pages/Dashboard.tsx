@@ -10,12 +10,11 @@ import { LocationStatsCard } from "@/components/dashboard/LocationStats";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { Loader2, RefreshCw } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
-  const { serviceEntries, isLoading, refreshData } = useAppContext();
+  const { serviceEntries, isLoading: contextLoading, refreshData } = useAppContext();
   const [dateFilter, setDateFilter] = useState<DateFilterType>("ytd");
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
@@ -52,6 +51,7 @@ const Dashboard = () => {
           console.log("Dashboard: Data refresh completed");
         } catch (error) {
           console.error("Dashboard: Error refreshing data on mount:", error);
+          toast.error("Failed to refresh data");
         } finally {
           setRefreshing(false);
           setInitialLoad(false);
@@ -82,8 +82,11 @@ const Dashboard = () => {
     }
   };
 
-  // Show a persistent loading state during initial load
-  if (initialLoad || isLoading) {
+  // Enhanced loading check to ensure we wait for both initial and context loading
+  const isLoadingData = initialLoad || contextLoading || refreshing;
+
+  // Show a persistent loading state during loading
+  if (isLoadingData) {
     return (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
@@ -118,7 +121,7 @@ const Dashboard = () => {
   }
   
   // If no entries but not loading, show empty state
-  if (serviceEntries.length === 0 && !isLoading) {
+  if (serviceEntries.length === 0 && !isLoadingData) {
     return (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
