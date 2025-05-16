@@ -2,7 +2,7 @@
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
-import { LocationStatsCard } from "@/components/dashboard/LocationStats";
+import { LocationStatsCard } from "@/components/dashboard/LocationStatsCard";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { DashboardLoader } from "@/components/dashboard/DashboardLoader";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 const Dashboard = () => {
   const [dateFilter, setDateFilter] = useState<DateFilterType>("ytd");
   
+  // Get dashboard state from the hook
   const { 
     serviceEntries, 
     isLoadingData, 
@@ -22,6 +23,9 @@ const Dashboard = () => {
     user
   } = useDashboard();
   
+  // Pre-process data outside of render conditions to avoid hook count mismatch
+  const dashboardData = useDashboardData(serviceEntries, dateFilter);
+
   // Show loading state during loading
   if (isLoadingData) {
     return <DashboardLoader />;
@@ -31,10 +35,6 @@ const Dashboard = () => {
   if (serviceEntries.length === 0) {
     return <EmptyDashboard user={user} />;
   }
-
-  // Only process dashboard data after we're sure we have data and aren't loading
-  const { filteredStats, filteredLocationStats, latestEntriesByLocation } = 
-    useDashboardData(serviceEntries, dateFilter);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -46,11 +46,11 @@ const Dashboard = () => {
       />
       
       <DateFilter dateFilter={dateFilter} setDateFilter={setDateFilter} />
-      <StatCards stats={filteredStats} />
+      <StatCards stats={dashboardData.filteredStats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentEntries entries={latestEntriesByLocation} />
-        <LocationStatsCard locationStats={filteredLocationStats} />
+        <RecentEntries entries={dashboardData.latestEntriesByLocation} />
+        <LocationStatsCard locationStats={dashboardData.filteredLocationStats} />
       </div>
     </div>
   );

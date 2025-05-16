@@ -7,17 +7,55 @@ import { toast } from "@/components/ui/sonner";
 export const useDashboard = () => {
   const { serviceEntries, isLoading: contextLoading, refreshData } = useAppContext();
   const [refreshing, setRefreshing] = useState(false);
-  const [initialLoad, setInitialLoad] = useState(true);
   const [stableLoading, setStableLoading] = useState(true);
   const { user } = useAuth();
-  const refreshAttemptedRef = useRef(false);
+  const initialLoadCompletedRef = useRef(false);
+  const isMountedRef = useRef(true);
   
   // Set document title
   useEffect(() => {
     document.title = "Dashboard | Service Community";
+    
+    // Clean up function
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
 
-  // Log state to help with debugging
+  // Controlled initial data loading
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      // Only refresh if not already completed and we have a refresh function
+      if (!initialLoadCompletedRef.current && refreshData) {
+        console.log("Dashboard: Initial data load started");
+        initialLoadCompletedRef.current = true;
+        
+        try {
+          setRefreshing(true);
+          await refreshData();
+          console.log("Dashboard: Initial data load completed");
+        } catch (error) {
+          console.error("Dashboard: Error during initial load:", error);
+          if (isMountedRef.current) {
+            toast.error("Failed to load dashboard data");
+          }
+        } finally {
+          // Only update state if component is still mounted
+          if (isMountedRef.current) {
+            setRefreshing(false);
+            setStableLoading(false);
+          }
+        }
+      } else if (!refreshing) {
+        // If we don't need to refresh but are still in loading state, update it
+        setStableLoading(false);
+      }
+    };
+    
+    loadDashboardData();
+  }, [refreshData]);
+
+  // Update logging for debugging
   useEffect(() => {
     if (user) {
       console.log("Dashboard: User is authenticated:", user.email);
@@ -27,71 +65,29 @@ export const useDashboard = () => {
     console.log(`Dashboard: Has ${serviceEntries.length} service entries`);
   }, [user, serviceEntries]);
 
-  // Auto-refresh data when component mounts with debounce to prevent flashing
-  useEffect(() => {
-    let isMounted = true;
-    
-    const refreshDashboardData = async () => {
-      // Only refresh if not already refreshing and not already attempted
-      if (refreshData && !refreshing && !refreshAttemptedRef.current) {
-        refreshAttemptedRef.current = true;
-        setRefreshing(true);
-        
-        try {
-          console.log("Dashboard: Auto refreshing data on mount");
-          await refreshData();
-          console.log("Dashboard: Data refresh completed");
-        } catch (error) {
-          console.error("Dashboard: Error refreshing data on mount:", error);
-          if (isMounted) {
-            toast.error("Failed to refresh data");
-          }
-        } finally {
-          // Use a small timeout to prevent UI flashing
-          setTimeout(() => {
-            if (isMounted) {
-              setRefreshing(false);
-              setInitialLoad(false);
-              setStableLoading(false);
-            }
-          }, 300);
-        }
-      } else if (!refreshing) {
-        // If we can't refresh, still update loading states
-        setTimeout(() => {
-          if (isMounted) {
-            setInitialLoad(false);
-            setStableLoading(false);
-          }
-        }, 300);
-      }
-    };
-    
-    refreshDashboardData();
-    
-    // Cleanup function to prevent state updates after unmount
-    return () => {
-      isMounted = false;
-    };
-  }, [refreshData, refreshing]);
-
   // Function to manually refresh data
   const handleRefresh = async () => {
-    if (refreshing) return;
+    if (refreshing || !isMountedRef.current) return;
     
     setRefreshing(true);
     try {
       console.log("Dashboard: Manual refresh initiated");
       if (refreshData) {
         await refreshData();
-        toast.success("Data refreshed successfully");
+        if (isMountedRef.current) {
+          toast.success("Dashboard data refreshed");
+        }
         console.log("Dashboard: Manual refresh completed");
       }
     } catch (error) {
       console.error("Dashboard: Error refreshing data:", error);
-      toast.error("Failed to refresh data");
+      if (isMountedRef.current) {
+        toast.error("Failed to refresh data");
+      }
     } finally {
-      setRefreshing(false);
+      if (isMountedRef.current) {
+        setRefreshing(false);
+      }
     }
   };
 
