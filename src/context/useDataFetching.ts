@@ -5,18 +5,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "../components/ui/sonner";
 import { User } from "@supabase/supabase-js";
 
+// Define pagination constants
+const PAGE_SIZE = 1000; // Items per page
+const DEFAULT_PAGE = 1; // Default starting page
+
 export const useDataFetching = (user: User | null) => {
-  // Function to fetch data from Supabase
-  const fetchData = useCallback(async () => {
+  // Function to fetch data from Supabase with pagination support
+  const fetchData = useCallback(async (page = DEFAULT_PAGE) => {
     if (!user) {
       console.log("No user authenticated, skipping data fetch");
-      return { customers: [], serviceEntries: [] };
+      return { customers: [], serviceEntries: [], totalCount: 0, hasMore: false };
     }
 
-    console.log("User authenticated, fetching data from Supabase...");
+    console.log(`User authenticated, fetching data from Supabase (page ${page})...`);
     
     try {
-      // Fetch customers
+      // Fetch customers (no need for pagination here as they're typically fewer)
       const { data: customersData, error: customersError } = await supabase
         .from('customers')
         .select('*');
@@ -41,17 +45,36 @@ export const useDataFetching = (user: User | null) => {
         zip: customer.zip || ''
       })) || [];
       
-      // Fetch service entries
+      // Calculate pagination ranges
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      
+      // First, get the total count of entries
+      const { count, error: countError } = await supabase
+        .from('service_entries')
+        .select('*', { count: 'exact', head: true });
+        
+      if (countError) {
+        console.error("Error counting service entries:", countError);
+        throw countError;
+      }
+      
+      const totalCount = count || 0;
+      console.log(`Total service entries in database: ${totalCount}`);
+      
+      // Fetch service entries with pagination
       const { data: entriesData, error: entriesError } = await supabase
         .from('service_entries')
-        .select('*, customers(name)');
+        .select('*, customers(name)')
+        .order('date', { ascending: false })
+        .range(from, to);
       
       if (entriesError) {
         console.error("Error fetching service entries:", entriesError);
         throw entriesError;
       }
 
-      console.log(`Fetched ${entriesData?.length || 0} service entries from Supabase`);
+      console.log(`Fetched ${entriesData?.length || 0} service entries from Supabase (page ${page})`);
       console.log("Sample entry data:", entriesData && entriesData.length > 0 ? entriesData[0] : "No entries found");
 
       // Transform Supabase service entries to app format
@@ -68,6 +91,10 @@ export const useDataFetching = (user: User | null) => {
         notes: entry.description || '',
         createdAt: new Date(entry.created_at || new Date())
       })) || [];
+
+      // Calculate if there are more pages
+      const hasMore = totalCount > (page * PAGE_SIZE);
+      console.log(`Has more pages: ${hasMore}, Total pages: ${Math.ceil(totalCount / PAGE_SIZE)}`);
 
       // Fetch facility locations to map IDs to names
       if (transformedEntries.length > 0) {
@@ -88,12 +115,27 @@ export const useDataFetching = (user: User | null) => {
             location: locationMap.get(entry.facilityLocationId) || entry.facilityLocationId
           }));
           
-          return { customers: transformedCustomers, serviceEntries: entriesWithLocations };
+          return { 
+            customers: transformedCustomers, 
+            serviceEntries: entriesWithLocations,
+            totalCount,
+            hasMore
+          };
         } else {
-          return { customers: transformedCustomers, serviceEntries: transformedEntries };
+          return { 
+            customers: transformedCustomers, 
+            serviceEntries: transformedEntries,
+            totalCount,
+            hasMore
+          };
         }
       } else {
-        return { customers: transformedCustomers, serviceEntries: [] };
+        return { 
+          customers: transformedCustomers, 
+          serviceEntries: [],
+          totalCount: 0,
+          hasMore: false
+        };
       }
       
     } catch (error) {

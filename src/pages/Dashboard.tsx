@@ -1,4 +1,3 @@
-
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
@@ -9,6 +8,8 @@ import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useDashboard } from "@/hooks/use-dashboard";
 import { useState } from "react";
+import { DashboardPagination } from "@/components/dashboard/DashboardPagination";
+import { useAppContext } from "@/context/AppContext";
 
 const Dashboard = () => {
   const [dateFilter, setDateFilter] = useState<DateFilterType>("ytd");
@@ -20,11 +21,28 @@ const Dashboard = () => {
     refreshing, 
     handleRefresh, 
     refreshData, 
-    user
+    user,
+    loadMore
   } = useDashboard();
+  
+  // Get pagination info from context
+  const { pagination } = useAppContext();
   
   // Pre-process data outside of render conditions to avoid hook count mismatch
   const dashboardData = useDashboardData(serviceEntries, dateFilter);
+
+  // Function to handle page changes
+  const handlePageChange = async (page: number) => {
+    if (page === pagination.currentPage) return;
+    
+    // If going to next page, use loadMore function
+    if (page === pagination.currentPage + 1) {
+      await loadMore();
+    } else {
+      // Otherwise refresh with specific page
+      await refreshData(page);
+    }
+  };
 
   // Show loading state during loading
   if (isLoadingData) {
@@ -51,6 +69,21 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentEntries entries={dashboardData.latestEntriesByLocation} />
         <LocationStatsCard locationStats={dashboardData.filteredLocationStats} />
+      </div>
+      
+      {/* Pagination controls */}
+      <DashboardPagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        hasMore={pagination.hasMore}
+        onPageChange={handlePageChange}
+        isLoading={isLoadingData || refreshing}
+      />
+      
+      {/* Display data summary */}
+      <div className="text-sm text-muted-foreground text-center">
+        Showing {serviceEntries.length} service entries 
+        {pagination.totalPages > 1 && ` (Page ${pagination.currentPage} of ${pagination.totalPages})`}
       </div>
     </div>
   );

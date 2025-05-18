@@ -7,7 +7,7 @@ import { createServiceActions, ServiceActionsType } from "./ServiceActions";
 import { toast } from "@/components/ui/sonner";
 
 interface AppContextExtendedType extends AppStateType, CustomerActionsType, ServiceActionsType {
-  refreshData: () => Promise<void>;
+  refreshData: (page?: number) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextExtendedType | undefined>(undefined);
@@ -21,16 +21,16 @@ export function useAppContext() {
 }
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [{ customers, serviceEntries, stats, locationStats, isLoading }, setCustomers, setServiceEntries, refreshData] = useAppState();
+  const [{ customers, serviceEntries, stats, locationStats, isLoading, pagination }, setCustomers, setServiceEntries, refreshData] = useAppState();
   
   const customerActions = createCustomerActions(customers, setCustomers, serviceEntries);
   const serviceActions = createServiceActions(serviceEntries, setServiceEntries, refreshData);
 
   // Create a more consistent refreshData function that ensures all data is refreshed
-  const handleRefreshData = async () => {
-    console.log("AppContext: Refreshing all data");
+  const handleRefreshData = async (page?: number) => {
+    console.log(`AppContext: Refreshing all data${page ? ` for page ${page}` : ''}`);
     try {
-      await refreshData();
+      await refreshData(page);
       console.log("AppContext: Data refresh completed successfully");
     } catch (error) {
       console.error("AppContext: Error refreshing data:", error);
@@ -60,6 +60,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     stats,
     locationStats,
     isLoading,
+    pagination,
     
     // Customer actions
     ...customerActions,

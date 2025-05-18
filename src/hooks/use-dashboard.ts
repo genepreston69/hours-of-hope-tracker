@@ -11,6 +11,9 @@ export const useDashboard = () => {
   const { user } = useAuth();
   const initialLoadCompletedRef = useRef(false);
   const isMountedRef = useRef(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
   
   // Set document title
   useEffect(() => {
@@ -91,6 +94,30 @@ export const useDashboard = () => {
     }
   };
 
+  // Function to load more data
+  const loadMore = async () => {
+    if (refreshing || !hasMore || !refreshData) return;
+    
+    setRefreshing(true);
+    try {
+      console.log(`Dashboard: Loading page ${currentPage + 1}`);
+      const nextPage = currentPage + 1;
+      await refreshData(nextPage);
+      if (isMountedRef.current) {
+        setCurrentPage(nextPage);
+      }
+    } catch (error) {
+      console.error("Dashboard: Error loading more data:", error);
+      if (isMountedRef.current) {
+        toast.error("Failed to load more data");
+      }
+    } finally {
+      if (isMountedRef.current) {
+        setRefreshing(false);
+      }
+    }
+  };
+
   // Enhanced loading check to ensure we wait for both initial and context loading
   const isLoadingData = stableLoading || contextLoading || refreshing;
 
@@ -100,6 +127,11 @@ export const useDashboard = () => {
     refreshing,
     handleRefresh,
     refreshData,
-    user
+    user,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    hasMore,
+    loadMore
   };
 };
