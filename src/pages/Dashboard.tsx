@@ -2,13 +2,13 @@
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
-import { LocationStats } from "@/components/dashboard/LocationStats";
+import { LocationStatsCard } from "@/components/dashboard/LocationStats";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { DashboardLoader } from "@/components/dashboard/DashboardLoader";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useDashboard } from "@/hooks/use-dashboard";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const Dashboard = () => {
   const [dateFilter, setDateFilter] = useState<DateFilterType>("ytd");
@@ -50,7 +50,7 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentEntries entries={dashboardData.latestEntriesByLocation} />
-        <LocationStats locationStats={dashboardData.filteredLocationStats} />
+        <LocationStatsCard locationStats={dashboardData.filteredLocationStats} />
       </div>
     </div>
   );
