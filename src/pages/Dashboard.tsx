@@ -1,4 +1,3 @@
-
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
@@ -9,7 +8,6 @@ import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useDashboard } from "@/hooks/use-dashboard";
 import { useState, useEffect } from "react";
-import { DashboardPagination } from "@/components/dashboard/DashboardPagination";
 import { useAppContext } from "@/context/AppContext";
 
 const Dashboard = () => {
@@ -77,20 +75,8 @@ const Dashboard = () => {
         <LocationStatsCard locationStats={dashboardData.filteredLocationStats} />
       </div>
       
-      {/* Pagination controls */}
-      <DashboardPagination
-        currentPage={pagination.currentPage}
-        totalPages={pagination.totalPages}
-        hasMore={pagination.hasMore}
-        onPageChange={handlePageChange}
-        isLoading={isLoadingData || refreshing}
-      />
-      
-      {/* Display data summary */}
-      <div className="text-sm text-muted-foreground text-center">
-        Showing {serviceEntries.length} service entries 
-        {pagination.totalPages > 1 && ` (Page ${pagination.currentPage} of ${pagination.totalPages})`}
-      </div>
+      {/* Pagination functionality is preserved but UI elements are removed */}
+      {/* The loadMore and pagination state are still available for other uses */}
     </div>
   );
 };
