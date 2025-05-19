@@ -1,9 +1,8 @@
 
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, Loader2 } from "lucide-react";
+import { Download } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { ReportFilters } from "@/components/reports/ReportFilters";
 import { StatCards } from "@/components/reports/StatCards";
 import { ReportTabs } from "@/components/reports/ReportTabs";
@@ -32,7 +31,7 @@ const Reports = () => {
     handleResetFilters,
   } = useReportData(serviceEntries, refreshData);
   
-  // Function to refresh data manually
+  // Function to refresh data manually (kept for future use but not displayed in UI)
   const handleRefresh = async () => {
     if (refreshing || !refreshData) return;
     
@@ -60,21 +59,6 @@ const Reports = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
         <h1 className="text-3xl font-bold">Service Reports</h1>
         <div className="flex items-center gap-2 mt-2 sm:mt-0">
-          {refreshData && (
-            <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
-              {refreshing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Refreshing...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  Refresh Data
-                </>
-              )}
-            </Button>
-          )}
           {sortedEntries.length > 0 && (
             <Button onClick={handleExportToCSV} className="mt-2 sm:mt-0">
               <Download className="h-4 w-4 mr-2" />
