@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { LogOut, User } from "lucide-react";
+import { useAppContext } from "@/context/AppContext";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { refreshData } = useAppContext();
 
   // Define navigation items based on authentication status
   const navItems = [
@@ -22,6 +24,21 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     await signOut();
+  };
+  
+  // Handler for Dashboard navigation with data refresh
+  const handleDashboardClick = () => {
+    if (refreshData) {
+      console.log("Navbar: Dashboard link clicked, refreshing data");
+      refreshData().catch(error => {
+        console.error("Error refreshing data from navbar:", error);
+      });
+    }
+    
+    // Close mobile menu if open
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
   };
 
   return (
@@ -40,21 +57,40 @@ const Navbar = () => {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={({ isActive }) =>
-                  cn(
-                    "px-3 py-2 rounded-md text-sm font-medium",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-gray-600 hover:bg-muted hover:text-gray-900"
-                  )
-                }
-                end={item.path === "/dashboard"}
-              >
-                {item.name}
-              </NavLink>
+              item.path === "/dashboard" ? (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  onClick={handleDashboardClick}
+                  className={({ isActive }) =>
+                    cn(
+                      "px-3 py-2 rounded-md text-sm font-medium",
+                      isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-gray-600 hover:bg-muted hover:text-gray-900"
+                    )
+                  }
+                  end
+                >
+                  {item.name}
+                </NavLink>
+              ) : (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    cn(
+                      "px-3 py-2 rounded-md text-sm font-medium",
+                      isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-gray-600 hover:bg-muted hover:text-gray-900"
+                    )
+                  }
+                  end={item.path === "/dashboard"}
+                >
+                  {item.name}
+                </NavLink>
+              )
             ))}
             
             {user ? (
@@ -147,22 +183,41 @@ const Navbar = () => {
       >
         <div className="px-2 pt-2 pb-3 space-y-1">
           {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) =>
-                cn(
-                  "block px-3 py-2 rounded-md text-base font-medium",
-                  isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-gray-600 hover:bg-muted hover:text-gray-900"
-                )
-              }
-              end={item.path === "/dashboard"}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {item.name}
-            </NavLink>
+            item.path === "/dashboard" ? (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={handleDashboardClick}
+                className={({ isActive }) =>
+                  cn(
+                    "block px-3 py-2 rounded-md text-base font-medium",
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "text-gray-600 hover:bg-muted hover:text-gray-900"
+                  )
+                }
+                end
+              >
+                {item.name}
+              </NavLink>
+            ) : (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  cn(
+                    "block px-3 py-2 rounded-md text-base font-medium",
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "text-gray-600 hover:bg-muted hover:text-gray-900"
+                  )
+                }
+                end={item.path === "/dashboard"}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.name}
+              </NavLink>
+            )
           ))}
         </div>
       </div>
