@@ -1,3 +1,4 @@
+
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
@@ -7,7 +8,7 @@ import { DashboardLoader } from "@/components/dashboard/DashboardLoader";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { useDashboard } from "@/hooks/use-dashboard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardPagination } from "@/components/dashboard/DashboardPagination";
 import { useAppContext } from "@/context/AppContext";
 
@@ -30,6 +31,11 @@ const Dashboard = () => {
   
   // Pre-process data outside of render conditions to avoid hook count mismatch
   const dashboardData = useDashboardData(serviceEntries, dateFilter);
+  
+  // Log when dashboard is rendered/re-rendered for debugging
+  useEffect(() => {
+    console.log("Dashboard rendered with", serviceEntries.length, "entries, loading:", isLoadingData);
+  }, [serviceEntries.length, isLoadingData]);
 
   // Function to handle page changes
   const handlePageChange = async (page: number) => {

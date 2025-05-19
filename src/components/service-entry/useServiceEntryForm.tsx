@@ -119,18 +119,25 @@ export const useServiceEntryForm = () => {
       // Show success message
       toast.success("Service entry recorded successfully");
       
+      // IMPROVED APPROACH: Force a complete refresh of data and wait for it to complete
+      // before navigating to ensure the dashboard shows the latest data
       try {
-        // Ensure data is refreshed before navigating
-        console.log("Explicitly refreshing data before navigation");
+        console.log("Forcing complete data refresh before navigation");
         if (refreshData) {
+          // Wait for the refresh to complete
           await refreshData();
-          console.log("Data refresh completed, navigating to dashboard");
+          console.log("Data refresh completed, ready to navigate to dashboard");
+          
+          // Add a small delay to ensure state updates are processed
+          setTimeout(() => {
+            navigate("/dashboard", { state: { forceRefresh: true } });
+          }, 300);
+        } else {
+          navigate("/dashboard");
         }
       } catch (refreshError) {
         console.error("Error refreshing data before navigation:", refreshError);
-        // Continue with navigation even if refresh fails
-      } finally {
-        // Navigate to dashboard regardless of refresh status
+        // Navigate to dashboard even if refresh fails
         navigate("/dashboard");
       }
     } catch (error) {

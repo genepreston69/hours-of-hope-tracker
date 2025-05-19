@@ -1,10 +1,11 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/components/ui/sonner";
+import { useLocation } from "react-router-dom";
 
 export const useDashboard = () => {
+  const location = useLocation();
   const { serviceEntries, isLoading: contextLoading, refreshData } = useAppContext();
   const [refreshing, setRefreshing] = useState(false);
   const [stableLoading, setStableLoading] = useState(true);
@@ -15,30 +16,42 @@ export const useDashboard = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   
+  // Get forceRefresh parameter from location state
+  const forceRefresh = location.state?.forceRefresh || false;
+  
   // Set document title
   useEffect(() => {
     document.title = "Dashboard | Service Community";
+    
+    // Reset the forceRefresh state parameter after it's been used
+    if (forceRefresh && history.replaceState) {
+      const newState = { ...location.state };
+      delete newState.forceRefresh;
+      history.replaceState(newState, '');
+    }
     
     // Clean up function
     return () => {
       isMountedRef.current = false;
     };
-  }, []);
+  }, [forceRefresh, location.state]);
 
-  // Controlled initial data loading
+  // Controlled initial data loading with force refresh support
   useEffect(() => {
     const loadDashboardData = async () => {
-      // Only refresh if not already completed and we have a refresh function
-      if (!initialLoadCompletedRef.current && refreshData) {
-        console.log("Dashboard: Initial data load started");
+      // Check if we need to refresh data (either initial load or forced refresh)
+      if ((forceRefresh || !initialLoadCompletedRef.current) && refreshData) {
+        console.log(`Dashboard: ${forceRefresh ? 'Forced' : 'Initial'} data load started`);
+        
+        // Mark initial load as completed even if forced, to avoid double loading
         initialLoadCompletedRef.current = true;
         
         try {
           setRefreshing(true);
           await refreshData();
-          console.log("Dashboard: Initial data load completed");
+          console.log(`Dashboard: ${forceRefresh ? 'Forced' : 'Initial'} data load completed`);
         } catch (error) {
-          console.error("Dashboard: Error during initial load:", error);
+          console.error(`Dashboard: Error during ${forceRefresh ? 'forced' : 'initial'} load:`, error);
           if (isMountedRef.current) {
             toast.error("Failed to load dashboard data");
           }
@@ -56,7 +69,7 @@ export const useDashboard = () => {
     };
     
     loadDashboardData();
-  }, [refreshData]);
+  }, [refreshData, forceRefresh]);
 
   // Update logging for debugging
   useEffect(() => {
