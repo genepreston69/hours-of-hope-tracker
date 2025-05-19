@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +16,7 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/sonner";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 
 type ReportFilters = {
   location: string;
