@@ -128,177 +128,8 @@ const RecoveryPointSurvey = () => {
     }
   };
 
-  // Create all editors at once to prevent unmounting/remounting
-  const renderEditors = () => (
-    <div>
-      {/* Program Highlights Editors */}
-      <div style={{ display: sections[currentStep]?.component === 'programHighlights' ? 'block' : 'none' }}>
-        <TiptapEditor
-          key="weekSummary"
-          content={formData.weekSummary || ''}
-          onChange={(content) => {
-            console.log('Week Summary Tiptap onChange:', content);
-            handleInputChange('weekSummary', content);
-          }}
-          placeholder="Share what happened this week..."
-        />
-        
-        <TiptapEditor
-          key="events"
-          content={formData.events || ''}
-          onChange={(content) => {
-            console.log('Events Tiptap onChange:', content);
-            handleInputChange('events', content);
-          }}
-          placeholder="List completed events and projects..."
-        />
-        
-        <TiptapEditor
-          key="upcomingEvents"
-          content={formData.upcomingEvents || ''}
-          onChange={(content) => {
-            console.log('Upcoming Events Tiptap onChange:', content);
-            handleInputChange('upcomingEvents', content);
-          }}
-          placeholder="Tell us what's coming up..."
-        />
-        
-        <TiptapEditor
-          key="accomplishments"
-          content={formData.accomplishments || ''}
-          onChange={(content) => {
-            console.log('Accomplishments Tiptap onChange:', content);
-            handleInputChange('accomplishments', content);
-          }}
-          placeholder="Share your wins..."
-        />
-      </div>
-
-      {/* Staffing Editors */}
-      <div style={{ display: sections[currentStep]?.component === 'staffing' ? 'block' : 'none' }}>
-        <TiptapEditor
-          key="meetingDates"
-          content={formData.meetingDates || ''}
-          onChange={(content) => {
-            console.log('Meeting Dates Tiptap onChange:', content);
-            handleInputChange('meetingDates', content);
-          }}
-          placeholder="e.g., Monday 9am, Wednesday 2pm..."
-        />
-        
-        <TiptapEditor
-          key="evaluationDetails"
-          content={formData.evaluationDetails || ''}
-          onChange={(content) => {
-            console.log('Evaluation Details Tiptap onChange:', content);
-            handleInputChange('evaluationDetails', content);
-          }}
-          placeholder="Describe the activities..."
-        />
-        
-        <TiptapEditor
-          key="staffingNeeds"
-          content={formData.staffingNeeds || ''}
-          onChange={(content) => {
-            console.log('Staffing Needs Tiptap onChange:', content);
-            handleInputChange('staffingNeeds', content);
-          }}
-          placeholder="Share any concerns or needs..."
-        />
-      </div>
-
-      {/* Resident Data Editors */}
-      <div style={{ display: sections[currentStep]?.component === 'residentData' ? 'block' : 'none' }}>
-        <TiptapEditor
-          key="phase1NextSteps"
-          content={formData.phase1NextSteps || ''}
-          onChange={(content) => {
-            console.log('Phase1 Next Steps Tiptap onChange:', content);
-            handleInputChange('phase1NextSteps', content);
-          }}
-          placeholder="Enter details..."
-        />
-        
-        <TiptapEditor
-          key="phase2NextSteps"
-          content={formData.phase2NextSteps || ''}
-          onChange={(content) => {
-            console.log('Phase2 Next Steps Tiptap onChange:', content);
-            handleInputChange('phase2NextSteps', content);
-          }}
-          placeholder="Enter details..."
-        />
-        
-        <TiptapEditor
-          key="dischargeReasons"
-          content={formData.dischargeReasons || ''}
-          onChange={(content) => {
-            console.log('Discharge Reasons Tiptap onChange:', content);
-            handleInputChange('dischargeReasons', content);
-          }}
-          placeholder="Enter details..."
-        />
-      </div>
-
-      {/* Facility Editors */}
-      <div style={{ display: sections[currentStep]?.component === 'facility' ? 'block' : 'none' }}>
-        <TiptapEditor
-          key="facilityIssues"
-          content={formData.facilityIssues || ''}
-          onChange={(content) => {
-            console.log('Facility Issues Tiptap onChange:', content);
-            handleInputChange('facilityIssues', content);
-          }}
-          placeholder="Describe any maintenance or facility concerns..."
-        />
-        
-        <TiptapEditor
-          key="supplyNeeds"
-          content={formData.supplyNeeds || ''}
-          onChange={(content) => {
-            console.log('Supply Needs Tiptap onChange:', content);
-            handleInputChange('supplyNeeds', content);
-          }}
-          placeholder="List needed supplies or equipment..."
-        />
-        
-        <TiptapEditor
-          key="programConcerns"
-          content={formData.programConcerns || ''}
-          onChange={(content) => {
-            console.log('Program Concerns Tiptap onChange:', content);
-            handleInputChange('programConcerns', content);
-          }}
-          placeholder="Share any program-related concerns..."
-        />
-      </div>
-
-      {/* Additional Editors */}
-      <div style={{ display: sections[currentStep]?.component === 'additional' ? 'block' : 'none' }}>
-        <TiptapEditor
-          key="celebrations"
-          content={formData.celebrations || ''}
-          onChange={(content) => {
-            console.log('Celebrations Tiptap onChange:', content);
-            handleInputChange('celebrations', content);
-          }}
-          placeholder="Tell us about the good stuff..."
-        />
-        
-        <TiptapEditor
-          key="additionalComments"
-          content={formData.additionalComments || ''}
-          onChange={(content) => {
-            console.log('Additional Comments Tiptap onChange:', content);
-            handleInputChange('additionalComments', content);
-          }}
-          placeholder="Anything else you'd like to share..."
-        />
-      </div>
-    </div>
-  );
-
   function WelcomeSection() {
+    console.log('WelcomeSection mounting');
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -347,6 +178,7 @@ const RecoveryPointSurvey = () => {
   }
 
   function ReportDetailsSection() {
+    console.log('ReportDetailsSection mounting');
     const programOptions = ['RPB', 'RPC', 'RPH', 'RPP', 'Point Apartments'];
     
     return (
@@ -413,6 +245,7 @@ const RecoveryPointSurvey = () => {
   }
 
   function ProgramHighlightsSection() {
+    console.log('ProgramHighlightsSection mounting');
     const [subStep, setSubStep] = useState(0);
     
     const questions = [
@@ -451,6 +284,20 @@ const RecoveryPointSurvey = () => {
           {currentQuestion.sublabel && (
             <p className="text-gray-600 mt-2">{currentQuestion.sublabel}</p>
           )}
+        </div>
+        
+        {/* Show the appropriate editor from the hidden section */}
+        <div>
+          <div style={{ position: 'relative', minHeight: '200px' }}>
+            <TiptapEditor
+              content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
+              onChange={(content) => {
+                console.log('Program Highlights Tiptap onChange:', currentQuestion.field, content);
+                handleInputChange(currentQuestion.field, content);
+              }}
+              placeholder={currentQuestion.placeholder}
+            />
+          </div>
         </div>
         
         <div className="flex justify-between">
@@ -982,30 +829,6 @@ const RecoveryPointSurvey = () => {
     );
   }
 
-  // Render the current section
-  const renderCurrentSection = () => {
-    switch (sections[currentStep]?.component) {
-      case 'welcome':
-        return <WelcomeSection />;
-      case 'reportDetails':
-        return <ReportDetailsSection />;
-      case 'programHighlights':
-        return <ProgramHighlightsSection />;
-      case 'staffing':
-        return <StaffingSection />;
-      case 'residentData':
-        return <ResidentDataSection />;
-      case 'facility':
-        return <FacilitySection />;
-      case 'additional':
-        return <AdditionalSection />;
-      case 'review':
-        return <ReviewSection />;
-      default:
-        return <WelcomeSection />;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-3xl mx-auto">
@@ -1040,12 +863,196 @@ const RecoveryPointSurvey = () => {
         
         {/* Main Content */}
         <div className="bg-white rounded-lg shadow-sm p-8">
-          {renderCurrentSection()}
+          {/* Render all sections but only show the current one */}
+          <div style={{ display: sections[currentStep]?.component === 'welcome' ? 'block' : 'none' }}>
+            <WelcomeSection />
+          </div>
+          
+          <div style={{ display: sections[currentStep]?.component === 'reportDetails' ? 'block' : 'none' }}>
+            <ReportDetailsSection />
+          </div>
+          
+          <div style={{ display: sections[currentStep]?.component === 'programHighlights' ? 'block' : 'none' }}>
+            <ProgramHighlightsSection />
+          </div>
+          
+          <div style={{ display: sections[currentStep]?.component === 'staffing' ? 'block' : 'none' }}>
+            <StaffingSection />
+          </div>
+          
+          <div style={{ display: sections[currentStep]?.component === 'residentData' ? 'block' : 'none' }}>
+            <ResidentDataSection />
+          </div>
+          
+          <div style={{ display: sections[currentStep]?.component === 'facility' ? 'block' : 'none' }}>
+            <FacilitySection />
+          </div>
+          
+          <div style={{ display: sections[currentStep]?.component === 'additional' ? 'block' : 'none' }}>
+            <AdditionalSection />
+          </div>
+          
+          <div style={{ display: sections[currentStep]?.component === 'review' ? 'block' : 'none' }}>
+            <ReviewSection />
+          </div>
         </div>
         
-        {/* Hidden editors to prevent unmounting */}
+        {/* All editors rendered once and kept in DOM */}
         <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
-          {renderEditors()}
+          {/* Program Highlights Editors */}
+          <TiptapEditor
+            key="weekSummary"
+            content={formData.weekSummary || ''}
+            onChange={(content) => {
+              console.log('Week Summary Tiptap onChange:', content);
+              handleInputChange('weekSummary', content);
+            }}
+            placeholder="Share what happened this week..."
+          />
+          
+          <TiptapEditor
+            key="events"
+            content={formData.events || ''}
+            onChange={(content) => {
+              console.log('Events Tiptap onChange:', content);
+              handleInputChange('events', content);
+            }}
+            placeholder="List completed events and projects..."
+          />
+          
+          <TiptapEditor
+            key="upcomingEvents"
+            content={formData.upcomingEvents || ''}
+            onChange={(content) => {
+              console.log('Upcoming Events Tiptap onChange:', content);
+              handleInputChange('upcomingEvents', content);
+            }}
+            placeholder="Tell us what's coming up..."
+          />
+          
+          <TiptapEditor
+            key="accomplishments"
+            content={formData.accomplishments || ''}
+            onChange={(content) => {
+              console.log('Accomplishments Tiptap onChange:', content);
+              handleInputChange('accomplishments', content);
+            }}
+            placeholder="Share your wins..."
+          />
+
+          {/* Staffing Editors */}
+          <TiptapEditor
+            key="meetingDates"
+            content={formData.meetingDates || ''}
+            onChange={(content) => {
+              console.log('Meeting Dates Tiptap onChange:', content);
+              handleInputChange('meetingDates', content);
+            }}
+            placeholder="e.g., Monday 9am, Wednesday 2pm..."
+          />
+          
+          <TiptapEditor
+            key="evaluationDetails"
+            content={formData.evaluationDetails || ''}
+            onChange={(content) => {
+              console.log('Evaluation Details Tiptap onChange:', content);
+              handleInputChange('evaluationDetails', content);
+            }}
+            placeholder="Describe the activities..."
+          />
+          
+          <TiptapEditor
+            key="staffingNeeds"
+            content={formData.staffingNeeds || ''}
+            onChange={(content) => {
+              console.log('Staffing Needs Tiptap onChange:', content);
+              handleInputChange('staffingNeeds', content);
+            }}
+            placeholder="Share any concerns or needs..."
+          />
+
+          {/* Resident Data Editors */}
+          <TiptapEditor
+            key="phase1NextSteps"
+            content={formData.phase1NextSteps || ''}
+            onChange={(content) => {
+              console.log('Phase1 Next Steps Tiptap onChange:', content);
+              handleInputChange('phase1NextSteps', content);
+            }}
+            placeholder="Enter details..."
+          />
+          
+          <TiptapEditor
+            key="phase2NextSteps"
+            content={formData.phase2NextSteps || ''}
+            onChange={(content) => {
+              console.log('Phase2 Next Steps Tiptap onChange:', content);
+              handleInputChange('phase2NextSteps', content);
+            }}
+            placeholder="Enter details..."
+          />
+          
+          <TiptapEditor
+            key="dischargeReasons"
+            content={formData.dischargeReasons || ''}
+            onChange={(content) => {
+              console.log('Discharge Reasons Tiptap onChange:', content);
+              handleInputChange('dischargeReasons', content);
+            }}
+            placeholder="Enter details..."
+          />
+
+          {/* Facility Editors */}
+          <TiptapEditor
+            key="facilityIssues"
+            content={formData.facilityIssues || ''}
+            onChange={(content) => {
+              console.log('Facility Issues Tiptap onChange:', content);
+              handleInputChange('facilityIssues', content);
+            }}
+            placeholder="Describe any maintenance or facility concerns..."
+          />
+          
+          <TiptapEditor
+            key="supplyNeeds"
+            content={formData.supplyNeeds || ''}
+            onChange={(content) => {
+              console.log('Supply Needs Tiptap onChange:', content);
+              handleInputChange('supplyNeeds', content);
+            }}
+            placeholder="List needed supplies or equipment..."
+          />
+          
+          <TiptapEditor
+            key="programConcerns"
+            content={formData.programConcerns || ''}
+            onChange={(content) => {
+              console.log('Program Concerns Tiptap onChange:', content);
+              handleInputChange('programConcerns', content);
+            }}
+            placeholder="Share any program-related concerns..."
+          />
+
+          {/* Additional Editors */}
+          <TiptapEditor
+            key="celebrations"
+            content={formData.celebrations || ''}
+            onChange={(content) => {
+              console.log('Celebrations Tiptap onChange:', content);
+              handleInputChange('celebrations', content);
+            }}
+            placeholder="Tell us about the good stuff..."
+          />
+          
+          <TiptapEditor
+            key="additionalComments"
+            content={formData.additionalComments || ''}
+            onChange={(content) => {
+              console.log('Additional Comments Tiptap onChange:', content);
+              handleInputChange('additionalComments', content);
+            }}
+            placeholder="Anything else you'd like to share..."
+          />
         </div>
       </div>
     </div>
