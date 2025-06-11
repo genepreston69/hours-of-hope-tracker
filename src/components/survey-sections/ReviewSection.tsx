@@ -25,6 +25,11 @@ export const ReviewSection: React.FC<SectionProps> = ({
     setIsSubmitting?.(true);
     
     try {
+      // Convert meeting entries to a string format for the database
+      const meetingDatesString = formData.meetingEntries
+        .map(meeting => `${meeting.date} ${meeting.time} - ${meeting.name}`)
+        .join('; ');
+
       // Convert form data to match database schema
       const surveyData = {
         user_id: user.id,
@@ -36,7 +41,7 @@ export const ReviewSection: React.FC<SectionProps> = ({
         upcoming_events: formData.upcomingEvents || null,
         accomplishments: formData.accomplishments || null,
         staff_meetings: formData.staffMeetings ? parseInt(formData.staffMeetings) : null,
-        meeting_dates: formData.meetingDates || null,
+        meeting_dates: meetingDatesString || null,
         evaluations: formData.evaluations || null,
         evaluation_details: formData.evaluationDetails || null,
         staffing_needs: formData.staffingNeeds || null,
@@ -120,6 +125,17 @@ export const ReviewSection: React.FC<SectionProps> = ({
           <p className="text-sm text-gray-600">Total Intakes: {formData.totalIntakes || '0'}</p>
           <p className="text-sm text-gray-600">Discharges: {formData.discharges || '0'}</p>
         </div>
+        
+        {formData.meetingEntries.length > 0 && (
+          <div>
+            <h3 className="font-semibold text-gray-700">Staff Meetings</h3>
+            {formData.meetingEntries.map((meeting, index) => (
+              <p key={meeting.id} className="text-sm text-gray-600">
+                {index + 1}. {meeting.name} - {meeting.date} at {meeting.time}
+              </p>
+            ))}
+          </div>
+        )}
       </div>
       
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
