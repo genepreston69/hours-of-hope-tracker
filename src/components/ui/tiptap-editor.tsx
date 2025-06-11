@@ -1,8 +1,7 @@
-
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { cn } from '@/lib/utils';
-import { useRef, useCallback, memo } from 'react';
+import { useRef, useCallback, memo, useEffect } from 'react';
 
 interface TiptapEditorProps {
   content: string;
@@ -20,14 +19,21 @@ const TiptapEditor = memo(({
   editable = true 
 }: TiptapEditorProps) => {
   const onUpdateRef = useRef(onChange);
+  const editorRef = useRef(null);
 
   // Keep the onChange callback ref updated
   onUpdateRef.current = onChange;
 
+  // Track mount/unmount
+  useEffect(() => {
+    console.log('🔵 TiptapEditor mounted');
+    return () => console.log('🔴 TiptapEditor unmounted');
+  }, []);
+
   // Memoized onUpdate callback to prevent editor recreation
   const handleUpdate = useCallback(({ editor }: { editor: any }) => {
     const html = editor.getHTML();
-    console.log('TiptapEditor onUpdate:', html);
+    console.log('📝 Editor updated, has focus:', editor.isFocused, 'HTML:', html);
     onUpdateRef.current(html);
   }, []);
 
@@ -47,6 +53,13 @@ const TiptapEditor = memo(({
     content, // Only used for initial content
     editable,
     onUpdate: handleUpdate,
+    onFocus: ({ editor, event }) => {
+      console.log('🟢 Editor FOCUSED', event.type);
+    },
+    onBlur: ({ editor, event }) => {
+      console.log('🔴 Editor BLURRED', event.type, 'Related target:', event.relatedTarget);
+      console.trace('Blur stack trace');
+    },
     editorProps: {
       attributes: {
         class: cn(
@@ -57,6 +70,11 @@ const TiptapEditor = memo(({
       },
     },
   });
+
+  // Monitor editor instance changes
+  useEffect(() => {
+    console.log('🔄 Editor instance changed:', editor);
+  }, [editor]);
 
   if (!editor) {
     console.log('TiptapEditor - editor not ready yet');
@@ -127,11 +145,17 @@ const TiptapEditor = memo(({
           </button>
         </div>
       )}
-      <EditorContent 
-        editor={editor} 
-        placeholder={placeholder}
-        className="min-h-[100px]"
-      />
+      <div 
+        ref={editorRef}
+        onFocus={(e) => console.log('🟡 Wrapper div focused', e.target)}
+        onBlur={(e) => console.log('🟠 Wrapper div blurred', e.target)}
+      >
+        <EditorContent 
+          editor={editor} 
+          placeholder={placeholder}
+          className="min-h-[100px]"
+        />
+      </div>
     </div>
   );
 }, (prevProps, nextProps) => {
