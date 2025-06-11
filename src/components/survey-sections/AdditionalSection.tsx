@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { SectionProps } from './types';
-import { PhotoUpload } from './PhotoUpload';
 
 export const AdditionalSection: React.FC<SectionProps> = ({ 
   formData, 
@@ -43,11 +42,6 @@ export const AdditionalSection: React.FC<SectionProps> = ({
             />
           </div>
         ))}
-        
-        <PhotoUpload
-          photos={formData.photos}
-          onPhotosChange={(photos) => handleInputChange('photos', photos)}
-        />
       </div>
       
       <div className="flex justify-between">
