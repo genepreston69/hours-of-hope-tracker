@@ -1,7 +1,7 @@
 
 import { Control } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { TiptapEditor } from "@/components/ui/tiptap-editor";
 import { ServiceEntryFormValues } from "./types";
 
 interface NotesFieldProps {
@@ -17,9 +17,10 @@ export const NotesField = ({ control }: NotesFieldProps) => {
         <FormItem>
           <FormLabel>Notes (Optional)</FormLabel>
           <FormControl>
-            <Textarea
+            <TiptapEditor
+              content={field.value || ''}
+              onChange={field.onChange}
               placeholder="Add any additional details about the service performed"
-              {...field}
             />
           </FormControl>
           <FormMessage />

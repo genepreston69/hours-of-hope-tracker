@@ -6,7 +6,7 @@ import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { TiptapEditor } from '@/components/ui/tiptap-editor';
 
 const RecoveryPointSurvey = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -290,13 +290,12 @@ const RecoveryPointSurvey = () => {
         </div>
         
         <div>
-          <Textarea
-            value={formData[currentQuestion.field as keyof typeof formData] as string || ''}
-            onChange={(e) => {
-              console.log('Textarea onChange:', currentQuestion.field, e.target.value);
-              handleInputChange(currentQuestion.field, e.target.value);
+          <TiptapEditor
+            content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
+            onChange={(content) => {
+              console.log('Tiptap onChange:', currentQuestion.field, content);
+              handleInputChange(currentQuestion.field, content);
             }}
-            rows={5}
             placeholder={currentQuestion.placeholder}
           />
         </div>
@@ -396,13 +395,12 @@ const RecoveryPointSurvey = () => {
           )}
           
           {currentQuestion.type === 'textarea' && (
-            <Textarea
-              value={formData[currentQuestion.field as keyof typeof formData] as string || ''}
-              onChange={(e) => {
-                console.log('Staffing Textarea onChange:', currentQuestion.field, e.target.value);
-                handleInputChange(currentQuestion.field, e.target.value);
+            <TiptapEditor
+              content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
+              onChange={(content) => {
+                console.log('Staffing Tiptap onChange:', currentQuestion.field, content);
+                handleInputChange(currentQuestion.field, content);
               }}
-              rows={4}
               placeholder={currentQuestion.placeholder}
             />
           )}
@@ -542,13 +540,12 @@ const RecoveryPointSurvey = () => {
               )}
               
               {item.type === 'textarea' && (
-                <Textarea
-                  value={formData[item.field as keyof typeof formData] as string || ''}
-                  onChange={(e) => {
-                    console.log('Resident Data Textarea onChange:', item.field, e.target.value);
-                    handleInputChange(item.field, e.target.value);
+                <TiptapEditor
+                  content={formData[item.field as keyof typeof formData] as string || ''}
+                  onChange={(content) => {
+                    console.log('Resident Data Tiptap onChange:', item.field, content);
+                    handleInputChange(item.field, content);
                   }}
-                  rows={3}
                   placeholder="Enter details..."
                 />
               )}
@@ -607,13 +604,12 @@ const RecoveryPointSurvey = () => {
         </div>
         
         <div>
-          <Textarea
-            value={formData[currentQuestion.field as keyof typeof formData] as string || ''}
-            onChange={(e) => {
-              console.log('Facility Textarea onChange:', currentQuestion.field, e.target.value);
-              handleInputChange(currentQuestion.field, e.target.value);
+          <TiptapEditor
+            content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
+            onChange={(content) => {
+              console.log('Facility Tiptap onChange:', currentQuestion.field, content);
+              handleInputChange(currentQuestion.field, content);
             }}
-            rows={5}
             placeholder={currentQuestion.placeholder}
           />
           <p className="text-sm text-gray-500 mt-2">Leave blank if none</p>
@@ -668,13 +664,12 @@ const RecoveryPointSurvey = () => {
         </div>
         
         <div>
-          <Textarea
-            value={formData[currentQuestion.field as keyof typeof formData] as string || ''}
-            onChange={(e) => {
-              console.log('Additional Textarea onChange:', currentQuestion.field, e.target.value);
-              handleInputChange(currentQuestion.field, e.target.value);
+          <TiptapEditor
+            content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
+            onChange={(content) => {
+              console.log('Additional Tiptap onChange:', currentQuestion.field, content);
+              handleInputChange(currentQuestion.field, content);
             }}
-            rows={5}
             placeholder={currentQuestion.placeholder}
           />
         </div>
