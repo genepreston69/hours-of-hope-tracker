@@ -1,7 +1,8 @@
+
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { cn } from '@/lib/utils';
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, memo } from 'react';
 
 interface TiptapEditorProps {
   content: string;
@@ -11,7 +12,7 @@ interface TiptapEditorProps {
   editable?: boolean;
 }
 
-export const TiptapEditor = ({ 
+const TiptapEditor = memo(({ 
   content, 
   onChange, 
   placeholder = "Start typing...", 
@@ -132,4 +133,16 @@ export const TiptapEditor = ({
       />
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if editable, placeholder, or className changes
+  // Don't re-render when content changes since the editor manages its own state
+  return (
+    prevProps.editable === nextProps.editable &&
+    prevProps.placeholder === nextProps.placeholder &&
+    prevProps.className === nextProps.className
+  );
+});
+
+TiptapEditor.displayName = 'TiptapEditor';
+
+export { TiptapEditor };
