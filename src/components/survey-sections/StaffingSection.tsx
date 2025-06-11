@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import { SectionProps } from './types';
+import { MeetingFields } from './MeetingFields';
+import { MeetingEntry } from './useSurveyForm';
 
 interface StaffingQuestion {
   field: string;
@@ -30,11 +32,10 @@ export const StaffingSection: React.FC<SectionProps> = ({
       placeholder: 'Enter number'
     },
     {
-      field: 'meetingDates',
+      field: 'meetingEntries',
       label: 'When were these meetings?',
-      sublabel: 'List dates and times',
-      type: 'textarea',
-      placeholder: 'e.g., Monday 9am, Wednesday 2pm...'
+      sublabel: 'Add date, time, and meeting name for each meeting',
+      type: 'meeting-fields'
     },
     {
       field: 'evaluations',
@@ -85,8 +86,16 @@ export const StaffingSection: React.FC<SectionProps> = ({
           />
         )}
         
+        {currentQuestion.type === 'meeting-fields' && (
+          <MeetingFields
+            meetings={formData.meetingEntries}
+            onChange={(meetings: MeetingEntry[]) => handleInputChange('meetingEntries', meetings)}
+          />
+        )}
+        
         {currentQuestion.type === 'textarea' && (
           <TiptapEditor
+            key={`${currentQuestion.field}-${subStep}`}
             fieldName={currentQuestion.field}
             content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
             onChange={(content) => {

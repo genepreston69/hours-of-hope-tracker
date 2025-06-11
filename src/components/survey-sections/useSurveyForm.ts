@@ -1,6 +1,13 @@
 
 import { useState, useEffect } from 'react';
 
+export interface MeetingEntry {
+  id: string;
+  date: string;
+  time: string;
+  name: string;
+}
+
 export interface FormData {
   // Report Details
   programName: string;
@@ -15,7 +22,7 @@ export interface FormData {
   
   // Staffing
   staffMeetings: string;
-  meetingDates: string;
+  meetingEntries: MeetingEntry[];
   evaluations: string;
   evaluationDetails: string;
   staffingNeeds: string;
@@ -63,7 +70,7 @@ export const useSurveyForm = (user: any) => {
     
     // Staffing
     staffMeetings: '',
-    meetingDates: '',
+    meetingEntries: [],
     evaluations: '',
     evaluationDetails: '',
     staffingNeeds: '',
@@ -107,7 +114,7 @@ export const useSurveyForm = (user: any) => {
     return () => console.log('🚨 useSurveyForm unmounted');
   }, []);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | MeetingEntry[]) => {
     console.log('🔶 handleInputChange PRE-UPDATE', field, formData);
     setFormData(prevData => {
       const newData = { 

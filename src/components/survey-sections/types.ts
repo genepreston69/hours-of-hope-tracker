@@ -1,9 +1,9 @@
 
-import { FormData } from './useSurveyForm';
+import { FormData, MeetingEntry } from './useSurveyForm';
 
 export interface SectionProps {
   formData: FormData;
-  handleInputChange: (field: string, value: string) => void;
+  handleInputChange: (field: string, value: string | MeetingEntry[]) => void;
   nextStep: () => void;
   prevStep: () => void;
   isSubmitting?: boolean;
