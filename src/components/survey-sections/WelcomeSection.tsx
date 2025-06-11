@@ -2,8 +2,13 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 import { SectionProps } from './types';
+import { PhotoUpload } from './PhotoUpload';
 
-export const WelcomeSection: React.FC<SectionProps> = ({ nextStep }) => {
+export const WelcomeSection: React.FC<SectionProps> = ({ 
+  formData, 
+  handleInputChange, 
+  nextStep 
+}) => {
   console.log('WelcomeSection mounting');
   
   return (
@@ -39,6 +44,13 @@ export const WelcomeSection: React.FC<SectionProps> = ({ nextStep }) => {
             Facility needs and concerns
           </li>
         </ul>
+      </div>
+      
+      <div className="bg-gray-50 rounded-lg p-6">
+        <PhotoUpload
+          photos={formData.photos}
+          onPhotosChange={(photos) => handleInputChange('photos', photos)}
+        />
       </div>
       
       <div className="text-center">
