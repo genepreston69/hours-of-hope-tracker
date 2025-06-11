@@ -53,6 +53,7 @@ const TiptapEditor = memo(({
           'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[100px] p-3',
           className
         ),
+        spellcheck: 'false', // Disable spellcheck to prevent focus loss
       },
     },
   });
