@@ -53,6 +53,7 @@ export const ProgramHighlightsSection: React.FC<SectionProps> = ({
       <div>
         <div style={{ position: 'relative', minHeight: '200px' }}>
           <TiptapEditor
+            key={`${currentQuestion.field}-${subStep}`}
             fieldName={currentQuestion.field}
             content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
             onChange={(content) => {
