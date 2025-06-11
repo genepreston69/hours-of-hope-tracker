@@ -14,6 +14,8 @@ const RecoveryPointSurvey = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
+  console.log('🔸 RecoveryPointSurvey render, currentStep:', currentStep);
+  
   const [formData, setFormData] = useState({
     // Report Details
     programName: '',
@@ -286,10 +288,10 @@ const RecoveryPointSurvey = () => {
           )}
         </div>
         
-        {/* Show the appropriate editor from the hidden section */}
         <div>
           <div style={{ position: 'relative', minHeight: '200px' }}>
             <TiptapEditor
+              fieldName={currentQuestion.field}
               content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
               onChange={(content) => {
                 console.log('Program Highlights Tiptap onChange:', currentQuestion.field, content);
@@ -396,6 +398,7 @@ const RecoveryPointSurvey = () => {
           
           {currentQuestion.type === 'textarea' && (
             <TiptapEditor
+              fieldName={currentQuestion.field}
               content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
               onChange={(content) => {
                 console.log('Staffing Tiptap onChange:', currentQuestion.field, content);
@@ -541,6 +544,7 @@ const RecoveryPointSurvey = () => {
               
               {item.type === 'textarea' && (
                 <TiptapEditor
+                  fieldName={item.field}
                   content={formData[item.field as keyof typeof formData] as string || ''}
                   onChange={(content) => {
                     console.log('Resident Data Tiptap onChange:', item.field, content);
@@ -605,6 +609,7 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <TiptapEditor
+            fieldName={currentQuestion.field}
             content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
             onChange={(content) => {
               console.log('Facility Tiptap onChange:', currentQuestion.field, content);
@@ -665,6 +670,7 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <TiptapEditor
+            fieldName={currentQuestion.field}
             content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
             onChange={(content) => {
               console.log('Additional Tiptap onChange:', currentQuestion.field, content);

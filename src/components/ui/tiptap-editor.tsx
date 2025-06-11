@@ -1,7 +1,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { cn } from '@/lib/utils';
-import { useRef, useCallback, memo, useEffect } from 'react';
+import { useRef, useCallback, memo, useEffect, useState } from 'react';
 
 interface TiptapEditorProps {
   content: string;
@@ -9,6 +9,7 @@ interface TiptapEditorProps {
   placeholder?: string;
   className?: string;
   editable?: boolean;
+  fieldName?: string;
 }
 
 const TiptapEditor = memo(({ 
@@ -16,26 +17,34 @@ const TiptapEditor = memo(({
   onChange, 
   placeholder = "Start typing...", 
   className,
-  editable = true 
+  editable = true,
+  fieldName = 'unknown'
 }: TiptapEditorProps) => {
+  const [instanceId] = useState(() => Math.random().toString(36).substr(2, 9));
   const onUpdateRef = useRef(onChange);
-  const editorRef = useRef(null);
+
+  console.log(`🏗️ TiptapEditor[${fieldName}:${instanceId}] rendering`);
 
   // Keep the onChange callback ref updated
   onUpdateRef.current = onChange;
 
   // Track mount/unmount
   useEffect(() => {
-    console.log('🔵 TiptapEditor mounted');
-    return () => console.log('🔴 TiptapEditor unmounted');
-  }, []);
+    console.log(`🔵 TiptapEditor[${fieldName}:${instanceId}] mounted`);
+    return () => console.log(`🔴 TiptapEditor[${fieldName}:${instanceId}] unmounted`);
+  }, [fieldName, instanceId]);
+
+  // Track if this component is re-rendering
+  useEffect(() => {
+    console.log(`🔄 TiptapEditor[${fieldName}:${instanceId}] effect ran`);
+  });
 
   // Memoized onUpdate callback to prevent editor recreation
   const handleUpdate = useCallback(({ editor }: { editor: any }) => {
     const html = editor.getHTML();
-    console.log('📝 Editor updated, has focus:', editor.isFocused, 'HTML:', html);
+    console.log(`📝 Editor[${fieldName}:${instanceId}] updated, focused:`, editor.isFocused, 'HTML:', html);
     onUpdateRef.current(html);
-  }, []);
+  }, [fieldName, instanceId]);
 
   const editor = useEditor({
     extensions: [
@@ -52,13 +61,19 @@ const TiptapEditor = memo(({
     ],
     content, // Only used for initial content
     editable,
+    onCreate: ({ editor }) => {
+      console.log(`✅ Editor[${fieldName}:${instanceId}] created`);
+    },
+    onDestroy: () => {
+      console.log(`❌ Editor[${fieldName}:${instanceId}] destroyed`);
+    },
     onUpdate: handleUpdate,
     onFocus: ({ editor, event }) => {
-      console.log('🟢 Editor FOCUSED', event.type);
+      console.log(`🟢 Editor[${fieldName}:${instanceId}] FOCUSED`, event.type);
     },
     onBlur: ({ editor, event }) => {
-      console.log('🔴 Editor BLURRED', event.type, 'Related target:', event.relatedTarget);
-      console.trace('Blur stack trace');
+      console.log(`🔴 Editor[${fieldName}:${instanceId}] BLURRED`, event.type, 'Related target:', event.relatedTarget);
+      console.trace(`Blur stack trace for ${fieldName}:${instanceId}`);
     },
     editorProps: {
       attributes: {
@@ -67,17 +82,19 @@ const TiptapEditor = memo(({
           className
         ),
         spellcheck: 'false', // Disable spellcheck to prevent focus loss
+        'data-field': fieldName,
+        'data-instance': instanceId,
       },
     },
   });
 
   // Monitor editor instance changes
   useEffect(() => {
-    console.log('🔄 Editor instance changed:', editor);
-  }, [editor]);
+    console.log(`🔄 Editor[${fieldName}:${instanceId}] instance changed:`, editor);
+  }, [editor, fieldName, instanceId]);
 
   if (!editor) {
-    console.log('TiptapEditor - editor not ready yet');
+    console.log(`TiptapEditor[${fieldName}:${instanceId}] - editor not ready yet`);
     return (
       <div className="border border-input rounded-md p-3 min-h-[100px] flex items-center justify-center text-muted-foreground">
         Loading editor...
@@ -85,7 +102,7 @@ const TiptapEditor = memo(({
     );
   }
 
-  console.log('TiptapEditor render - editable:', editable);
+  console.log(`TiptapEditor[${fieldName}:${instanceId}] render - editable:`, editable);
 
   return (
     <div className="border border-input rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
@@ -94,7 +111,7 @@ const TiptapEditor = memo(({
           <button
             type="button"
             onClick={() => {
-              console.log('Bold button clicked');
+              console.log(`Bold button clicked on ${fieldName}:${instanceId}`);
               editor.chain().focus().toggleBold().run();
             }}
             className={cn(
@@ -107,7 +124,7 @@ const TiptapEditor = memo(({
           <button
             type="button"
             onClick={() => {
-              console.log('Italic button clicked');
+              console.log(`Italic button clicked on ${fieldName}:${instanceId}`);
               editor.chain().focus().toggleItalic().run();
             }}
             className={cn(
@@ -120,7 +137,7 @@ const TiptapEditor = memo(({
           <button
             type="button"
             onClick={() => {
-              console.log('Bullet list button clicked');
+              console.log(`Bullet list button clicked on ${fieldName}:${instanceId}`);
               editor.chain().focus().toggleBulletList().run();
             }}
             className={cn(
@@ -133,7 +150,7 @@ const TiptapEditor = memo(({
           <button
             type="button"
             onClick={() => {
-              console.log('Ordered list button clicked');
+              console.log(`Ordered list button clicked on ${fieldName}:${instanceId}`);
               editor.chain().focus().toggleOrderedList().run();
             }}
             className={cn(
@@ -146,9 +163,8 @@ const TiptapEditor = memo(({
         </div>
       )}
       <div 
-        ref={editorRef}
-        onFocus={(e) => console.log('🟡 Wrapper div focused', e.target)}
-        onBlur={(e) => console.log('🟠 Wrapper div blurred', e.target)}
+        onFocus={(e) => console.log(`🟡 Wrapper div focused on ${fieldName}:${instanceId}`, e.target)}
+        onBlur={(e) => console.log(`🟠 Wrapper div blurred on ${fieldName}:${instanceId}`, e.target)}
       >
         <EditorContent 
           editor={editor} 
@@ -159,12 +175,13 @@ const TiptapEditor = memo(({
     </div>
   );
 }, (prevProps, nextProps) => {
-  // Only re-render if editable, placeholder, or className changes
+  // Only re-render if editable, placeholder, className, or fieldName changes
   // Don't re-render when content changes since the editor manages its own state
   return (
     prevProps.editable === nextProps.editable &&
     prevProps.placeholder === nextProps.placeholder &&
-    prevProps.className === nextProps.className
+    prevProps.className === nextProps.className &&
+    prevProps.fieldName === nextProps.fieldName
   );
 });
 
