@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronRight, Check, Users, Home, FileText, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
@@ -16,7 +16,7 @@ const RecoveryPointSurvey = () => {
   
   console.log('🔸 RecoveryPointSurvey render, currentStep:', currentStep);
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => ({
     // Report Details
     programName: '',
     reportDate: new Date().toISOString().split('T')[0],
@@ -61,7 +61,18 @@ const RecoveryPointSurvey = () => {
     // Additional
     celebrations: '',
     additionalComments: ''
-  });
+  }));
+
+  // Debug form data changes
+  useEffect(() => {
+    console.log('🚨 formData changed:', formData);
+  }, [formData]);
+
+  // Debug component lifecycle
+  useEffect(() => {
+    console.log('🚨 RecoveryPointSurvey mounted');
+    return () => console.log('🚨 RecoveryPointSurvey unmounted');
+  }, []);
 
   const sections = [
     {
@@ -107,13 +118,13 @@ const RecoveryPointSurvey = () => {
   ];
 
   const handleInputChange = (field: string, value: string) => {
-    console.log('handleInputChange called:', field, value);
+    console.log('🔶 handleInputChange PRE-UPDATE', field, formData);
     setFormData(prevData => {
       const newData = { 
         ...prevData, 
         [field]: value 
       };
-      console.log('Updated formData:', newData);
+      console.log('🔶 handleInputChange POST-UPDATE', field, newData);
       return newData;
     });
   };
@@ -1066,3 +1077,5 @@ const RecoveryPointSurvey = () => {
 };
 
 export default RecoveryPointSurvey;
+
+}
