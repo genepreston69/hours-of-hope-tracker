@@ -2,10 +2,12 @@
 import React, { useState } from 'react';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import { SectionProps } from './types';
+import { QuestionPhotoUpload } from './QuestionPhotoUpload';
 
 export const ProgramHighlightsSection: React.FC<SectionProps> = ({ 
   formData, 
   handleInputChange, 
+  handleQuestionPhotosChange,
   nextStep, 
   prevStep 
 }) => {
@@ -17,25 +19,29 @@ export const ProgramHighlightsSection: React.FC<SectionProps> = ({
       field: 'weekSummary',
       label: 'Tell us about this week',
       sublabel: 'Include successes, challenges, highlights, or ongoing needs',
-      placeholder: 'Share what happened this week...'
+      placeholder: 'Share what happened this week...',
+      allowPhotos: false
     },
     {
       field: 'events',
       label: 'What events or volunteer projects did you complete?',
-      sublabel: 'Include dates and details',
-      placeholder: 'List completed events and projects...'
+      sublabel: 'You can attach photos to showcase your activities',
+      placeholder: 'List completed events and projects...',
+      allowPhotos: true
     },
     {
       field: 'upcomingEvents',
       label: 'Any upcoming events or celebrations?',
       sublabel: 'Include dates and details',
-      placeholder: 'Tell us what\'s coming up...'
+      placeholder: 'Tell us what\'s coming up...',
+      allowPhotos: false
     },
     {
       field: 'accomplishments',
       label: 'Major accomplishments worth highlighting?',
       sublabel: 'Initiatives, outcomes, or special achievements',
-      placeholder: 'Share your wins...'
+      placeholder: 'Share your wins...',
+      allowPhotos: false
     }
   ];
   
@@ -63,6 +69,15 @@ export const ProgramHighlightsSection: React.FC<SectionProps> = ({
             placeholder={currentQuestion.placeholder}
           />
         </div>
+        
+        {currentQuestion.allowPhotos && handleQuestionPhotosChange && (
+          <QuestionPhotoUpload
+            questionField={currentQuestion.field}
+            photos={formData.questionPhotos[currentQuestion.field] || []}
+            onPhotosChange={(photos) => handleQuestionPhotosChange(currentQuestion.field, photos)}
+            label="Attach event photos"
+          />
+        )}
       </div>
       
       <div className="flex justify-between">

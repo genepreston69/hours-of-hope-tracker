@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Check, Users, Home, FileText, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
@@ -21,7 +20,7 @@ const RecoveryPointSurvey = () => {
   
   console.log('🔸 RecoveryPointSurvey render, currentStep:', currentStep);
   
-  const { formData, handleInputChange } = useSurveyForm(user);
+  const { formData, handleInputChange, handleQuestionPhotosChange } = useSurveyForm(user);
 
   const sections = [
     {
@@ -81,6 +80,7 @@ const RecoveryPointSurvey = () => {
   const sectionProps = {
     formData,
     handleInputChange,
+    handleQuestionPhotosChange,
     nextStep,
     prevStep,
     isSubmitting,

@@ -2,10 +2,12 @@
 import React, { useState } from 'react';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import { SectionProps } from './types';
+import { QuestionPhotoUpload } from './QuestionPhotoUpload';
 
 export const FacilitySection: React.FC<SectionProps> = ({ 
   formData, 
   handleInputChange, 
+  handleQuestionPhotosChange,
   nextStep, 
   prevStep 
 }) => {
@@ -16,19 +18,24 @@ export const FacilitySection: React.FC<SectionProps> = ({
       field: 'facilityIssues',
       label: 'Are there any facility or building issues that need addressed?',
       type: 'textarea',
-      placeholder: 'Describe any maintenance or facility concerns...'
+      placeholder: 'Describe any maintenance or facility concerns...',
+      allowPhotos: true,
+      photoLabel: 'Attach photos of facility issues'
     },
     {
       field: 'supplyNeeds',
       label: 'Any immediate supply or equipment needs?',
       type: 'textarea',
-      placeholder: 'List needed supplies or equipment...'
+      placeholder: 'List needed supplies or equipment...',
+      allowPhotos: true,
+      photoLabel: 'Attach photos of supply needs'
     },
     {
       field: 'programConcerns',
       label: 'Any programmatic concerns or areas needing support?',
       type: 'textarea',
-      placeholder: 'Share any program-related concerns...'
+      placeholder: 'Share any program-related concerns...',
+      allowPhotos: false
     }
   ];
   
@@ -51,6 +58,15 @@ export const FacilitySection: React.FC<SectionProps> = ({
           placeholder={currentQuestion.placeholder}
         />
         <p className="text-sm text-gray-500 mt-2">Leave blank if none</p>
+        
+        {currentQuestion.allowPhotos && handleQuestionPhotosChange && (
+          <QuestionPhotoUpload
+            questionField={currentQuestion.field}
+            photos={formData.questionPhotos[currentQuestion.field] || []}
+            onPhotosChange={(photos) => handleQuestionPhotosChange(currentQuestion.field, photos)}
+            label={currentQuestion.photoLabel || 'Attach photos'}
+          />
+        )}
       </div>
       
       <div className="flex justify-between">
