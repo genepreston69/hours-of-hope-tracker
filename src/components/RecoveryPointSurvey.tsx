@@ -105,10 +105,15 @@ const RecoveryPointSurvey = () => {
   ];
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      [field]: value 
-    }));
+    console.log('handleInputChange called:', field, value);
+    setFormData(prevData => {
+      const newData = { 
+        ...prevData, 
+        [field]: value 
+      };
+      console.log('Updated formData:', newData);
+      return newData;
+    });
   };
 
   const nextStep = () => {
@@ -286,8 +291,11 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <Textarea
-            value={formData[currentQuestion.field as keyof typeof formData] as string}
-            onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
+            value={formData[currentQuestion.field as keyof typeof formData] as string || ''}
+            onChange={(e) => {
+              console.log('Textarea onChange:', currentQuestion.field, e.target.value);
+              handleInputChange(currentQuestion.field, e.target.value);
+            }}
             rows={5}
             placeholder={currentQuestion.placeholder}
           />
@@ -381,7 +389,7 @@ const RecoveryPointSurvey = () => {
           {currentQuestion.type === 'number' && (
             <Input
               type="number"
-              value={formData[currentQuestion.field as keyof typeof formData] as string}
+              value={formData[currentQuestion.field as keyof typeof formData] as string || ''}
               onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
               placeholder={currentQuestion.placeholder}
             />
@@ -389,8 +397,11 @@ const RecoveryPointSurvey = () => {
           
           {currentQuestion.type === 'textarea' && (
             <Textarea
-              value={formData[currentQuestion.field as keyof typeof formData] as string}
-              onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
+              value={formData[currentQuestion.field as keyof typeof formData] as string || ''}
+              onChange={(e) => {
+                console.log('Staffing Textarea onChange:', currentQuestion.field, e.target.value);
+                handleInputChange(currentQuestion.field, e.target.value);
+              }}
               rows={4}
               placeholder={currentQuestion.placeholder}
             />
@@ -524,7 +535,7 @@ const RecoveryPointSurvey = () => {
               {item.type === 'number' && (
                 <Input
                   type="number"
-                  value={formData[item.field as keyof typeof formData] as string}
+                  value={formData[item.field as keyof typeof formData] as string || ''}
                   onChange={(e) => handleInputChange(item.field, e.target.value)}
                   placeholder="Enter number"
                 />
@@ -532,8 +543,11 @@ const RecoveryPointSurvey = () => {
               
               {item.type === 'textarea' && (
                 <Textarea
-                  value={formData[item.field as keyof typeof formData] as string}
-                  onChange={(e) => handleInputChange(item.field, e.target.value)}
+                  value={formData[item.field as keyof typeof formData] as string || ''}
+                  onChange={(e) => {
+                    console.log('Resident Data Textarea onChange:', item.field, e.target.value);
+                    handleInputChange(item.field, e.target.value);
+                  }}
                   rows={3}
                   placeholder="Enter details..."
                 />
@@ -594,8 +608,11 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <Textarea
-            value={formData[currentQuestion.field as keyof typeof formData] as string}
-            onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
+            value={formData[currentQuestion.field as keyof typeof formData] as string || ''}
+            onChange={(e) => {
+              console.log('Facility Textarea onChange:', currentQuestion.field, e.target.value);
+              handleInputChange(currentQuestion.field, e.target.value);
+            }}
             rows={5}
             placeholder={currentQuestion.placeholder}
           />
@@ -652,8 +669,11 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <Textarea
-            value={formData[currentQuestion.field as keyof typeof formData] as string}
-            onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
+            value={formData[currentQuestion.field as keyof typeof formData] as string || ''}
+            onChange={(e) => {
+              console.log('Additional Textarea onChange:', currentQuestion.field, e.target.value);
+              handleInputChange(currentQuestion.field, e.target.value);
+            }}
             rows={5}
             placeholder={currentQuestion.placeholder}
           />
@@ -856,3 +876,5 @@ const RecoveryPointSurvey = () => {
 };
 
 export default RecoveryPointSurvey;
+
+}
