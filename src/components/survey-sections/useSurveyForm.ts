@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 
 export interface MeetingEntry {
@@ -53,6 +52,9 @@ export interface FormData {
   // Additional
   celebrations: string;
   additionalComments: string;
+  
+  // Photos
+  photos: File[];
 }
 
 export const useSurveyForm = (user: any) => {
@@ -100,7 +102,10 @@ export const useSurveyForm = (user: any) => {
     
     // Additional
     celebrations: '',
-    additionalComments: ''
+    additionalComments: '',
+    
+    // Photos
+    photos: []
   }));
 
   // Debug form data changes
@@ -114,7 +119,7 @@ export const useSurveyForm = (user: any) => {
     return () => console.log('🚨 useSurveyForm unmounted');
   }, []);
 
-  const handleInputChange = (field: string, value: string | MeetingEntry[]) => {
+  const handleInputChange = (field: string, value: string | MeetingEntry[] | File[]) => {
     console.log('🔶 handleInputChange PRE-UPDATE', field, formData);
     setFormData(prevData => {
       const newData = { 

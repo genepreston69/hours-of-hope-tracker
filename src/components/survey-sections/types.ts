@@ -3,7 +3,7 @@ import { FormData, MeetingEntry } from './useSurveyForm';
 
 export interface SectionProps {
   formData: FormData;
-  handleInputChange: (field: string, value: string | MeetingEntry[]) => void;
+  handleInputChange: (field: string, value: string | MeetingEntry[] | File[]) => void;
   nextStep: () => void;
   prevStep: () => void;
   isSubmitting?: boolean;

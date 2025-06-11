@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -69,6 +68,7 @@ export const ReviewSection: React.FC<SectionProps> = ({
       };
 
       console.log('Submitting survey data:', surveyData);
+      console.log('Photos to upload:', formData.photos.length);
 
       const { data, error } = await supabase
         .from('recovery_surveys')
@@ -134,6 +134,29 @@ export const ReviewSection: React.FC<SectionProps> = ({
                 {index + 1}. {meeting.name} - {meeting.date} at {meeting.time}
               </p>
             ))}
+          </div>
+        )}
+        
+        {formData.photos.length > 0 && (
+          <div>
+            <h3 className="font-semibold text-gray-700">Attached Photos</h3>
+            <p className="text-sm text-gray-600">{formData.photos.length} photo(s) selected</p>
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-2 mt-2">
+              {formData.photos.slice(0, 8).map((photo, index) => (
+                <div key={index} className="aspect-square bg-gray-200 rounded overflow-hidden">
+                  <img
+                    src={URL.createObjectURL(photo)}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+              {formData.photos.length > 8 && (
+                <div className="aspect-square bg-gray-200 rounded flex items-center justify-center">
+                  <span className="text-xs text-gray-500">+{formData.photos.length - 8} more</span>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

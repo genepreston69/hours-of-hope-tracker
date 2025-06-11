@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
-import { TiptapEditor } from '@/components/ui/tiptap-editor';
+import React from 'react';
 import { SectionProps } from './types';
+import { PhotoUpload } from './PhotoUpload';
 
 export const AdditionalSection: React.FC<SectionProps> = ({ 
   formData, 
@@ -9,60 +9,59 @@ export const AdditionalSection: React.FC<SectionProps> = ({
   nextStep, 
   prevStep 
 }) => {
-  const [subStep, setSubStep] = useState(0);
-  
   const questions = [
     {
-      field: 'celebrations',
-      label: 'Share any celebrations, resident milestones, or positive stories!',
-      sublabel: 'This helps us highlight successes across programs',
-      type: 'textarea',
-      placeholder: 'Tell us about the good stuff...'
+      id: 'celebrations',
+      label: 'What successes or positive developments would you like to celebrate this week?',
+      type: 'textarea' as const,
+      placeholder: 'Share any positive news, achievements, or celebrations...'
     },
     {
-      field: 'additionalComments',
-      label: 'Any other comments or observations?',
-      type: 'textarea',
-      placeholder: 'Anything else you\'d like to share...'
+      id: 'additionalComments',
+      label: 'Additional Comments or Concerns',
+      type: 'textarea' as const,
+      placeholder: 'Any other information you would like to share...'
     }
   ];
-  
-  const currentQuestion = questions[subStep];
-  
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-800">{currentQuestion.label}</h2>
-        {currentQuestion.sublabel && (
-          <p className="text-gray-600 mt-2">{currentQuestion.sublabel}</p>
-        )}
-      </div>
+      <h2 className="text-2xl font-bold text-gray-800">Additional Information</h2>
       
-      <div>
-        <TiptapEditor
-          key={`${currentQuestion.field}-${subStep}`}
-          fieldName={currentQuestion.field}
-          content={formData[currentQuestion.field as keyof typeof formData] as string || ''}
-          onChange={(content) => {
-            console.log('Additional Tiptap onChange:', currentQuestion.field, content);
-            handleInputChange(currentQuestion.field, content);
-          }}
-          placeholder={currentQuestion.placeholder}
+      <div className="space-y-6">
+        {questions.map((question) => (
+          <div key={question.id} className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              {question.label}
+            </label>
+            <textarea
+              value={formData[question.id as keyof typeof formData] as string}
+              onChange={(e) => handleInputChange(question.id, e.target.value)}
+              placeholder={question.placeholder}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        ))}
+        
+        <PhotoUpload
+          photos={formData.photos}
+          onPhotosChange={(photos) => handleInputChange('photos', photos)}
         />
       </div>
       
       <div className="flex justify-between">
         <button
-          onClick={() => subStep > 0 ? setSubStep(subStep - 1) : prevStep()}
+          onClick={prevStep}
           className="text-gray-600 hover:text-gray-800"
         >
-          ← Back
+          ← Previous Section
         </button>
         <button
-          onClick={() => subStep < questions.length - 1 ? setSubStep(subStep + 1) : nextStep()}
+          onClick={nextStep}
           className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
-          Continue
+          Continue to Review →
         </button>
       </div>
     </div>
