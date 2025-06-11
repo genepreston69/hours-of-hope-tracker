@@ -16,7 +16,7 @@ const Navbar = () => {
     { name: "Dashboard", path: "/dashboard" },
     ...(user ? [
       { name: "Enter Service Hours", path: "/service-entry" },
-      { name: "Recovery Survey", path: "/recovery-survey" },
+      { name: "Director Report", path: "/recovery-survey" },
       { name: "Manage Customers", path: "/customers" },
       { name: "Reports", path: "/reports" },
     ] : []),
