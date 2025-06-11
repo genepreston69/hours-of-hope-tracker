@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ChevronRight, ChevronLeft, Check, Upload, Calendar, Users, Home, FileText, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -102,7 +101,7 @@ const RecoveryPointSurvey = () => {
     }
   ];
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -263,7 +262,7 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <textarea
-            value={formData[currentQuestion.field]}
+            value={formData[currentQuestion.field as keyof typeof formData]}
             onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             rows={5}
@@ -292,7 +291,17 @@ const RecoveryPointSurvey = () => {
   function StaffingSection() {
     const [subStep, setSubStep] = useState(0);
     
-    const questions = [
+    interface StaffingQuestion {
+      field: string;
+      label: string;
+      type: string;
+      placeholder?: string;
+      sublabel?: string;
+      options?: string[];
+      showIf?: (data: any) => boolean;
+    }
+    
+    const questions: StaffingQuestion[] = [
       {
         field: 'staffMeetings',
         label: 'How many staff meetings did you hold this week?',
@@ -349,7 +358,7 @@ const RecoveryPointSurvey = () => {
           {currentQuestion.type === 'number' && (
             <input
               type="number"
-              value={formData[currentQuestion.field]}
+              value={formData[currentQuestion.field as keyof typeof formData]}
               onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder={currentQuestion.placeholder}
@@ -358,7 +367,7 @@ const RecoveryPointSurvey = () => {
           
           {currentQuestion.type === 'textarea' && (
             <textarea
-              value={formData[currentQuestion.field]}
+              value={formData[currentQuestion.field as keyof typeof formData]}
               onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows={4}
@@ -366,7 +375,7 @@ const RecoveryPointSurvey = () => {
             />
           )}
           
-          {currentQuestion.type === 'radio' && (
+          {currentQuestion.type === 'radio' && currentQuestion.options && (
             <div className="space-y-3">
               {currentQuestion.options.map(option => (
                 <label key={option} className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
@@ -374,7 +383,7 @@ const RecoveryPointSurvey = () => {
                     type="radio"
                     name={currentQuestion.field}
                     value={option}
-                    checked={formData[currentQuestion.field] === option}
+                    checked={formData[currentQuestion.field as keyof typeof formData] === option}
                     onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
                     className="mr-3"
                   />
@@ -406,7 +415,20 @@ const RecoveryPointSurvey = () => {
   function ResidentDataSection() {
     const [subStep, setSubStep] = useState(0);
     
-    const questions = [
+    interface ResidentDataItem {
+      field: string;
+      label: string;
+      type: string;
+      note?: string;
+      showIf?: (data: any) => boolean;
+    }
+    
+    interface ResidentDataGroup {
+      group: string;
+      items: ResidentDataItem[];
+    }
+    
+    const questions: ResidentDataGroup[] = [
       {
         group: 'Current Residents',
         items: [
@@ -481,7 +503,7 @@ const RecoveryPointSurvey = () => {
               {item.type === 'number' && (
                 <input
                   type="number"
-                  value={formData[item.field]}
+                  value={formData[item.field as keyof typeof formData]}
                   onChange={(e) => handleInputChange(item.field, e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter number"
@@ -490,7 +512,7 @@ const RecoveryPointSurvey = () => {
               
               {item.type === 'textarea' && (
                 <textarea
-                  value={formData[item.field]}
+                  value={formData[item.field as keyof typeof formData]}
                   onChange={(e) => handleInputChange(item.field, e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   rows={3}
@@ -553,7 +575,7 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <textarea
-            value={formData[currentQuestion.field]}
+            value={formData[currentQuestion.field as keyof typeof formData]}
             onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             rows={5}
@@ -612,7 +634,7 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <textarea
-            value={formData[currentQuestion.field]}
+            value={formData[currentQuestion.field as keyof typeof formData]}
             onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             rows={5}
