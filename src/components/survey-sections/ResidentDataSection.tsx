@@ -1,14 +1,15 @@
-
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import { SectionProps } from './types';
+import { QuestionPhotoUpload } from './QuestionPhotoUpload';
 
 interface ResidentDataItem {
   field: string;
   label: string;
   type: string;
   note?: string;
+  allowPhotos?: boolean;
   showIf?: (data: any) => boolean;
 }
 
@@ -20,6 +21,7 @@ interface ResidentDataGroup {
 export const ResidentDataSection: React.FC<SectionProps> = ({ 
   formData, 
   handleInputChange, 
+  handleQuestionPhotosChange,
   nextStep, 
   prevStep 
 }) => {
@@ -36,14 +38,14 @@ export const ResidentDataSection: React.FC<SectionProps> = ({
     {
       group: 'Phase Completions',
       items: [
-        { field: 'phase1Completions', label: 'Number of Phase 1 completions this week?', type: 'number', note: 'Photos can be added later' },
+        { field: 'phase1Completions', label: 'Number of Phase 1 completions this week?', type: 'number', note: 'Attach photos to celebrate achievements', allowPhotos: true },
         { field: 'phase1NextSteps', label: 'Who completed Phase 1 and what are their next steps?', type: 'textarea', showIf: (data) => data.phase1Completions > 0 }
       ]
     },
     {
       group: 'Phase 2 Completions',
       items: [
-        { field: 'phase2Completions', label: 'Number of Phase 2 completions this week?', type: 'number', note: 'Photos can be added later' },
+        { field: 'phase2Completions', label: 'Number of Phase 2 completions this week?', type: 'number', note: 'Attach photos to celebrate achievements', allowPhotos: true },
         { field: 'phase2NextSteps', label: 'Who completed Phase 2 and what will they be doing now?', type: 'textarea', showIf: (data) => data.phase2Completions > 0 }
       ]
     },
@@ -115,6 +117,15 @@ export const ResidentDataSection: React.FC<SectionProps> = ({
                   handleInputChange(item.field, content);
                 }}
                 placeholder="Enter details..."
+              />
+            )}
+            
+            {item.allowPhotos && handleQuestionPhotosChange && (
+              <QuestionPhotoUpload
+                questionField={item.field}
+                photos={formData.questionPhotos[item.field] || []}
+                onPhotosChange={(photos) => handleQuestionPhotosChange(item.field, photos)}
+                label="Attach completion photos"
               />
             )}
           </div>

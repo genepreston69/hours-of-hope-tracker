@@ -69,6 +69,7 @@ export const ReviewSection: React.FC<SectionProps> = ({
 
       console.log('Submitting survey data:', surveyData);
       console.log('Photos to upload:', formData.photos.length);
+      console.log('Question photos:', formData.questionPhotos);
 
       const { data, error } = await supabase
         .from('recovery_surveys')
@@ -105,6 +106,9 @@ export const ReviewSection: React.FC<SectionProps> = ({
       setIsSubmitting?.(false);
     }
   };
+
+  // Count total question photos
+  const totalQuestionPhotos = Object.values(formData.questionPhotos).reduce((total, photos) => total + photos.length, 0);
   
   return (
     <div className="space-y-6">
@@ -137,33 +141,48 @@ export const ReviewSection: React.FC<SectionProps> = ({
           </div>
         )}
         
-        {formData.photos.length > 0 && (
+        {(formData.photos.length > 0 || totalQuestionPhotos > 0) && (
           <div>
             <h3 className="font-semibold text-gray-700">Attached Photos</h3>
-            <p className="text-sm text-gray-600">{formData.photos.length} photo(s) selected</p>
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-2 mt-2">
-              {formData.photos.slice(0, 8).map((photo, index) => (
-                <div key={index} className="aspect-square bg-gray-200 rounded overflow-hidden">
-                  <img
-                    src={URL.createObjectURL(photo)}
-                    alt={`Preview ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
+            {formData.photos.length > 0 && (
+              <p className="text-sm text-gray-600">General photos: {formData.photos.length}</p>
+            )}
+            {totalQuestionPhotos > 0 && (
+              <p className="text-sm text-gray-600">Question-specific photos: {totalQuestionPhotos}</p>
+            )}
+            
+            {/* Show question photos organized by section */}
+            {Object.entries(formData.questionPhotos).map(([questionField, photos]) => {
+              if (photos.length === 0) return null;
+              return (
+                <div key={questionField} className="mt-2">
+                  <p className="text-xs text-gray-500 font-medium">{questionField}: {photos.length} photo(s)</p>
+                  <div className="grid grid-cols-4 gap-1 mt-1">
+                    {photos.slice(0, 4).map((photo, index) => (
+                      <div key={index} className="aspect-square bg-gray-200 rounded overflow-hidden">
+                        <img
+                          src={URL.createObjectURL(photo)}
+                          alt={`${questionField} ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                    {photos.length > 4 && (
+                      <div className="aspect-square bg-gray-200 rounded flex items-center justify-center">
+                        <span className="text-xs text-gray-500">+{photos.length - 4}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ))}
-              {formData.photos.length > 8 && (
-                <div className="aspect-square bg-gray-200 rounded flex items-center justify-center">
-                  <span className="text-xs text-gray-500">+{formData.photos.length - 8} more</span>
-                </div>
-              )}
-            </div>
+              );
+            })}
           </div>
         )}
       </div>
       
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <p className="text-sm text-yellow-800">
-          <strong>Note:</strong> You can attach photos after submission through the document management system.
+          <strong>Note:</strong> Photos are currently displayed for review but storage functionality will be added in a future update.
         </p>
       </div>
       

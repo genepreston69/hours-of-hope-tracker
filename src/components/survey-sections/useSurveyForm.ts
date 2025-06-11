@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 
 export interface MeetingEntry {
@@ -5,6 +6,10 @@ export interface MeetingEntry {
   date: string;
   time: string;
   name: string;
+}
+
+export interface QuestionPhotos {
+  [questionField: string]: File[];
 }
 
 export interface FormData {
@@ -55,6 +60,7 @@ export interface FormData {
   
   // Photos
   photos: File[];
+  questionPhotos: QuestionPhotos;
 }
 
 export const useSurveyForm = (user: any) => {
@@ -105,7 +111,8 @@ export const useSurveyForm = (user: any) => {
     additionalComments: '',
     
     // Photos
-    photos: []
+    photos: [],
+    questionPhotos: {}
   }));
 
   // Debug form data changes
@@ -113,13 +120,12 @@ export const useSurveyForm = (user: any) => {
     console.log('🚨 formData changed:', formData);
   }, [formData]);
 
-  // Debug component lifecycle
   useEffect(() => {
     console.log('🚨 useSurveyForm mounted');
     return () => console.log('🚨 useSurveyForm unmounted');
   }, []);
 
-  const handleInputChange = (field: string, value: string | MeetingEntry[] | File[]) => {
+  const handleInputChange = (field: string, value: string | MeetingEntry[] | File[] | QuestionPhotos) => {
     console.log('🔶 handleInputChange PRE-UPDATE', field, formData);
     setFormData(prevData => {
       const newData = { 
@@ -131,5 +137,16 @@ export const useSurveyForm = (user: any) => {
     });
   };
 
-  return { formData, handleInputChange };
+  const handleQuestionPhotosChange = (questionField: string, photos: File[]) => {
+    console.log('🔶 handleQuestionPhotosChange', questionField, photos);
+    setFormData(prevData => ({
+      ...prevData,
+      questionPhotos: {
+        ...prevData.questionPhotos,
+        [questionField]: photos
+      }
+    }));
+  };
+
+  return { formData, handleInputChange, handleQuestionPhotosChange };
 };

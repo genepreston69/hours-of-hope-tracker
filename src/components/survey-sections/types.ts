@@ -1,9 +1,10 @@
 
-import { FormData, MeetingEntry } from './useSurveyForm';
+import { FormData, MeetingEntry, QuestionPhotos } from './useSurveyForm';
 
 export interface SectionProps {
   formData: FormData;
-  handleInputChange: (field: string, value: string | MeetingEntry[] | File[]) => void;
+  handleInputChange: (field: string, value: string | MeetingEntry[] | File[] | QuestionPhotos) => void;
+  handleQuestionPhotosChange?: (questionField: string, photos: File[]) => void;
   nextStep: () => void;
   prevStep: () => void;
   isSubmitting?: boolean;
