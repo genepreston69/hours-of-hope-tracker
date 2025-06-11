@@ -105,7 +105,10 @@ const RecoveryPointSurvey = () => {
   ];
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ 
+      ...prev, 
+      [field]: value 
+    }));
   };
 
   const nextStep = () => {
@@ -283,7 +286,7 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <Textarea
-            value={formData[currentQuestion.field as keyof typeof formData]}
+            value={formData[currentQuestion.field as keyof typeof formData] as string}
             onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
             rows={5}
             placeholder={currentQuestion.placeholder}
@@ -378,7 +381,7 @@ const RecoveryPointSurvey = () => {
           {currentQuestion.type === 'number' && (
             <Input
               type="number"
-              value={formData[currentQuestion.field as keyof typeof formData]}
+              value={formData[currentQuestion.field as keyof typeof formData] as string}
               onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
               placeholder={currentQuestion.placeholder}
             />
@@ -386,7 +389,7 @@ const RecoveryPointSurvey = () => {
           
           {currentQuestion.type === 'textarea' && (
             <Textarea
-              value={formData[currentQuestion.field as keyof typeof formData]}
+              value={formData[currentQuestion.field as keyof typeof formData] as string}
               onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
               rows={4}
               placeholder={currentQuestion.placeholder}
@@ -521,7 +524,7 @@ const RecoveryPointSurvey = () => {
               {item.type === 'number' && (
                 <Input
                   type="number"
-                  value={formData[item.field as keyof typeof formData]}
+                  value={formData[item.field as keyof typeof formData] as string}
                   onChange={(e) => handleInputChange(item.field, e.target.value)}
                   placeholder="Enter number"
                 />
@@ -529,7 +532,7 @@ const RecoveryPointSurvey = () => {
               
               {item.type === 'textarea' && (
                 <Textarea
-                  value={formData[item.field as keyof typeof formData]}
+                  value={formData[item.field as keyof typeof formData] as string}
                   onChange={(e) => handleInputChange(item.field, e.target.value)}
                   rows={3}
                   placeholder="Enter details..."
@@ -591,7 +594,7 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <Textarea
-            value={formData[currentQuestion.field as keyof typeof formData]}
+            value={formData[currentQuestion.field as keyof typeof formData] as string}
             onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
             rows={5}
             placeholder={currentQuestion.placeholder}
@@ -649,7 +652,7 @@ const RecoveryPointSurvey = () => {
         
         <div>
           <Textarea
-            value={formData[currentQuestion.field as keyof typeof formData]}
+            value={formData[currentQuestion.field as keyof typeof formData] as string}
             onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
             rows={5}
             placeholder={currentQuestion.placeholder}
