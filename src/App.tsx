@@ -30,40 +30,64 @@ function App() {
             <AppProvider>
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/dashboard" element={
-                  <Layout>
-                    <Dashboard />
-                  </Layout>
-                } />
-                <Route path="/service-entry" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <ServiceEntry />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/recovery-survey" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <RecoverySurvey />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/customers" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Customers />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/reports" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Reports />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
+                <Route 
+                  path="/auth" 
+                  element={
+                    <ProtectedRoute requireAuth={false}>
+                      <Auth />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Dashboard />
+                      </Layout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/service-entry" 
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <ServiceEntry />
+                      </Layout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/recovery-survey" 
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <RecoverySurvey />
+                      </Layout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/customers" 
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Customers />
+                      </Layout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/reports" 
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Reports />
+                      </Layout>
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </AppProvider>
