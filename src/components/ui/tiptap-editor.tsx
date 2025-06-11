@@ -1,7 +1,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { cn } from '@/lib/utils';
-import { useEffect, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 
 interface TiptapEditorProps {
   content: string;
@@ -19,17 +19,12 @@ export const TiptapEditor = ({
   editable = true 
 }: TiptapEditorProps) => {
   const onUpdateRef = useRef(onChange);
-  const isUpdatingRef = useRef(false);
 
   // Keep the onChange callback ref updated
-  useEffect(() => {
-    onUpdateRef.current = onChange;
-  }, [onChange]);
+  onUpdateRef.current = onChange;
 
   // Memoized onUpdate callback to prevent editor recreation
   const handleUpdate = useCallback(({ editor }: { editor: any }) => {
-    if (isUpdatingRef.current) return;
-    
     const html = editor.getHTML();
     console.log('TiptapEditor onUpdate:', html);
     onUpdateRef.current(html);
@@ -48,7 +43,7 @@ export const TiptapEditor = ({
         },
       }),
     ],
-    content,
+    content, // Only used for initial content
     editable,
     onUpdate: handleUpdate,
     editorProps: {
@@ -61,16 +56,6 @@ export const TiptapEditor = ({
     },
   });
 
-  // Update editor content when content prop changes (but avoid infinite loops)
-  useEffect(() => {
-    if (editor && content !== editor.getHTML() && !isUpdatingRef.current) {
-      console.log('TiptapEditor useEffect - updating content:', content);
-      isUpdatingRef.current = true;
-      editor.commands.setContent(content, false);
-      isUpdatingRef.current = false;
-    }
-  }, [editor, content]);
-
   if (!editor) {
     console.log('TiptapEditor - editor not ready yet');
     return (
@@ -80,7 +65,7 @@ export const TiptapEditor = ({
     );
   }
 
-  console.log('TiptapEditor render - content:', content, 'editable:', editable);
+  console.log('TiptapEditor render - editable:', editable);
 
   return (
     <div className="border border-input rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
