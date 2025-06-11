@@ -3,62 +3,75 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/hooks/use-auth";
+import { AppProvider } from "@/context/AppContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import Layout from "@/components/Layout";
+import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
+import Auth from "./pages/Auth";
 import ServiceEntry from "./pages/ServiceEntry";
+import RecoverySurvey from "./pages/RecoverySurvey";
 import Customers from "./pages/Customers";
 import Reports from "./pages/Reports";
-import Layout from "./components/Layout";
 import NotFound from "./pages/NotFound";
-import Auth from "./pages/Auth";
-import Index from "./pages/Index";
-import { ProtectedRoute } from "./components/ProtectedRoute";
-import { AppProvider } from "./context/AppContext";
-import { useAuth } from "./hooks/use-auth";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <AppProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route element={<Layout />}>
-              {/* Public routes */}
-              <Route element={<ProtectedRoute requireAuth={false} />}>
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <AppProvider>
+              <Routes>
+                <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
-              </Route>
-              
-              {/* Root path now forwards to dashboard without requiring auth */}
-              <Route path="/" element={<Index />} />
-              
-              {/* Public dashboard route */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              
-              {/* Protected routes - require authentication */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/service-entry" element={<ServiceEntry />} />
-                <Route path="/customers" element={<Customers />} />
-                <Route path="/reports" element={<Reports />} />
-              </Route>
-              
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </AppProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+                <Route path="/dashboard" element={
+                  <Layout>
+                    <Dashboard />
+                  </Layout>
+                } />
+                <Route path="/service-entry" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <ServiceEntry />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/recovery-survey" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <RecoverySurvey />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/customers" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Customers />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/reports" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Reports />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AppProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

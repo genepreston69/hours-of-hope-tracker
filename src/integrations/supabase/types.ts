@@ -107,6 +107,126 @@ export type Database = {
         }
         Relationships: []
       }
+      recovery_surveys: {
+        Row: {
+          accomplishments: string | null
+          additional_comments: string | null
+          celebrations: string | null
+          court_intakes: number | null
+          created_at: string
+          discharge_reasons: string | null
+          discharges: number | null
+          drug_screens: number | null
+          evaluation_details: string | null
+          evaluations: string | null
+          events: string | null
+          facility_issues: string | null
+          id: string
+          mat_clients: number | null
+          mat_intakes: number | null
+          meeting_dates: string | null
+          ots1_orientations: number | null
+          peer_mentors: number | null
+          phase1_completions: number | null
+          phase1_count: number | null
+          phase1_next_steps: string | null
+          phase2_completions: number | null
+          phase2_count: number | null
+          phase2_next_steps: string | null
+          program_concerns: string | null
+          program_name: string
+          report_date: string
+          reporter_name: string
+          scheduled_intakes: number | null
+          staff_meetings: number | null
+          staffing_needs: string | null
+          supply_needs: string | null
+          total_intakes: number | null
+          upcoming_events: string | null
+          updated_at: string
+          user_id: string
+          week_summary: string | null
+        }
+        Insert: {
+          accomplishments?: string | null
+          additional_comments?: string | null
+          celebrations?: string | null
+          court_intakes?: number | null
+          created_at?: string
+          discharge_reasons?: string | null
+          discharges?: number | null
+          drug_screens?: number | null
+          evaluation_details?: string | null
+          evaluations?: string | null
+          events?: string | null
+          facility_issues?: string | null
+          id?: string
+          mat_clients?: number | null
+          mat_intakes?: number | null
+          meeting_dates?: string | null
+          ots1_orientations?: number | null
+          peer_mentors?: number | null
+          phase1_completions?: number | null
+          phase1_count?: number | null
+          phase1_next_steps?: string | null
+          phase2_completions?: number | null
+          phase2_count?: number | null
+          phase2_next_steps?: string | null
+          program_concerns?: string | null
+          program_name: string
+          report_date: string
+          reporter_name: string
+          scheduled_intakes?: number | null
+          staff_meetings?: number | null
+          staffing_needs?: string | null
+          supply_needs?: string | null
+          total_intakes?: number | null
+          upcoming_events?: string | null
+          updated_at?: string
+          user_id: string
+          week_summary?: string | null
+        }
+        Update: {
+          accomplishments?: string | null
+          additional_comments?: string | null
+          celebrations?: string | null
+          court_intakes?: number | null
+          created_at?: string
+          discharge_reasons?: string | null
+          discharges?: number | null
+          drug_screens?: number | null
+          evaluation_details?: string | null
+          evaluations?: string | null
+          events?: string | null
+          facility_issues?: string | null
+          id?: string
+          mat_clients?: number | null
+          mat_intakes?: number | null
+          meeting_dates?: string | null
+          ots1_orientations?: number | null
+          peer_mentors?: number | null
+          phase1_completions?: number | null
+          phase1_count?: number | null
+          phase1_next_steps?: string | null
+          phase2_completions?: number | null
+          phase2_count?: number | null
+          phase2_next_steps?: string | null
+          program_concerns?: string | null
+          program_name?: string
+          report_date?: string
+          reporter_name?: string
+          scheduled_intakes?: number | null
+          staff_meetings?: number | null
+          staffing_needs?: string | null
+          supply_needs?: string | null
+          total_intakes?: number | null
+          upcoming_events?: string | null
+          updated_at?: string
+          user_id?: string
+          week_summary?: string | null
+        }
+        Relationships: []
+      }
       service_entries: {
         Row: {
           created_at: string | null

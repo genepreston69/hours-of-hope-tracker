@@ -1,4 +1,3 @@
-
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ const Navbar = () => {
     { name: "Dashboard", path: "/dashboard" },
     ...(user ? [
       { name: "Enter Service Hours", path: "/service-entry" },
+      { name: "Recovery Survey", path: "/recovery-survey" },
       { name: "Manage Customers", path: "/customers" },
       { name: "Reports", path: "/reports" },
     ] : []),
