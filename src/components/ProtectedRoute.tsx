@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
   requireAuth?: boolean;
 }
 
-export const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -37,3 +37,5 @@ export const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteP
 
   return <>{children}</>;
 };
+
+export default ProtectedRoute;
