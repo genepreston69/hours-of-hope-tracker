@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronRight, ChevronLeft, Check, Upload, Calendar, Users, Home, FileText, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
-import { toast } from '@/components/ui/sonner';
+import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
@@ -18,7 +18,7 @@ const RecoveryPointSurvey = () => {
     // Report Details
     programName: '',
     reportDate: new Date().toISOString().split('T')[0],
-    reporterName: user?.email || '',
+    reporterName: user?.user_metadata?.full_name || user?.email || '',
     
     // Program Highlights
     weekSummary: '',
@@ -180,7 +180,7 @@ const RecoveryPointSurvey = () => {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Which program/facility is this report for?
+              Which program/facility is this report for? *
             </label>
             <Select value={formData.programName} onValueChange={(value) => handleInputChange('programName', value)}>
               <SelectTrigger className="w-full">
@@ -198,24 +198,26 @@ const RecoveryPointSurvey = () => {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              What date are you submitting this report?
+              What date are you submitting this report? *
             </label>
             <Input
               type="date"
               value={formData.reportDate}
               onChange={(e) => handleInputChange('reportDate', e.target.value)}
+              required
             />
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Your name
+              Your name *
             </label>
             <Input
               type="text"
               value={formData.reporterName}
               onChange={(e) => handleInputChange('reporterName', e.target.value)}
               placeholder="Enter your full name"
+              required
             />
           </div>
         </div>
@@ -223,7 +225,8 @@ const RecoveryPointSurvey = () => {
         <div className="flex justify-end">
           <button
             onClick={nextStep}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            disabled={!formData.programName || !formData.reportDate || !formData.reporterName}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
             <ChevronRight className="w-4 h-4" />
@@ -674,7 +677,11 @@ const RecoveryPointSurvey = () => {
   function ReviewSection() {
     const handleSubmit = async () => {
       if (!user) {
-        toast.error("You must be logged in to submit a survey");
+        toast({
+          title: "Error",
+          description: "You must be logged in to submit a survey",
+          variant: "destructive"
+        });
         return;
       }
 
@@ -728,19 +735,30 @@ const RecoveryPointSurvey = () => {
 
         if (error) {
           console.error('Error submitting survey:', error);
-          toast.error("Failed to submit survey: " + error.message);
+          toast({
+            title: "Error",
+            description: "Failed to submit survey: " + error.message,
+            variant: "destructive"
+          });
           return;
         }
 
         console.log('Survey submitted successfully:', data);
-        toast.success("Recovery survey submitted successfully!");
+        toast({
+          title: "Success",
+          description: "Recovery survey submitted successfully!",
+        });
         
         // Navigate to reports page to view the submitted survey
         navigate('/reports');
         
       } catch (error) {
         console.error('Unexpected error submitting survey:', error);
-        toast.error("An unexpected error occurred while submitting the survey");
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred while submitting the survey",
+          variant: "destructive"
+        });
       } finally {
         setIsSubmitting(false);
       }
