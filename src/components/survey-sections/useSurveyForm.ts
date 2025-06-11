@@ -38,6 +38,10 @@ export interface FormData {
   phase1NextSteps: string;
   phase2Completions: string;
   phase2NextSteps: string;
+  gedPreparationStarts: string;
+  gedCompletions: string;
+  lifeSkillsStarts: string;
+  driversLicenseReceived: string;
   peerMentors: string;
   matClients: string;
   totalIntakes: string;
@@ -90,6 +94,10 @@ export const useSurveyForm = (user: any) => {
     phase1NextSteps: '',
     phase2Completions: '',
     phase2NextSteps: '',
+    gedPreparationStarts: '',
+    gedCompletions: '',
+    lifeSkillsStarts: '',
+    driversLicenseReceived: '',
     peerMentors: '',
     matClients: '',
     totalIntakes: '',

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { TiptapEditor } from '@/components/ui/tiptap-editor';
@@ -47,6 +48,15 @@ export const ResidentDataSection: React.FC<SectionProps> = ({
       items: [
         { field: 'phase2Completions', label: 'Number of Phase 2 completions this week?', type: 'number', note: 'Attach photos to celebrate achievements', allowPhotos: true },
         { field: 'phase2NextSteps', label: 'Who completed Phase 2 and what will they be doing now?', type: 'textarea', showIf: (data) => data.phase2Completions > 0 }
+      ]
+    },
+    {
+      group: 'Education & Life Skills',
+      items: [
+        { field: 'gedPreparationStarts', label: 'How many GED preparation starts?', type: 'number' },
+        { field: 'gedCompletions', label: 'How many GED completions?', type: 'number' },
+        { field: 'lifeSkillsStarts', label: 'How many started Life Skills Training?', type: 'number' },
+        { field: 'driversLicenseReceived', label: 'How many received their drivers license?', type: 'number' }
       ]
     },
     {
