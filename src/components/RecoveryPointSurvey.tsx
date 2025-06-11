@@ -4,6 +4,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 import { toast } from '@/components/ui/sonner';
 import { useNavigate } from 'react-router-dom';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 const RecoveryPointSurvey = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -15,7 +18,7 @@ const RecoveryPointSurvey = () => {
     // Report Details
     programName: '',
     reportDate: new Date().toISOString().split('T')[0],
-    reporterName: '',
+    reporterName: user?.email || '',
     
     // Program Highlights
     weekSummary: '',
@@ -168,6 +171,8 @@ const RecoveryPointSurvey = () => {
   }
 
   function ReportDetailsSection() {
+    const programOptions = ['RPB', 'RPC', 'RPH', 'RPP', 'Point Apartments'];
+    
     return (
       <div className="space-y-6">
         <h2 className="text-2xl font-bold text-gray-800">First, let's get some basic information</h2>
@@ -177,24 +182,28 @@ const RecoveryPointSurvey = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Which program/facility is this report for?
             </label>
-            <input
-              type="text"
-              value={formData.programName}
-              onChange={(e) => handleInputChange('programName', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter program or facility name"
-            />
+            <Select value={formData.programName} onValueChange={(value) => handleInputChange('programName', value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a program/facility" />
+              </SelectTrigger>
+              <SelectContent>
+                {programOptions.map((program) => (
+                  <SelectItem key={program} value={program}>
+                    {program}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               What date are you submitting this report?
             </label>
-            <input
+            <Input
               type="date"
               value={formData.reportDate}
               onChange={(e) => handleInputChange('reportDate', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           
@@ -202,14 +211,23 @@ const RecoveryPointSurvey = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Your name
             </label>
-            <input
+            <Input
               type="text"
               value={formData.reporterName}
               onChange={(e) => handleInputChange('reporterName', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter your full name"
             />
           </div>
+        </div>
+        
+        <div className="flex justify-end">
+          <button
+            onClick={nextStep}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+          >
+            Next
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     );
@@ -261,10 +279,9 @@ const RecoveryPointSurvey = () => {
         </div>
         
         <div>
-          <textarea
+          <Textarea
             value={formData[currentQuestion.field as keyof typeof formData]}
             onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             rows={5}
             placeholder={currentQuestion.placeholder}
           />
@@ -356,20 +373,18 @@ const RecoveryPointSurvey = () => {
         
         <div>
           {currentQuestion.type === 'number' && (
-            <input
+            <Input
               type="number"
               value={formData[currentQuestion.field as keyof typeof formData]}
               onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder={currentQuestion.placeholder}
             />
           )}
           
           {currentQuestion.type === 'textarea' && (
-            <textarea
+            <Textarea
               value={formData[currentQuestion.field as keyof typeof formData]}
               onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows={4}
               placeholder={currentQuestion.placeholder}
             />
@@ -501,20 +516,18 @@ const RecoveryPointSurvey = () => {
               </label>
               
               {item.type === 'number' && (
-                <input
+                <Input
                   type="number"
                   value={formData[item.field as keyof typeof formData]}
                   onChange={(e) => handleInputChange(item.field, e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter number"
                 />
               )}
               
               {item.type === 'textarea' && (
-                <textarea
+                <Textarea
                   value={formData[item.field as keyof typeof formData]}
                   onChange={(e) => handleInputChange(item.field, e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   rows={3}
                   placeholder="Enter details..."
                 />
@@ -574,10 +587,9 @@ const RecoveryPointSurvey = () => {
         </div>
         
         <div>
-          <textarea
+          <Textarea
             value={formData[currentQuestion.field as keyof typeof formData]}
             onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             rows={5}
             placeholder={currentQuestion.placeholder}
           />
@@ -633,10 +645,9 @@ const RecoveryPointSurvey = () => {
         </div>
         
         <div>
-          <textarea
+          <Textarea
             value={formData[currentQuestion.field as keyof typeof formData]}
             onChange={(e) => handleInputChange(currentQuestion.field, e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             rows={5}
             placeholder={currentQuestion.placeholder}
           />
