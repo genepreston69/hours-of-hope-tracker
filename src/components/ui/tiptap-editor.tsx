@@ -1,8 +1,7 @@
-
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { cn } from '@/lib/utils';
-import { useEffect } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 interface TiptapEditorProps {
   content: string;
@@ -19,6 +18,23 @@ export const TiptapEditor = ({
   className,
   editable = true 
 }: TiptapEditorProps) => {
+  const onUpdateRef = useRef(onChange);
+  const isUpdatingRef = useRef(false);
+
+  // Keep the onChange callback ref updated
+  useEffect(() => {
+    onUpdateRef.current = onChange;
+  }, [onChange]);
+
+  // Memoized onUpdate callback to prevent editor recreation
+  const handleUpdate = useCallback(({ editor }: { editor: any }) => {
+    if (isUpdatingRef.current) return;
+    
+    const html = editor.getHTML();
+    console.log('TiptapEditor onUpdate:', html);
+    onUpdateRef.current(html);
+  }, []);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -34,11 +50,7 @@ export const TiptapEditor = ({
     ],
     content,
     editable,
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      console.log('TiptapEditor onUpdate:', html);
-      onChange(html);
-    },
+    onUpdate: handleUpdate,
     editorProps: {
       attributes: {
         class: cn(
@@ -49,11 +61,13 @@ export const TiptapEditor = ({
     },
   });
 
-  // Update editor content when content prop changes
+  // Update editor content when content prop changes (but avoid infinite loops)
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
+    if (editor && content !== editor.getHTML() && !isUpdatingRef.current) {
       console.log('TiptapEditor useEffect - updating content:', content);
+      isUpdatingRef.current = true;
       editor.commands.setContent(content, false);
+      isUpdatingRef.current = false;
     }
   }, [editor, content]);
 
