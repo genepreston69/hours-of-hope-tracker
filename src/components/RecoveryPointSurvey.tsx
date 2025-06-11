@@ -876,5 +876,3 @@ const RecoveryPointSurvey = () => {
 };
 
 export default RecoveryPointSurvey;
-
-}
