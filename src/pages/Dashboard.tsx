@@ -6,7 +6,9 @@ import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { DashboardLoader } from "@/components/dashboard/DashboardLoader";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { TaskNotifications } from "@/components/dashboard/TaskNotifications";
 import { useDashboard } from "@/hooks/use-dashboard";
+import { useTaskTracking } from "@/hooks/use-task-tracking";
 import { useState, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
 
@@ -26,6 +28,9 @@ const Dashboard = () => {
   
   // Get pagination info from context
   const { pagination } = useAppContext();
+  
+  // Get task tracking status
+  const taskStatus = useTaskTracking(serviceEntries);
   
   // Pre-process data outside of render conditions to avoid hook count mismatch
   const dashboardData = useDashboardData(serviceEntries, dateFilter);
@@ -66,6 +71,9 @@ const Dashboard = () => {
         refreshData={refreshData} 
         user={user} 
       />
+      
+      {/* Task Notifications - Show at top for authenticated users */}
+      <TaskNotifications taskStatus={taskStatus} user={user} />
       
       <DateFilter dateFilter={dateFilter} setDateFilter={setDateFilter} />
       <StatCards stats={dashboardData.filteredStats} />

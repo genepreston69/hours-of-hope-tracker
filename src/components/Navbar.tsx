@@ -1,3 +1,4 @@
+
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -5,11 +6,30 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { LogOut, User } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
+import { useTaskTracking } from "@/hooks/use-task-tracking";
+import { NotificationBadge } from "@/components/ui/notification-badge";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
-  const { refreshData } = useAppContext();
+  const { refreshData, serviceEntries } = useAppContext();
+  
+  // Get task tracking status for notification badges
+  const taskStatus = useTaskTracking(serviceEntries);
+
+  // Calculate notification counts
+  const getNotificationCount = (path: string) => {
+    if (!user) return 0;
+    
+    switch (path) {
+      case "/service-entry":
+        return taskStatus.serviceHoursCompleted ? 0 : 1;
+      case "/recovery-survey":
+        return taskStatus.directorReportCompleted ? 0 : 1;
+      default:
+        return 0;
+    }
+  };
 
   // Define navigation items based on authentication status
   const navItems = [
@@ -41,6 +61,56 @@ const Navbar = () => {
     }
   };
 
+  const renderNavLink = (item: { name: string; path: string }, isMobile = false) => {
+    const notificationCount = getNotificationCount(item.path);
+    
+    if (item.path === "/dashboard") {
+      return (
+        <NavLink
+          key={item.path}
+          to={item.path}
+          onClick={handleDashboardClick}
+          className={({ isActive }) =>
+            cn(
+              isMobile 
+                ? "block px-3 py-2 rounded-md text-base font-medium"
+                : "px-3 py-2 rounded-md text-sm font-medium relative",
+              isActive
+                ? "bg-primary text-primary-foreground"
+                : "text-gray-600 hover:bg-muted hover:text-gray-900"
+            )
+          }
+          end
+        >
+          {item.name}
+          <NotificationBadge count={notificationCount} show={user && notificationCount > 0} />
+        </NavLink>
+      );
+    }
+
+    return (
+      <NavLink
+        key={item.path}
+        to={item.path}
+        className={({ isActive }) =>
+          cn(
+            isMobile 
+              ? "block px-3 py-2 rounded-md text-base font-medium"
+              : "px-3 py-2 rounded-md text-sm font-medium relative",
+            isActive
+              ? "bg-primary text-primary-foreground"
+              : "text-gray-600 hover:bg-muted hover:text-gray-900"
+          )
+        }
+        end={item.path === "/dashboard"}
+        onClick={() => isMobile && setIsMobileMenuOpen(false)}
+      >
+        {item.name}
+        <NotificationBadge count={notificationCount} show={user && notificationCount > 0} />
+      </NavLink>
+    );
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b">
       <div className="container mx-auto px-4 py-3">
@@ -51,42 +121,7 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
-              item.path === "/dashboard" ? (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  onClick={handleDashboardClick}
-                  className={({ isActive }) =>
-                    cn(
-                      "px-3 py-2 rounded-md text-sm font-medium",
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-gray-600 hover:bg-muted hover:text-gray-900"
-                    )
-                  }
-                  end
-                >
-                  {item.name}
-                </NavLink>
-              ) : (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    cn(
-                      "px-3 py-2 rounded-md text-sm font-medium",
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-gray-600 hover:bg-muted hover:text-gray-900"
-                    )
-                  }
-                  end={item.path === "/dashboard"}
-                >
-                  {item.name}
-                </NavLink>
-              )
-            ))}
+            {navItems.map((item) => renderNavLink(item))}
             
             {user ? (
               <Button 
@@ -177,43 +212,7 @@ const Navbar = () => {
         } md:hidden bg-white border-t`}
       >
         <div className="px-2 pt-2 pb-3 space-y-1">
-          {navItems.map((item) => (
-            item.path === "/dashboard" ? (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                onClick={handleDashboardClick}
-                className={({ isActive }) =>
-                  cn(
-                    "block px-3 py-2 rounded-md text-base font-medium",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-gray-600 hover:bg-muted hover:text-gray-900"
-                  )
-                }
-                end
-              >
-                {item.name}
-              </NavLink>
-            ) : (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={({ isActive }) =>
-                  cn(
-                    "block px-3 py-2 rounded-md text-base font-medium",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-gray-600 hover:bg-muted hover:text-gray-900"
-                  )
-                }
-                end={item.path === "/dashboard"}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.name}
-              </NavLink>
-            )
-          ))}
+          {navItems.map((item) => renderNavLink(item, true))}
         </div>
       </div>
     </nav>

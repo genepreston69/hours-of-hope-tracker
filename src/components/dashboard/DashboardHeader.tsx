@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Loader2, RefreshCw } from "lucide-react";
 import { User } from "@supabase/supabase-js";
+import { NotificationSettings } from "./NotificationSettings";
 
 interface DashboardHeaderProps {
   refreshing: boolean;
@@ -35,6 +36,7 @@ export const DashboardHeader = ({
         </Button>
       </div>
       <div className="flex gap-2 mt-2 sm:mt-0">
+        {user && <NotificationSettings user={user} />}
         {refreshData && user && !hideRefreshButton && (
           <Button variant="outline" onClick={onRefresh} disabled={refreshing}>
             {refreshing ? (
