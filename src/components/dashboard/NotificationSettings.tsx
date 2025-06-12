@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Settings } from 'lucide-react';
@@ -11,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { SidebarMenuButton } from '@/components/ui/sidebar';
 
 interface NotificationSettingsProps {
   user: any;
@@ -37,10 +37,10 @@ export const NotificationSettings = ({ user }: NotificationSettingsProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Settings className="h-4 w-4 mr-2" />
-          Notification Settings
-        </Button>
+        <SidebarMenuButton>
+          <Settings className="h-4 w-4" />
+          <span>Notification Settings</span>
+        </SidebarMenuButton>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

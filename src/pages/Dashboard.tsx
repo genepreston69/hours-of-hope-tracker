@@ -1,3 +1,4 @@
+
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
@@ -5,12 +6,13 @@ import { LocationStatsCard } from "@/components/dashboard/LocationStats";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { DashboardLoader } from "@/components/dashboard/DashboardLoader";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { TaskNotifications } from "@/components/dashboard/TaskNotifications";
 import { useDashboard } from "@/hooks/use-dashboard";
 import { useTaskTracking } from "@/hooks/use-task-tracking";
 import { useState, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
+import { Button } from "@/components/ui/button";
+import { RefreshCw, Loader2 } from "lucide-react";
 
 const Dashboard = () => {
   const [dateFilter, setDateFilter] = useState<DateFilterType>("ytd");
@@ -65,12 +67,27 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      <DashboardHeader 
-        refreshing={refreshing} 
-        onRefresh={handleRefresh} 
-        refreshData={refreshData} 
-        user={user} 
-      />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <Button 
+          variant="outline"
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="mt-2 sm:mt-0"
+        >
+          {refreshing ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Refreshing...
+            </>
+          ) : (
+            <>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Refresh Data
+            </>
+          )}
+        </Button>
+      </div>
       
       {/* Task Notifications - Show at top for authenticated users */}
       <TaskNotifications taskStatus={taskStatus} user={user} />
