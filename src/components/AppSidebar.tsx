@@ -139,8 +139,12 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="border-b">
-        <div className="flex items-center gap-2 px-2 py-1">
-          <span className="font-semibold text-lg">Service Community</span>
+        <div className="flex items-center justify-center px-2 py-1">
+          <img 
+            src="/lovable-uploads/f4dd29f5-c1ea-4bf3-88c3-f13573496fe7.png" 
+            alt="Recovery Point Logo" 
+            className="h-12 w-auto"
+          />
         </div>
       </SidebarHeader>
       
