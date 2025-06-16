@@ -134,9 +134,9 @@ export type Database = {
           phase2_count: number | null
           phase2_next_steps: string | null
           program_concerns: string | null
-          program_name: string
-          report_date: string
-          reporter_name: string
+          program_name: string | null
+          report_date: string | null
+          reporter_name: string | null
           scheduled_intakes: number | null
           staff_meetings: number | null
           staffing_needs: string | null
@@ -173,9 +173,9 @@ export type Database = {
           phase2_count?: number | null
           phase2_next_steps?: string | null
           program_concerns?: string | null
-          program_name: string
-          report_date: string
-          reporter_name: string
+          program_name?: string | null
+          report_date?: string | null
+          reporter_name?: string | null
           scheduled_intakes?: number | null
           staff_meetings?: number | null
           staffing_needs?: string | null
@@ -212,9 +212,9 @@ export type Database = {
           phase2_count?: number | null
           phase2_next_steps?: string | null
           program_concerns?: string | null
-          program_name?: string
-          report_date?: string
-          reporter_name?: string
+          program_name?: string | null
+          report_date?: string | null
+          reporter_name?: string | null
           scheduled_intakes?: number | null
           staff_meetings?: number | null
           staffing_needs?: string | null
