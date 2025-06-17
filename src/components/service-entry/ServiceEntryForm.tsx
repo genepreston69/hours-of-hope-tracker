@@ -11,19 +11,21 @@ import { NotesField } from "./NotesField";
 import { TotalHoursDisplay } from "./TotalHoursDisplay";
 import { useServiceEntryForm } from "./useServiceEntryForm";
 import { Loader2 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const ServiceEntryForm = () => {
   const { form, onSubmit, totalHours, customers, isSubmitting } = useServiceEntryForm();
+  const isMobile = useIsMobile();
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className={`w-full ${isMobile ? 'border-0 shadow-none' : ''}`}>
+      <CardHeader className={isMobile ? 'px-0' : ''}>
         <CardTitle>New Service Entry</CardTitle>
         <CardDescription>
           Record hours worked by recovery volunteers for a customer.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className={isMobile ? 'px-0 pb-6' : ''}>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <DateField control={form.control} />
@@ -37,7 +39,8 @@ const ServiceEntryForm = () => {
             <Button 
               type="submit" 
               disabled={customers.length === 0 || isSubmitting}
-              className="w-full"
+              className={`w-full ${isMobile ? 'sticky bottom-4 z-10 shadow-lg' : ''}`}
+              size={isMobile ? "lg" : "default"}
             >
               {isSubmitting ? (
                 <>
