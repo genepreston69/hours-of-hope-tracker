@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { ServiceEntry } from '@/models/types';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,10 +20,10 @@ export const useTaskTracking = (serviceEntries: ServiceEntry[]) => {
   const weekBoundaries = useMemo(() => {
     const now = new Date();
     const dayOfWeek = now.getDay();
-    const daysUntilMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Sunday = 0, Monday = 1
+    const daysUntilCurrentMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Sunday = 0, Monday = 1
     
     const weekStart = new Date(now);
-    weekStart.setDate(now.getDate() + daysUntilMonday);
+    weekStart.setDate(now.getDate() + daysUntilCurrentMonday);
     weekStart.setHours(0, 0, 0, 0);
     
     const weekEnd = new Date(weekStart);
