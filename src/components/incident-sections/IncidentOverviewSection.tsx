@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { IncidentFormData } from './useIncidentForm';
+import { supabase } from '@/integrations/supabase/client';
 
 interface IncidentOverviewSectionProps {
   formData: IncidentFormData;
@@ -13,14 +14,63 @@ interface IncidentOverviewSectionProps {
   prevStep: () => void;
 }
 
+interface FacilityLocation {
+  id: string;
+  name: string;
+}
+
 export const IncidentOverviewSection = ({ 
   formData, 
   handleInputChange, 
   nextStep, 
   prevStep 
 }: IncidentOverviewSectionProps) => {
+  const [facilityLocations, setFacilityLocations] = useState<FacilityLocation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const canProceed = formData.incidentDate && formData.incidentTime && formData.location && 
                     formData.incidentType && formData.severityLevel;
+
+  useEffect(() => {
+    const fetchFacilityLocations = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('facility_locations')
+          .select('id, name')
+          .order('name');
+
+        if (error) {
+          console.error('Error fetching facility locations:', error);
+          // Use fallback options if database fetch fails
+          setFacilityLocations([
+            { id: 'rpb', name: 'RPB' },
+            { id: 'rpc', name: 'RPC' },
+            { id: 'rph', name: 'RPH' },
+            { id: 'rpp', name: 'RPP' },
+            { id: 'point-apartments', name: 'Point Apartments' },
+            { id: 'phase-2-housing', name: 'Phase 2 Housing' }
+          ]);
+        } else {
+          setFacilityLocations(data || []);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        // Use fallback options
+        setFacilityLocations([
+          { id: 'rpb', name: 'RPB' },
+          { id: 'rpc', name: 'RPC' },
+          { id: 'rph', name: 'RPH' },
+          { id: 'rpp', name: 'RPP' },
+          { id: 'point-apartments', name: 'Point Apartments' },
+          { id: 'phase-2-housing', name: 'Phase 2 Housing' }
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFacilityLocations();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -54,25 +104,21 @@ export const IncidentOverviewSection = ({
       </div>
 
       <div>
-        <Label htmlFor="location">Location *</Label>
+        <Label htmlFor="facilityLocation">Facility Location *</Label>
         <Select 
           value={formData.location} 
           onValueChange={(value) => handleInputChange('location', value)}
+          disabled={isLoading}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select incident location" />
+            <SelectValue placeholder={isLoading ? "Loading locations..." : "Select facility location"} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="resident-room">Resident Room</SelectItem>
-            <SelectItem value="common-area">Common Area</SelectItem>
-            <SelectItem value="dining-room">Dining Room</SelectItem>
-            <SelectItem value="bathroom">Bathroom</SelectItem>
-            <SelectItem value="hallway">Hallway</SelectItem>
-            <SelectItem value="kitchen">Kitchen</SelectItem>
-            <SelectItem value="outdoor-area">Outdoor Area</SelectItem>
-            <SelectItem value="entrance">Entrance/Exit</SelectItem>
-            <SelectItem value="parking-lot">Parking Lot</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
+            {facilityLocations.map((location) => (
+              <SelectItem key={location.id} value={location.name}>
+                {location.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
