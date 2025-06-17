@@ -1,3 +1,4 @@
+
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,7 @@ const TiptapEditor = memo(({
 }: TiptapEditorProps) => {
   const [instanceId] = useState(() => Math.random().toString(36).substr(2, 9));
   const onUpdateRef = useRef(onChange);
+  const isUpdatingRef = useRef(false);
 
   console.log(`🏗️ TiptapEditor[${fieldName}:${instanceId}] rendering`);
 
@@ -34,16 +36,18 @@ const TiptapEditor = memo(({
     return () => console.log(`🔴 TiptapEditor[${fieldName}:${instanceId}] unmounted`);
   }, [fieldName, instanceId]);
 
-  // Track if this component is re-rendering
-  useEffect(() => {
-    console.log(`🔄 TiptapEditor[${fieldName}:${instanceId}] effect ran`);
-  });
-
   // Memoized onUpdate callback to prevent editor recreation
   const handleUpdate = useCallback(({ editor }: { editor: any }) => {
+    if (isUpdatingRef.current) return; // Prevent recursive updates
+    
     const html = editor.getHTML();
     console.log(`📝 Editor[${fieldName}:${instanceId}] updated, focused:`, editor.isFocused, 'HTML:', html);
+    
+    isUpdatingRef.current = true;
     onUpdateRef.current(html);
+    setTimeout(() => {
+      isUpdatingRef.current = false;
+    }, 0);
   }, [fieldName, instanceId]);
 
   const editor = useEditor({
@@ -73,7 +77,14 @@ const TiptapEditor = memo(({
     },
     onBlur: ({ editor, event }) => {
       console.log(`🔴 Editor[${fieldName}:${instanceId}] BLURRED`, event.type, 'Related target:', event.relatedTarget);
-      console.trace(`Blur stack trace for ${fieldName}:${instanceId}`);
+      
+      // Only blur if we're not clicking on toolbar buttons
+      const relatedTarget = event.relatedTarget as HTMLElement;
+      if (relatedTarget && relatedTarget.closest('.tiptap-toolbar')) {
+        event.preventDefault();
+        setTimeout(() => editor.commands.focus(), 0);
+        return;
+      }
     },
     editorProps: {
       attributes: {
@@ -81,17 +92,26 @@ const TiptapEditor = memo(({
           'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[100px] p-3',
           className
         ),
-        spellcheck: 'false', // Disable spellcheck to prevent focus loss
+        spellcheck: 'false',
+        autocomplete: 'off',
+        autocorrect: 'off',
+        autocapitalize: 'off',
         'data-field': fieldName,
         'data-instance': instanceId,
       },
     },
   });
 
-  // Monitor editor instance changes
+  // Update editor content only when it differs significantly and editor is not focused
   useEffect(() => {
-    console.log(`🔄 Editor[${fieldName}:${instanceId}] instance changed:`, editor);
-  }, [editor, fieldName, instanceId]);
+    if (editor && !isUpdatingRef.current && !editor.isFocused) {
+      const currentContent = editor.getHTML();
+      if (currentContent !== content && content !== '') {
+        console.log(`🔄 Updating editor content for ${fieldName}:${instanceId}`);
+        editor.commands.setContent(content, false);
+      }
+    }
+  }, [content, editor, fieldName, instanceId]);
 
   if (!editor) {
     console.log(`TiptapEditor[${fieldName}:${instanceId}] - editor not ready yet`);
@@ -107,9 +127,10 @@ const TiptapEditor = memo(({
   return (
     <div className="border border-input rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
       {editable && (
-        <div className="border-b border-input p-2 flex flex-wrap gap-1">
+        <div className="tiptap-toolbar border-b border-input p-2 flex flex-wrap gap-1">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()} // Prevent focus loss
             onClick={() => {
               console.log(`Bold button clicked on ${fieldName}:${instanceId}`);
               editor.chain().focus().toggleBold().run();
@@ -123,6 +144,7 @@ const TiptapEditor = memo(({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()} // Prevent focus loss
             onClick={() => {
               console.log(`Italic button clicked on ${fieldName}:${instanceId}`);
               editor.chain().focus().toggleItalic().run();
@@ -136,6 +158,7 @@ const TiptapEditor = memo(({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()} // Prevent focus loss
             onClick={() => {
               console.log(`Bullet list button clicked on ${fieldName}:${instanceId}`);
               editor.chain().focus().toggleBulletList().run();
@@ -149,6 +172,7 @@ const TiptapEditor = memo(({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()} // Prevent focus loss
             onClick={() => {
               console.log(`Ordered list button clicked on ${fieldName}:${instanceId}`);
               editor.chain().focus().toggleOrderedList().run();
@@ -162,10 +186,7 @@ const TiptapEditor = memo(({
           </button>
         </div>
       )}
-      <div 
-        onFocus={(e) => console.log(`🟡 Wrapper div focused on ${fieldName}:${instanceId}`, e.target)}
-        onBlur={(e) => console.log(`🟠 Wrapper div blurred on ${fieldName}:${instanceId}`, e.target)}
-      >
+      <div>
         <EditorContent 
           editor={editor} 
           placeholder={placeholder}
