@@ -86,6 +86,138 @@ export type Database = {
           },
         ]
       }
+      incident_reports: {
+        Row: {
+          additional_documentation: string | null
+          auto_save_data: Json | null
+          contributing_factors: string | null
+          created_at: string | null
+          evidence_collected: boolean | null
+          family_notification_details: string | null
+          family_notified: boolean | null
+          follow_up_actions_required: string | null
+          hospital_details: string | null
+          hospital_transport_required: boolean | null
+          id: string
+          immediate_actions_taken: string | null
+          immediate_cause: string | null
+          incident_date: string
+          incident_description: string
+          incident_prevention_measures: string | null
+          incident_time: string
+          incident_type: string
+          injuries_sustained: string | null
+          last_saved_at: string | null
+          location: string
+          medical_professional_contacted: boolean | null
+          medical_professional_details: string | null
+          medical_treatment_provided: boolean | null
+          photos_taken: boolean | null
+          regulatory_agencies: string | null
+          regulatory_reporting_required: boolean | null
+          report_status: string | null
+          residents_involved: Json | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          severity_level: string
+          staff_involved: Json | null
+          submitted_at: string | null
+          supervisor_name: string | null
+          supervisor_notification_time: string | null
+          supervisor_notified: boolean | null
+          updated_at: string | null
+          user_id: string
+          visitors_involved: Json | null
+          witnesses: Json | null
+        }
+        Insert: {
+          additional_documentation?: string | null
+          auto_save_data?: Json | null
+          contributing_factors?: string | null
+          created_at?: string | null
+          evidence_collected?: boolean | null
+          family_notification_details?: string | null
+          family_notified?: boolean | null
+          follow_up_actions_required?: string | null
+          hospital_details?: string | null
+          hospital_transport_required?: boolean | null
+          id?: string
+          immediate_actions_taken?: string | null
+          immediate_cause?: string | null
+          incident_date: string
+          incident_description: string
+          incident_prevention_measures?: string | null
+          incident_time: string
+          incident_type: string
+          injuries_sustained?: string | null
+          last_saved_at?: string | null
+          location: string
+          medical_professional_contacted?: boolean | null
+          medical_professional_details?: string | null
+          medical_treatment_provided?: boolean | null
+          photos_taken?: boolean | null
+          regulatory_agencies?: string | null
+          regulatory_reporting_required?: boolean | null
+          report_status?: string | null
+          residents_involved?: Json | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          severity_level: string
+          staff_involved?: Json | null
+          submitted_at?: string | null
+          supervisor_name?: string | null
+          supervisor_notification_time?: string | null
+          supervisor_notified?: boolean | null
+          updated_at?: string | null
+          user_id: string
+          visitors_involved?: Json | null
+          witnesses?: Json | null
+        }
+        Update: {
+          additional_documentation?: string | null
+          auto_save_data?: Json | null
+          contributing_factors?: string | null
+          created_at?: string | null
+          evidence_collected?: boolean | null
+          family_notification_details?: string | null
+          family_notified?: boolean | null
+          follow_up_actions_required?: string | null
+          hospital_details?: string | null
+          hospital_transport_required?: boolean | null
+          id?: string
+          immediate_actions_taken?: string | null
+          immediate_cause?: string | null
+          incident_date?: string
+          incident_description?: string
+          incident_prevention_measures?: string | null
+          incident_time?: string
+          incident_type?: string
+          injuries_sustained?: string | null
+          last_saved_at?: string | null
+          location?: string
+          medical_professional_contacted?: boolean | null
+          medical_professional_details?: string | null
+          medical_treatment_provided?: boolean | null
+          photos_taken?: boolean | null
+          regulatory_agencies?: string | null
+          regulatory_reporting_required?: boolean | null
+          report_status?: string | null
+          residents_involved?: Json | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          severity_level?: string
+          staff_involved?: Json | null
+          submitted_at?: string | null
+          supervisor_name?: string | null
+          supervisor_notification_time?: string | null
+          supervisor_notified?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+          visitors_involved?: Json | null
+          witnesses?: Json | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
