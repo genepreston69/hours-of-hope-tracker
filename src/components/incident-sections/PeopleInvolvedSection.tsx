@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { TiptapEditor } from '@/components/ui/tiptap-editor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2, Users } from 'lucide-react';
 import { IncidentFormData, PersonInvolved } from './useIncidentForm';
@@ -109,11 +109,11 @@ export const PeopleInvolvedSection = ({
         </div>
         <div>
           <Label className="text-xs">Statement/Notes</Label>
-          <Textarea
-            value={person.statement}
-            onChange={(e) => updatePerson(category, person.id, 'statement', e.target.value)}
+          <TiptapEditor
+            content={person.statement || ''}
+            onChange={(content) => updatePerson(category, person.id, 'statement', content)}
             placeholder="What they said or observed"
-            className="min-h-20"
+            fieldName={`${category}-${person.id}-statement`}
           />
         </div>
       </CardContent>
