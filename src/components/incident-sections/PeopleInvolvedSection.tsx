@@ -79,6 +79,9 @@ export const PeopleInvolvedSection = ({
               value={person.name}
               onChange={(e) => updatePerson(category, person.id, 'name', e.target.value)}
               placeholder="Full name"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
             />
           </div>
           <div>
@@ -87,6 +90,9 @@ export const PeopleInvolvedSection = ({
               value={person.role}
               onChange={(e) => updatePerson(category, person.id, 'role', e.target.value)}
               placeholder="Position, family member, etc."
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
             />
           </div>
         </div>
@@ -96,6 +102,9 @@ export const PeopleInvolvedSection = ({
             value={person.contactInfo}
             onChange={(e) => updatePerson(category, person.id, 'contactInfo', e.target.value)}
             placeholder="Phone number, room number, etc."
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
           />
         </div>
         <div>
