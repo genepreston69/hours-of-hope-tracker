@@ -18,6 +18,7 @@ export const QuestionPhotoUpload: React.FC<QuestionPhotoUploadProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('QuestionPhotoUpload: File input changed', questionField);
     const files = Array.from(event.target.files || []);
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
     
@@ -25,8 +26,11 @@ export const QuestionPhotoUpload: React.FC<QuestionPhotoUploadProps> = ({
       alert('Only image files are allowed');
     }
     
-    const newPhotos = [...photos, ...imageFiles];
-    onPhotosChange(newPhotos);
+    if (imageFiles.length > 0) {
+      const newPhotos = [...photos, ...imageFiles];
+      console.log('QuestionPhotoUpload: New photos', newPhotos);
+      onPhotosChange(newPhotos);
+    }
     
     // Reset the input
     event.target.value = '';
@@ -41,12 +45,19 @@ export const QuestionPhotoUpload: React.FC<QuestionPhotoUploadProps> = ({
     setIsExpanded(!isExpanded);
   };
 
+  const triggerFileInput = () => {
+    const input = document.getElementById(`photo-upload-${questionField}`);
+    if (input) {
+      input.click();
+    }
+  };
+
   return (
     <div className="mt-3 border border-gray-200 rounded-md bg-gray-50">
       <button
         type="button"
         onClick={toggleExpanded}
-        className="w-full px-3 py-2 text-left text-sm text-gray-600 hover:bg-gray-100 flex items-center justify-between"
+        className="w-full px-3 py-2 text-left text-sm text-gray-600 hover:bg-gray-100 flex items-center justify-between touch-manipulation"
       >
         <span className="flex items-center">
           <Image className="w-4 h-4 mr-2" />
@@ -61,19 +72,24 @@ export const QuestionPhotoUpload: React.FC<QuestionPhotoUploadProps> = ({
         <div className="p-3 border-t border-gray-200 bg-white">
           <div className="space-y-3">
             {/* Upload Area */}
-            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+            <div 
+              className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 touch-manipulation"
+              onClick={triggerFileInput}
+            >
               <div className="flex flex-col items-center justify-center pt-2 pb-2">
                 <Upload className="w-6 h-6 text-gray-400 mb-1" />
-                <p className="text-xs text-gray-500">Click to upload images</p>
+                <p className="text-xs text-gray-500">Tap to upload images</p>
               </div>
               <input
                 type="file"
                 className="hidden"
                 multiple
                 accept="image/*"
+                capture="environment"
                 onChange={handleFileSelect}
+                id={`photo-upload-${questionField}`}
               />
-            </label>
+            </div>
 
             {/* Photo Grid */}
             {photos.length > 0 && (
@@ -88,7 +104,7 @@ export const QuestionPhotoUpload: React.FC<QuestionPhotoUploadProps> = ({
                     <button
                       type="button"
                       onClick={() => removePhoto(index)}
-                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity touch-manipulation"
                     >
                       <X className="w-3 h-3" />
                     </button>

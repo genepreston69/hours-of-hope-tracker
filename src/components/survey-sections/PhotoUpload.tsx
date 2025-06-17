@@ -41,15 +41,27 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onPhotosChange, photos
   };
 
   const handleFiles = (newFiles: File[]) => {
+    console.log('PhotoUpload: Handling files', newFiles);
     const imageFiles = newFiles.filter(file => file.type.startsWith('image/'));
     if (imageFiles.length > 0) {
-      onPhotosChange([...photos, ...imageFiles]);
+      const updatedPhotos = [...photos, ...imageFiles];
+      console.log('PhotoUpload: Updated photos', updatedPhotos);
+      onPhotosChange(updatedPhotos);
+    } else if (newFiles.length > 0) {
+      alert('Please select only image files (JPG, PNG, GIF, etc.)');
     }
   };
 
   const removePhoto = (index: number) => {
     const updatedPhotos = photos.filter((_, i) => i !== index);
     onPhotosChange(updatedPhotos);
+  };
+
+  const triggerFileInput = () => {
+    const input = document.getElementById('photo-upload');
+    if (input) {
+      input.click();
+    }
   };
 
   return (
@@ -60,7 +72,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onPhotosChange, photos
       </div>
       
       <div
-        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
           dragActive 
             ? 'border-blue-400 bg-blue-50' 
             : 'border-gray-300 hover:border-gray-400'
@@ -69,10 +81,11 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onPhotosChange, photos
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
+        onClick={triggerFileInput}
       >
         <Upload className="w-8 h-8 text-gray-400 mx-auto mb-3" />
         <p className="text-gray-600 mb-2">
-          Drag and drop photos here, or click to select
+          Tap here to select photos or drag and drop
         </p>
         <Input
           type="file"
@@ -81,11 +94,15 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onPhotosChange, photos
           onChange={handleChange}
           className="hidden"
           id="photo-upload"
+          capture="environment"
         />
         <Button
           type="button"
           variant="outline"
-          onClick={() => document.getElementById('photo-upload')?.click()}
+          onClick={(e) => {
+            e.stopPropagation();
+            triggerFileInput();
+          }}
         >
           Choose Photos
         </Button>
@@ -110,7 +127,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onPhotosChange, photos
                 <button
                   type="button"
                   onClick={() => removePhoto(index)}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity touch-manipulation"
                 >
                   <X className="w-4 h-4" />
                 </button>
