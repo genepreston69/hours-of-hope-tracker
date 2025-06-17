@@ -1,9 +1,15 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { SectionProps } from './types';
+import { supabase } from '@/integrations/supabase/client';
+
+interface FacilityLocation {
+  id: string;
+  name: string;
+}
 
 export const ReportDetailsSection: React.FC<SectionProps> = ({ 
   formData, 
@@ -11,7 +17,47 @@ export const ReportDetailsSection: React.FC<SectionProps> = ({
   nextStep 
 }) => {
   console.log('ReportDetailsSection mounting');
-  const programOptions = ['RPB', 'RPC', 'RPH', 'RPP', 'Point Apartments'];
+  const [facilityLocations, setFacilityLocations] = useState<FacilityLocation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchFacilityLocations = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('facility_locations')
+          .select('id, name')
+          .order('name');
+
+        if (error) {
+          console.error('Error fetching facility locations:', error);
+          // Use fallback options if database fetch fails
+          setFacilityLocations([
+            { id: 'rpb', name: 'RPB' },
+            { id: 'rpc', name: 'RPC' },
+            { id: 'rph', name: 'RPH' },
+            { id: 'rpp', name: 'RPP' },
+            { id: 'point-apartments', name: 'Point Apartments' }
+          ]);
+        } else {
+          setFacilityLocations(data || []);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        // Use fallback options
+        setFacilityLocations([
+          { id: 'rpb', name: 'RPB' },
+          { id: 'rpc', name: 'RPC' },
+          { id: 'rph', name: 'RPH' },
+          { id: 'rpp', name: 'RPP' },
+          { id: 'point-apartments', name: 'Point Apartments' }
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFacilityLocations();
+  }, []);
   
   return (
     <div className="space-y-6">
@@ -22,14 +68,18 @@ export const ReportDetailsSection: React.FC<SectionProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Which program/facility is this report for? *
           </label>
-          <Select value={formData.programName} onValueChange={(value) => handleInputChange('programName', value)}>
+          <Select 
+            value={formData.programName} 
+            onValueChange={(value) => handleInputChange('programName', value)}
+            disabled={isLoading}
+          >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a program/facility" />
+              <SelectValue placeholder={isLoading ? "Loading facilities..." : "Select a program/facility"} />
             </SelectTrigger>
             <SelectContent>
-              {programOptions.map((program) => (
-                <SelectItem key={program} value={program}>
-                  {program}
+              {facilityLocations.map((facility) => (
+                <SelectItem key={facility.id} value={facility.name}>
+                  {facility.name}
                 </SelectItem>
               ))}
             </SelectContent>
