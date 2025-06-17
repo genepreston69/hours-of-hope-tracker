@@ -7,7 +7,8 @@ import {
   ClipboardList, 
   LogOut, 
   User,
-  Settings
+  Settings,
+  AlertTriangle
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -73,6 +74,12 @@ export function AppSidebar() {
       name: "Director Report", 
       path: "/recovery-survey", 
       icon: FileBarChart,
+      requireAuth: true 
+    },
+    { 
+      name: "Incident Report", 
+      path: "/incident-report", 
+      icon: AlertTriangle,
       requireAuth: true 
     },
     { 

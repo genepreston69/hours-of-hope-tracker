@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import ServiceEntry from "./pages/ServiceEntry";
 import RecoverySurvey from "./pages/RecoverySurvey";
+import IncidentReport from "./pages/IncidentReport";
 import Customers from "./pages/Customers";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
@@ -64,6 +65,16 @@ function App() {
                     <ProtectedRoute>
                       <Layout>
                         <RecoverySurvey />
+                      </Layout>
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/incident-report" 
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <IncidentReport />
                       </Layout>
                     </ProtectedRoute>
                   } 
