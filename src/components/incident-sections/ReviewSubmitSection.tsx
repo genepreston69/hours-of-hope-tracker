@@ -41,10 +41,10 @@ export const ReviewSubmitSection = ({
         incident_description: formData.incidentDescription,
         immediate_cause: formData.immediateCause,
         contributing_factors: formData.contributingFactors,
-        residents_involved: formData.residentsInvolved,
-        staff_involved: formData.staffInvolved,
-        visitors_involved: formData.visitorsInvolved,
-        witnesses: formData.witnesses,
+        residents_involved: JSON.parse(JSON.stringify(formData.residentsInvolved)),
+        staff_involved: JSON.parse(JSON.stringify(formData.staffInvolved)),
+        visitors_involved: JSON.parse(JSON.stringify(formData.visitorsInvolved)),
+        witnesses: JSON.parse(JSON.stringify(formData.witnesses)),
         injuries_sustained: formData.injuriesSustained,
         medical_treatment_provided: formData.medicalTreatmentProvided,
         medical_professional_contacted: formData.medicalProfessionalContacted,
@@ -70,7 +70,7 @@ export const ReviewSubmitSection = ({
 
       const { error } = await supabase
         .from('incident_reports')
-        .insert([reportData]);
+        .insert(reportData);
 
       if (error) throw error;
 
