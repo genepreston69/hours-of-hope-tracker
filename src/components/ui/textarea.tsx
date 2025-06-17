@@ -16,6 +16,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
         ref={ref}
         spellCheck="true"
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
         {...props}
       />
     )
