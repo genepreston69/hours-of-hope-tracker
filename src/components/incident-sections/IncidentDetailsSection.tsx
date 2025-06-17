@@ -18,7 +18,7 @@ export const IncidentDetailsSection = ({
   nextStep, 
   prevStep 
 }: IncidentDetailsSectionProps) => {
-  const canProceed = formData.incidentDescription.trim().length > 0;
+  const canProceed = formData.incidentDescription && formData.immediateCause;
 
   return (
     <div className="space-y-6">
@@ -28,28 +28,26 @@ export const IncidentDetailsSection = ({
       </div>
 
       <div>
-        <Label htmlFor="incidentDescription">What happened? *</Label>
+        <Label htmlFor="incidentDescription">Incident Description *</Label>
         <Textarea
           id="incidentDescription"
+          placeholder="Describe what happened in detail..."
           value={formData.incidentDescription}
           onChange={(e) => handleInputChange('incidentDescription', e.target.value)}
-          placeholder="Provide a detailed, objective description of the incident. Include the sequence of events, what you observed, and any immediate circumstances."
-          className="min-h-32"
+          className="min-h-[120px]"
           required
         />
-        <p className="text-sm text-gray-500 mt-1">
-          Be specific and factual. Avoid speculation or opinions.
-        </p>
       </div>
 
       <div>
-        <Label htmlFor="immediateCause">Immediate Cause</Label>
+        <Label htmlFor="immediateCause">Immediate Cause *</Label>
         <Textarea
           id="immediateCause"
+          placeholder="What was the immediate cause of this incident?"
           value={formData.immediateCause}
           onChange={(e) => handleInputChange('immediateCause', e.target.value)}
-          placeholder="What was the direct cause of this incident? (e.g., wet floor, equipment failure, medical condition)"
-          className="min-h-24"
+          className="min-h-[100px]"
+          required
         />
       </div>
 
@@ -57,21 +55,11 @@ export const IncidentDetailsSection = ({
         <Label htmlFor="contributingFactors">Contributing Factors</Label>
         <Textarea
           id="contributingFactors"
+          placeholder="Were there any contributing factors? (optional)"
           value={formData.contributingFactors}
           onChange={(e) => handleInputChange('contributingFactors', e.target.value)}
-          placeholder="What factors may have contributed to this incident? (e.g., lighting conditions, staffing levels, resident condition, environmental factors)"
-          className="min-h-24"
+          className="min-h-[100px]"
         />
-      </div>
-
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="font-medium text-blue-900 mb-2">Writing Tips</h4>
-        <ul className="text-sm text-blue-800 space-y-1">
-          <li>• Use objective language (what you saw, heard, or observed)</li>
-          <li>• Include specific times, locations, and sequence of events</li>
-          <li>• Avoid blame, assumptions, or opinions</li>
-          <li>• Include relevant environmental conditions</li>
-        </ul>
       </div>
 
       <div className="flex justify-between pt-6">
