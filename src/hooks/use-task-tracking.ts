@@ -10,7 +10,7 @@ export interface TaskStatus {
   directorReportCompleted: boolean;
   weekStart: Date;
   weekEnd: Date;
-  daysUntilFriday: number;
+  daysUntilMonday: number;
   isOverdue: boolean;
 }
 
@@ -31,14 +31,15 @@ export const useTaskTracking = (serviceEntries: ServiceEntry[]) => {
     weekEnd.setDate(weekStart.getDate() + 4); // Friday
     weekEnd.setHours(23, 59, 59, 999);
     
-    const friday = new Date(weekStart);
-    friday.setDate(weekStart.getDate() + 4);
-    friday.setHours(17, 0, 0, 0); // 5 PM Friday deadline
+    // Director report due Monday of following week at 5 PM
+    const mondayNextWeek = new Date(weekStart);
+    mondayNextWeek.setDate(weekStart.getDate() + 7); // Monday of next week
+    mondayNextWeek.setHours(17, 0, 0, 0); // 5 PM Monday deadline
     
-    const daysUntilFriday = Math.ceil((friday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    const isOverdue = now > friday;
+    const daysUntilMonday = Math.ceil((mondayNextWeek.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const isOverdue = now > mondayNextWeek;
     
-    return { weekStart, weekEnd, daysUntilFriday, isOverdue };
+    return { weekStart, weekEnd, daysUntilMonday, isOverdue };
   }, []);
 
   // Check if service hours completed this week
@@ -78,7 +79,7 @@ export const useTaskTracking = (serviceEntries: ServiceEntry[]) => {
     directorReportCompleted,
     weekStart: weekBoundaries.weekStart,
     weekEnd: weekBoundaries.weekEnd,
-    daysUntilFriday: weekBoundaries.daysUntilFriday,
+    daysUntilMonday: weekBoundaries.daysUntilMonday,
     isOverdue: weekBoundaries.isOverdue
   };
 

@@ -15,7 +15,7 @@ export const TaskNotifications = ({ taskStatus, user }: TaskNotificationsProps) 
   const {
     serviceHoursCompleted,
     directorReportCompleted,
-    daysUntilFriday,
+    daysUntilMonday,
     isOverdue
   } = taskStatus;
 
@@ -58,7 +58,7 @@ export const TaskNotifications = ({ taskStatus, user }: TaskNotificationsProps) 
         title: 'Overdue Tasks',
         message: 'These weekly tasks are past due. Please complete them as soon as possible.'
       };
-    } else if (daysUntilFriday <= 1) {
+    } else if (daysUntilMonday <= 1) {
       return {
         icon: AlertTriangle,
         bgColor: 'bg-orange-50',
@@ -67,7 +67,7 @@ export const TaskNotifications = ({ taskStatus, user }: TaskNotificationsProps) 
         titleColor: 'text-orange-900',
         textColor: 'text-orange-700',
         title: 'Urgent: Due Soon',
-        message: `${daysUntilFriday === 0 ? 'Due today' : 'Due tomorrow'} by 5 PM`
+        message: `${daysUntilMonday === 0 ? 'Due today' : 'Due tomorrow'} by 5 PM`
       };
     } else {
       return {
@@ -78,7 +78,7 @@ export const TaskNotifications = ({ taskStatus, user }: TaskNotificationsProps) 
         titleColor: 'text-blue-900',
         textColor: 'text-blue-700',
         title: 'Weekly Tasks Pending',
-        message: `Due Friday (${daysUntilFriday} day${daysUntilFriday !== 1 ? 's' : ''} remaining)`
+        message: `Due Monday (${daysUntilMonday} day${daysUntilMonday !== 1 ? 's' : ''} remaining)`
       };
     }
   };
