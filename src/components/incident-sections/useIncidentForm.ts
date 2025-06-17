@@ -159,7 +159,7 @@ export const useIncidentForm = (user: any) => {
         additional_documentation: formData.additionalDocumentation,
         report_status: formData.reportStatus,
         last_saved_at: new Date().toISOString(),
-        auto_save_data: formData
+        auto_save_data: formData as any // Cast to any to resolve type compatibility
       };
 
       if (reportId) {
