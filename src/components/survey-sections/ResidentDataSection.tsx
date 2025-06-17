@@ -32,6 +32,7 @@ export const ResidentDataSection: React.FC<SectionProps> = ({
     {
       group: 'Current Residents',
       items: [
+        { field: 'otsCount', label: 'How many residents are currently in OTS?', type: 'number' },
         { field: 'phase1Count', label: 'How many residents are currently in Phase 1?', type: 'number' },
         { field: 'phase2Count', label: 'How many residents are currently in Phase 2?', type: 'number' }
       ]

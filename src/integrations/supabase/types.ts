@@ -125,6 +125,7 @@ export type Database = {
           mat_clients: number | null
           mat_intakes: number | null
           meeting_dates: string | null
+          ots_count: number | null
           ots1_orientations: number | null
           peer_mentors: number | null
           phase1_completions: number | null
@@ -164,6 +165,7 @@ export type Database = {
           mat_clients?: number | null
           mat_intakes?: number | null
           meeting_dates?: string | null
+          ots_count?: number | null
           ots1_orientations?: number | null
           peer_mentors?: number | null
           phase1_completions?: number | null
@@ -203,6 +205,7 @@ export type Database = {
           mat_clients?: number | null
           mat_intakes?: number | null
           meeting_dates?: string | null
+          ots_count?: number | null
           ots1_orientations?: number | null
           peer_mentors?: number | null
           phase1_completions?: number | null

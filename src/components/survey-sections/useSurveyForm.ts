@@ -32,6 +32,7 @@ export interface FormData {
   staffingNeeds: string;
   
   // Resident Data
+  otsCount: string;
   phase1Count: string;
   phase2Count: string;
   phase1Completions: string;
@@ -88,6 +89,7 @@ export const useSurveyForm = (user: any) => {
     staffingNeeds: '',
     
     // Resident Data
+    otsCount: '',
     phase1Count: '',
     phase2Count: '',
     phase1Completions: '',
