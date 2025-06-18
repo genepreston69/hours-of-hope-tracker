@@ -8,7 +8,8 @@ import {
   LogOut, 
   User,
   Settings,
-  AlertTriangle
+  AlertTriangle,
+  PieChart
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -74,6 +75,12 @@ export function AppSidebar() {
       name: "Director Report", 
       path: "/recovery-survey", 
       icon: FileBarChart,
+      requireAuth: true 
+    },
+    { 
+      name: "Director Dashboard", 
+      path: "/director-dashboard", 
+      icon: PieChart,
       requireAuth: true 
     },
     { 

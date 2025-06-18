@@ -4,78 +4,41 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/hooks/use-auth";
 import { AppProvider } from "@/context/AppContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import Layout from "@/components/Layout";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { Layout } from "@/components/Layout";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
-import Auth from "./pages/Auth";
 import ServiceEntry from "./pages/ServiceEntry";
-import RecoverySurvey from "./pages/RecoverySurvey";
-import IncidentReport from "./pages/IncidentReport";
+import Auth from "./pages/Auth";
 import Customers from "./pages/Customers";
+import RecoverySurvey from "./pages/RecoverySurvey";
+import DirectorDashboard from "./pages/DirectorDashboard";
+import IncidentReport from "./pages/IncidentReport";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <AppProvider>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route 
-                  path="/auth" 
-                  element={
-                    <ProtectedRoute requireAuth={false}>
-                      <Auth />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/dashboard" 
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Dashboard />
-                      </Layout>
-                    </ProtectedRoute>
-                  } 
-                />
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AppProvider>
+          <SidebarProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route element={<Layout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route 
                   path="/service-entry" 
                   element={
                     <ProtectedRoute>
-                      <Layout>
-                        <ServiceEntry />
-                      </Layout>
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/recovery-survey" 
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <RecoverySurvey />
-                      </Layout>
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/incident-report" 
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <IncidentReport />
-                      </Layout>
+                      <ServiceEntry />
                     </ProtectedRoute>
                   } 
                 />
@@ -83,9 +46,31 @@ function App() {
                   path="/customers" 
                   element={
                     <ProtectedRoute>
-                      <Layout>
-                        <Customers />
-                      </Layout>
+                      <Customers />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/recovery-survey" 
+                  element={
+                    <ProtectedRoute>
+                      <RecoverySurvey />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/director-dashboard" 
+                  element={
+                    <ProtectedRoute>
+                      <DirectorDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/incident-report" 
+                  element={
+                    <ProtectedRoute>
+                      <IncidentReport />
                     </ProtectedRoute>
                   } 
                 />
@@ -93,20 +78,18 @@ function App() {
                   path="/reports" 
                   element={
                     <ProtectedRoute>
-                      <Layout>
-                        <Reports />
-                      </Layout>
+                      <Reports />
                     </ProtectedRoute>
                   } 
                 />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </AppProvider>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-}
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </SidebarProvider>
+        </AppProvider>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
