@@ -41,25 +41,43 @@ const DirectorDashboard = () => {
   const [surveys, setSurveys] = useState<RecoverySurvey[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSurvey, setSelectedSurvey] = useState<RecoverySurvey | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     document.title = "Director Dashboard | Service Community";
     if (user) {
+      console.log("DirectorDashboard: User authenticated, fetching surveys...", user.email);
       fetchSurveys();
+    } else {
+      console.log("DirectorDashboard: No authenticated user");
+      setLoading(false);
     }
   }, [user]);
 
   const fetchSurveys = async () => {
     try {
-      const { data, error } = await supabase
+      console.log("DirectorDashboard: Starting survey fetch...");
+      setError(null);
+      
+      const { data, error, count } = await supabase
         .from('recovery_surveys')
-        .select('*')
+        .select('*', { count: 'exact' })
         .order('report_date', { ascending: false });
 
-      if (error) throw error;
+      console.log("DirectorDashboard: Query result:", { data, error, count });
+
+      if (error) {
+        console.error('DirectorDashboard: Error fetching surveys:', error);
+        setError(`Failed to fetch surveys: ${error.message}`);
+        toast.error('Failed to load survey data: ' + error.message);
+        throw error;
+      }
+      
+      console.log(`DirectorDashboard: Successfully fetched ${data?.length || 0} surveys from ${count || 0} total`);
       setSurveys(data || []);
-    } catch (error) {
-      console.error('Error fetching surveys:', error);
+    } catch (error: any) {
+      console.error('DirectorDashboard: Unexpected error:', error);
+      setError(`Unexpected error: ${error.message || 'Unknown error'}`);
       toast.error('Failed to load survey data');
     } finally {
       setLoading(false);
@@ -133,293 +151,333 @@ const DirectorDashboard = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <FileText className="h-12 w-12 mx-auto mb-2" />
+            <h3 className="text-lg font-semibold">Error Loading Data</h3>
+          </div>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={fetchSurveys}>Try Again</Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-semibold">Authentication Required</h3>
+          <p className="text-muted-foreground">Please sign in to view the Director Dashboard.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
         <div>
           <h1 className="text-3xl font-bold">Director Dashboard</h1>
           <p className="text-muted-foreground mt-1">Recovery program analytics and insights</p>
+          {surveys.length === 0 && (
+            <p className="text-amber-600 mt-2">No director reports found. Submit reports through the Director Report page to see analytics.</p>
+          )}
         </div>
         <Button onClick={fetchSurveys} disabled={loading}>
           Refresh Data
         </Button>
       </div>
 
-      {/* Overview Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalSurveys}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Phase 1 Residents</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalPhase1}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Phase 2 Residents</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalPhase2}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Intakes</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalIntakes}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Discharges</CardTitle>
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalDischarges}</div>
-          </CardContent>
-        </Card>
-      </div>
+      {surveys.length === 0 ? (
+        <div className="text-center py-16">
+          <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-xl font-semibold mb-2">No Director Reports Found</h3>
+          <p className="text-muted-foreground mb-4 max-w-md mx-auto">
+            Start by submitting director reports through the "Director Report" page to see comprehensive analytics and insights here.
+          </p>
+          <Button onClick={() => window.location.href = '/recovery-survey'}>
+            Submit First Report
+          </Button>
+        </div>
+      ) : (
+        <>
+          {/* Overview Stats */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalSurveys}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Phase 1 Residents</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalPhase1}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Phase 2 Residents</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalPhase2}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Intakes</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalIntakes}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Discharges</CardTitle>
+                <CalendarDays className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalDischarges}</div>
+              </CardContent>
+            </Card>
+          </div>
 
-      {/* Charts Section */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Phase Distribution</CardTitle>
-            <CardDescription>Current resident distribution across phases</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={getPhaseDistributionData()}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, count }) => `${name}: ${count}`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {getPhaseDistributionData().map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          {/* Charts Section */}
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Phase Distribution</CardTitle>
+                <CardDescription>Current resident distribution across phases</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={getPhaseDistributionData()}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, count }) => `${name}: ${count}`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {getPhaseDistributionData().map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Intake Types</CardTitle>
+                <CardDescription>Breakdown of intake sources</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={getIntakeTypeData()}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, count }) => `${name}: ${count}`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {getIntakeTypeData().map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Monthly Trends */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Monthly Trends</CardTitle>
+              <CardDescription>6-month trend analysis</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart data={getMonthlyTrendsData()}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="intakes" stroke="#8884d8" name="Intakes" />
+                  <Line type="monotone" dataKey="discharges" stroke="#82ca9d" name="Discharges" />
+                  <Line type="monotone" dataKey="phase1" stroke="#ffc658" name="Phase 1" />
+                  <Line type="monotone" dataKey="phase2" stroke="#ff7300" name="Phase 2" />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Reports Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Director Reports</CardTitle>
+              <CardDescription>All submitted director reports with option to view details</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Report Date</TableHead>
+                    <TableHead>Program Name</TableHead>
+                    <TableHead>Reporter</TableHead>
+                    <TableHead>Phase 1</TableHead>
+                    <TableHead>Phase 2</TableHead>
+                    <TableHead>Total Intakes</TableHead>
+                    <TableHead>Discharges</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {surveys.map((survey) => (
+                    <TableRow key={survey.id}>
+                      <TableCell>{new Date(survey.report_date).toLocaleDateString()}</TableCell>
+                      <TableCell>{survey.program_name || 'N/A'}</TableCell>
+                      <TableCell>{survey.reporter_name || 'N/A'}</TableCell>
+                      <TableCell>{survey.phase1_count || 0}</TableCell>
+                      <TableCell>{survey.phase2_count || 0}</TableCell>
+                      <TableCell>{survey.total_intakes || 0}</TableCell>
+                      <TableCell>{survey.discharges || 0}</TableCell>
+                      <TableCell>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setSelectedSurvey(survey)}
+                            >
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-4xl max-h-[80vh]">
+                            <DialogHeader>
+                              <DialogTitle>Director Report Details</DialogTitle>
+                              <DialogDescription>
+                                Report from {new Date(survey.report_date).toLocaleDateString()}
+                              </DialogDescription>
+                            </DialogHeader>
+                            {selectedSurvey && (
+                              <ScrollArea className="h-[60vh] pr-4">
+                                <div className="space-y-4">
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <h4 className="font-semibold">Program Information</h4>
+                                      <p>Program: {selectedSurvey.program_name || 'N/A'}</p>
+                                      <p>Reporter: {selectedSurvey.reporter_name || 'N/A'}</p>
+                                      <p>Report Date: {new Date(selectedSurvey.report_date).toLocaleDateString()}</p>
+                                    </div>
+                                    <div>
+                                      <h4 className="font-semibold">Staff Meetings</h4>
+                                      <p>{selectedSurvey.staff_meetings || 0} meetings</p>
+                                    </div>
+                                  </div>
+                                  
+                                  <Separator />
+                                  
+                                  <div>
+                                    <h4 className="font-semibold mb-2">Resident Data</h4>
+                                    <div className="grid grid-cols-3 gap-4">
+                                      <div>
+                                        <p className="text-sm text-muted-foreground">Phase 1 Count</p>
+                                        <p className="text-lg font-semibold">{selectedSurvey.phase1_count || 0}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-sm text-muted-foreground">Phase 2 Count</p>
+                                        <p className="text-lg font-semibold">{selectedSurvey.phase2_count || 0}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-sm text-muted-foreground">Peer Mentors</p>
+                                        <p className="text-lg font-semibold">{selectedSurvey.peer_mentors || 0}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  <Separator />
+                                  
+                                  <div>
+                                    <h4 className="font-semibold mb-2">Intake Information</h4>
+                                    <div className="grid grid-cols-4 gap-4">
+                                      <div>
+                                        <p className="text-sm text-muted-foreground">Total Intakes</p>
+                                        <p className="text-lg font-semibold">{selectedSurvey.total_intakes || 0}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-sm text-muted-foreground">MAT Intakes</p>
+                                        <p className="text-lg font-semibold">{selectedSurvey.mat_intakes || 0}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-sm text-muted-foreground">Court Intakes</p>
+                                        <p className="text-lg font-semibold">{selectedSurvey.court_intakes || 0}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-sm text-muted-foreground">OTS Count</p>
+                                        <p className="text-lg font-semibold">{selectedSurvey.ots_count || 0}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  <Separator />
+                                  
+                                  <div>
+                                    <h4 className="font-semibold mb-2">Other Metrics</h4>
+                                    <div className="grid grid-cols-3 gap-4">
+                                      <div>
+                                        <p className="text-sm text-muted-foreground">Discharges</p>
+                                        <p className="text-lg font-semibold">{selectedSurvey.discharges || 0}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-sm text-muted-foreground">Drug Screens</p>
+                                        <p className="text-lg font-semibold">{selectedSurvey.drug_screens || 0}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-sm text-muted-foreground">MAT Clients</p>
+                                        <p className="text-lg font-semibold">{selectedSurvey.mat_clients || 0}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </ScrollArea>
+                            )}
+                          </DialogContent>
+                        </Dialog>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Intake Types</CardTitle>
-            <CardDescription>Breakdown of intake sources</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={getIntakeTypeData()}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, count }) => `${name}: ${count}`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {getIntakeTypeData().map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Monthly Trends */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Monthly Trends</CardTitle>
-          <CardDescription>6-month trend analysis</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={getMonthlyTrendsData()}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="intakes" stroke="#8884d8" name="Intakes" />
-              <Line type="monotone" dataKey="discharges" stroke="#82ca9d" name="Discharges" />
-              <Line type="monotone" dataKey="phase1" stroke="#ffc658" name="Phase 1" />
-              <Line type="monotone" dataKey="phase2" stroke="#ff7300" name="Phase 2" />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* Reports Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Director Reports</CardTitle>
-          <CardDescription>All submitted director reports with option to view details</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Report Date</TableHead>
-                <TableHead>Program Name</TableHead>
-                <TableHead>Reporter</TableHead>
-                <TableHead>Phase 1</TableHead>
-                <TableHead>Phase 2</TableHead>
-                <TableHead>Total Intakes</TableHead>
-                <TableHead>Discharges</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {surveys.map((survey) => (
-                <TableRow key={survey.id}>
-                  <TableCell>{new Date(survey.report_date).toLocaleDateString()}</TableCell>
-                  <TableCell>{survey.program_name || 'N/A'}</TableCell>
-                  <TableCell>{survey.reporter_name || 'N/A'}</TableCell>
-                  <TableCell>{survey.phase1_count || 0}</TableCell>
-                  <TableCell>{survey.phase2_count || 0}</TableCell>
-                  <TableCell>{survey.total_intakes || 0}</TableCell>
-                  <TableCell>{survey.discharges || 0}</TableCell>
-                  <TableCell>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setSelectedSurvey(survey)}
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          View
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-4xl max-h-[80vh]">
-                        <DialogHeader>
-                          <DialogTitle>Director Report Details</DialogTitle>
-                          <DialogDescription>
-                            Report from {new Date(survey.report_date).toLocaleDateString()}
-                          </DialogDescription>
-                        </DialogHeader>
-                        {selectedSurvey && (
-                          <ScrollArea className="h-[60vh] pr-4">
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <h4 className="font-semibold">Program Information</h4>
-                                  <p>Program: {selectedSurvey.program_name || 'N/A'}</p>
-                                  <p>Reporter: {selectedSurvey.reporter_name || 'N/A'}</p>
-                                  <p>Report Date: {new Date(selectedSurvey.report_date).toLocaleDateString()}</p>
-                                </div>
-                                <div>
-                                  <h4 className="font-semibold">Staff Meetings</h4>
-                                  <p>{selectedSurvey.staff_meetings || 0} meetings</p>
-                                </div>
-                              </div>
-                              
-                              <Separator />
-                              
-                              <div>
-                                <h4 className="font-semibold mb-2">Resident Data</h4>
-                                <div className="grid grid-cols-3 gap-4">
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">Phase 1 Count</p>
-                                    <p className="text-lg font-semibold">{selectedSurvey.phase1_count || 0}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">Phase 2 Count</p>
-                                    <p className="text-lg font-semibold">{selectedSurvey.phase2_count || 0}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">Peer Mentors</p>
-                                    <p className="text-lg font-semibold">{selectedSurvey.peer_mentors || 0}</p>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              <Separator />
-                              
-                              <div>
-                                <h4 className="font-semibold mb-2">Intake Information</h4>
-                                <div className="grid grid-cols-4 gap-4">
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">Total Intakes</p>
-                                    <p className="text-lg font-semibold">{selectedSurvey.total_intakes || 0}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">MAT Intakes</p>
-                                    <p className="text-lg font-semibold">{selectedSurvey.mat_intakes || 0}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">Court Intakes</p>
-                                    <p className="text-lg font-semibold">{selectedSurvey.court_intakes || 0}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">OTS Count</p>
-                                    <p className="text-lg font-semibold">{selectedSurvey.ots_count || 0}</p>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              <Separator />
-                              
-                              <div>
-                                <h4 className="font-semibold mb-2">Other Metrics</h4>
-                                <div className="grid grid-cols-3 gap-4">
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">Discharges</p>
-                                    <p className="text-lg font-semibold">{selectedSurvey.discharges || 0}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">Drug Screens</p>
-                                    <p className="text-lg font-semibold">{selectedSurvey.drug_screens || 0}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">MAT Clients</p>
-                                    <p className="text-lg font-semibold">{selectedSurvey.mat_clients || 0}</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </ScrollArea>
-                        )}
-                      </DialogContent>
-                    </Dialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {surveys.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              No director reports found. Submit your first report to see analytics.
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 };
