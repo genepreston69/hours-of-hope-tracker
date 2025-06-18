@@ -61,6 +61,14 @@ const DirectorDashboard = () => {
   const [selectedSurvey, setSelectedSurvey] = useState<RecoverySurvey | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Function to strip HTML tags from text
+  const stripHtml = (html: string) => {
+    if (!html) return '';
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    return temp.textContent || temp.innerText || '';
+  };
+
   useEffect(() => {
     document.title = "Director Dashboard | Service Community";
     if (user) {
@@ -410,11 +418,11 @@ const DirectorDashboard = () => {
                                     <div className="grid grid-cols-2 gap-4">
                                       <div>
                                         <p className="text-sm text-muted-foreground">Program</p>
-                                        <p className="font-medium">{selectedSurvey.program_name || 'N/A'}</p>
+                                        <p className="font-medium">{stripHtml(selectedSurvey.program_name) || 'N/A'}</p>
                                       </div>
                                       <div>
                                         <p className="text-sm text-muted-foreground">Reporter</p>
-                                        <p className="font-medium">{selectedSurvey.reporter_name || 'N/A'}</p>
+                                        <p className="font-medium">{stripHtml(selectedSurvey.reporter_name) || 'N/A'}</p>
                                       </div>
                                       <div>
                                         <p className="text-sm text-muted-foreground">Report Date</p>
@@ -434,7 +442,7 @@ const DirectorDashboard = () => {
                                     <>
                                       <div>
                                         <h4 className="font-semibold mb-2">Week Summary</h4>
-                                        <p className="text-sm">{selectedSurvey.week_summary}</p>
+                                        <p className="text-sm">{stripHtml(selectedSurvey.week_summary)}</p>
                                       </div>
                                       <Separator />
                                     </>
@@ -449,13 +457,13 @@ const DirectorDashboard = () => {
                                           {selectedSurvey.events && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Recent Events</p>
-                                              <p className="text-sm">{selectedSurvey.events}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.events)}</p>
                                             </div>
                                           )}
                                           {selectedSurvey.upcoming_events && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Upcoming Events</p>
-                                              <p className="text-sm">{selectedSurvey.upcoming_events}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.upcoming_events)}</p>
                                             </div>
                                           )}
                                         </div>
@@ -469,7 +477,7 @@ const DirectorDashboard = () => {
                                     <>
                                       <div>
                                         <h4 className="font-semibold mb-2">Accomplishments</h4>
-                                        <p className="text-sm">{selectedSurvey.accomplishments}</p>
+                                        <p className="text-sm">{stripHtml(selectedSurvey.accomplishments)}</p>
                                       </div>
                                       <Separator />
                                     </>
@@ -484,25 +492,25 @@ const DirectorDashboard = () => {
                                           {selectedSurvey.meeting_dates && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Meeting Dates</p>
-                                              <p className="text-sm">{selectedSurvey.meeting_dates}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.meeting_dates)}</p>
                                             </div>
                                           )}
                                           {selectedSurvey.evaluations && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Evaluations</p>
-                                              <p className="text-sm">{selectedSurvey.evaluations}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.evaluations)}</p>
                                             </div>
                                           )}
                                           {selectedSurvey.evaluation_details && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Evaluation Details</p>
-                                              <p className="text-sm">{selectedSurvey.evaluation_details}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.evaluation_details)}</p>
                                             </div>
                                           )}
                                           {selectedSurvey.staffing_needs && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Staffing Needs</p>
-                                              <p className="text-sm">{selectedSurvey.staffing_needs}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.staffing_needs)}</p>
                                             </div>
                                           )}
                                         </div>
@@ -545,13 +553,13 @@ const DirectorDashboard = () => {
                                         {selectedSurvey.phase1_next_steps && (
                                           <div>
                                             <p className="text-sm text-muted-foreground">Phase 1 Next Steps</p>
-                                            <p className="text-sm">{selectedSurvey.phase1_next_steps}</p>
+                                            <p className="text-sm">{stripHtml(selectedSurvey.phase1_next_steps)}</p>
                                           </div>
                                         )}
                                         {selectedSurvey.phase2_next_steps && (
                                           <div>
                                             <p className="text-sm text-muted-foreground">Phase 2 Next Steps</p>
-                                            <p className="text-sm">{selectedSurvey.phase2_next_steps}</p>
+                                            <p className="text-sm">{stripHtml(selectedSurvey.phase2_next_steps)}</p>
                                           </div>
                                         )}
                                       </div>
@@ -618,7 +626,7 @@ const DirectorDashboard = () => {
                                     {selectedSurvey.discharge_reasons && (
                                       <div className="mt-3">
                                         <p className="text-sm text-muted-foreground">Discharge Reasons</p>
-                                        <p className="text-sm">{selectedSurvey.discharge_reasons}</p>
+                                        <p className="text-sm">{stripHtml(selectedSurvey.discharge_reasons)}</p>
                                       </div>
                                     )}
                                   </div>
@@ -633,31 +641,31 @@ const DirectorDashboard = () => {
                                           {selectedSurvey.facility_issues && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Facility Issues</p>
-                                              <p className="text-sm">{selectedSurvey.facility_issues}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.facility_issues)}</p>
                                             </div>
                                           )}
                                           {selectedSurvey.supply_needs && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Supply Needs</p>
-                                              <p className="text-sm">{selectedSurvey.supply_needs}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.supply_needs)}</p>
                                             </div>
                                           )}
                                           {selectedSurvey.program_concerns && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Program Concerns</p>
-                                              <p className="text-sm">{selectedSurvey.program_concerns}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.program_concerns)}</p>
                                             </div>
                                           )}
                                           {selectedSurvey.celebrations && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Celebrations</p>
-                                              <p className="text-sm">{selectedSurvey.celebrations}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.celebrations)}</p>
                                             </div>
                                           )}
                                           {selectedSurvey.additional_comments && (
                                             <div>
                                               <p className="text-sm text-muted-foreground">Additional Comments</p>
-                                              <p className="text-sm">{selectedSurvey.additional_comments}</p>
+                                              <p className="text-sm">{stripHtml(selectedSurvey.additional_comments)}</p>
                                             </div>
                                           )}
                                         </div>
