@@ -1,0 +1,117 @@
+
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Eye } from "lucide-react";
+import { ReportDetailsDialog } from "./ReportDetailsDialog";
+
+interface RecoverySurvey {
+  id: string;
+  report_date: string;
+  program_name: string;
+  reporter_name: string;
+  week_summary: string;
+  events: string;
+  upcoming_events: string;
+  accomplishments: string;
+  staff_meetings: number;
+  meeting_dates: string;
+  evaluations: string;
+  evaluation_details: string;
+  staffing_needs: string;
+  phase1_count: number;
+  phase2_count: number;
+  phase1_completions: number;
+  phase1_next_steps: string;
+  phase2_completions: number;
+  phase2_next_steps: string;
+  peer_mentors: number;
+  mat_clients: number;
+  total_intakes: number;
+  mat_intakes: number;
+  court_intakes: number;
+  scheduled_intakes: number;
+  ots1_orientations: number;
+  ots_count: number;
+  discharges: number;
+  discharge_reasons: string;
+  drug_screens: number;
+  facility_issues: string;
+  supply_needs: string;
+  program_concerns: string;
+  celebrations: string;
+  additional_comments: string;
+  created_at: string;
+  user_id: string;
+}
+
+interface ReportsTableProps {
+  surveys: RecoverySurvey[];
+}
+
+export const ReportsTable = ({ surveys }: ReportsTableProps) => {
+  const [selectedSurvey, setSelectedSurvey] = useState<RecoverySurvey | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleViewReport = (survey: RecoverySurvey) => {
+    setSelectedSurvey(survey);
+    setDialogOpen(true);
+  };
+
+  return (
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Director Reports</CardTitle>
+          <CardDescription>All submitted director reports with option to view details</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Report Date</TableHead>
+                <TableHead>Program Name</TableHead>
+                <TableHead>Reporter</TableHead>
+                <TableHead>Phase 1</TableHead>
+                <TableHead>Phase 2</TableHead>
+                <TableHead>Total Intakes</TableHead>
+                <TableHead>Discharges</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {surveys.map((survey) => (
+                <TableRow key={survey.id}>
+                  <TableCell>{new Date(survey.report_date).toLocaleDateString()}</TableCell>
+                  <TableCell>{survey.program_name || 'N/A'}</TableCell>
+                  <TableCell>{survey.reporter_name || 'N/A'}</TableCell>
+                  <TableCell>{survey.phase1_count || 0}</TableCell>
+                  <TableCell>{survey.phase2_count || 0}</TableCell>
+                  <TableCell>{survey.total_intakes || 0}</TableCell>
+                  <TableCell>{survey.discharges || 0}</TableCell>
+                  <TableCell>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleViewReport(survey)}
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <ReportDetailsDialog
+        selectedSurvey={selectedSurvey}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
+    </>
+  );
+};
