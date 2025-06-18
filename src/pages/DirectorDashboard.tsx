@@ -5,15 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, Users, TrendingUp, FileText, Eye, MapPin } from "lucide-react";
+import { CalendarDays, Users, TrendingUp, FileText, Eye } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LOCATION_OPTIONS } from "@/constants/locations";
 
 interface RecoverySurvey {
   id: string;
@@ -45,7 +43,6 @@ const DirectorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSurvey, setSelectedSurvey] = useState<RecoverySurvey | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<string>("all");
 
   useEffect(() => {
     document.title = "Director Dashboard | Service Community";
@@ -88,25 +85,19 @@ const DirectorDashboard = () => {
     }
   };
 
-  // Filter surveys based on selected location
-  const filteredSurveys = selectedLocation === "all" 
-    ? surveys 
-    : surveys.filter(survey => survey.program_name === selectedLocation);
-
   const getOverviewStats = () => {
-    const totalSurveys = filteredSurveys.length;
-    const totalPhase1 = filteredSurveys.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
-    const totalPhase2 = filteredSurveys.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
-    const totalIntakes = filteredSurveys.reduce((sum, s) => sum + (s.total_intakes || 0), 0);
-    const totalDischarges = filteredSurveys.reduce((sum, s) => sum + (s.discharges || 0), 0);
-    const totalOTS = filteredSurveys.reduce((sum, s) => sum + (s.ots_count || 0), 0);
+    const totalSurveys = surveys.length;
+    const totalPhase1 = surveys.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
+    const totalPhase2 = surveys.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
+    const totalIntakes = surveys.reduce((sum, s) => sum + (s.total_intakes || 0), 0);
+    const totalDischarges = surveys.reduce((sum, s) => sum + (s.discharges || 0), 0);
 
-    return { totalSurveys, totalPhase1, totalPhase2, totalIntakes, totalDischarges, totalOTS };
+    return { totalSurveys, totalPhase1, totalPhase2, totalIntakes, totalDischarges };
   };
 
   const getPhaseDistributionData = () => {
-    const phase1Total = filteredSurveys.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
-    const phase2Total = filteredSurveys.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
+    const phase1Total = surveys.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
+    const phase2Total = surveys.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
     
     return [
       { name: 'Phase 1', value: phase1Total, count: phase1Total },
@@ -115,9 +106,9 @@ const DirectorDashboard = () => {
   };
 
   const getIntakeTypeData = () => {
-    const matIntakes = filteredSurveys.reduce((sum, s) => sum + (s.mat_intakes || 0), 0);
-    const courtIntakes = filteredSurveys.reduce((sum, s) => sum + (s.court_intakes || 0), 0);
-    const otherIntakes = filteredSurveys.reduce((sum, s) => sum + ((s.total_intakes || 0) - (s.mat_intakes || 0) - (s.court_intakes || 0)), 0);
+    const matIntakes = surveys.reduce((sum, s) => sum + (s.mat_intakes || 0), 0);
+    const courtIntakes = surveys.reduce((sum, s) => sum + (s.court_intakes || 0), 0);
+    const otherIntakes = surveys.reduce((sum, s) => sum + ((s.total_intakes || 0) - (s.mat_intakes || 0) - (s.court_intakes || 0)), 0);
     
     return [
       { name: 'MAT Intakes', value: matIntakes, count: matIntakes },
@@ -127,7 +118,7 @@ const DirectorDashboard = () => {
   };
 
   const getMonthlyTrendsData = () => {
-    const monthlyData = filteredSurveys.reduce((acc, survey) => {
+    const monthlyData = surveys.reduce((acc, survey) => {
       const month = new Date(survey.report_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
       if (!acc[month]) {
         acc[month] = { 
@@ -195,38 +186,17 @@ const DirectorDashboard = () => {
           <h1 className="text-3xl font-bold">Director Dashboard</h1>
           <p className="text-muted-foreground mt-1">Recovery program analytics and insights</p>
         </div>
-        <div className="flex items-center gap-4 mt-4 sm:mt-0">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-            <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Filter by location" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                {LOCATION_OPTIONS.map((location) => (
-                  <SelectItem key={location} value={location}>
-                    {location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <Button onClick={fetchSurveys} disabled={loading}>
-            Refresh Data
-          </Button>
-        </div>
+        <Button onClick={fetchSurveys} disabled={loading}>
+          Refresh Data
+        </Button>
       </div>
 
-      {filteredSurveys.length === 0 ? (
+      {surveys.length === 0 ? (
         <div className="text-center py-16">
           <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-xl font-semibold mb-2">No Director Reports Found</h3>
           <p className="text-muted-foreground mb-4 max-w-md mx-auto">
-            {selectedLocation === "all" 
-              ? "Start by submitting director reports through the \"Director Report\" page to see comprehensive analytics and insights here."
-              : `No reports found for ${selectedLocation}. Try selecting a different location or submit new reports.`
-            }
+            Start by submitting director reports through the "Director Report" page to see comprehensive analytics and insights here.
           </p>
           <Button onClick={() => window.location.href = '/recovery-survey'}>
             Submit Report
@@ -235,7 +205,7 @@ const DirectorDashboard = () => {
       ) : (
         <>
           {/* Overview Stats */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
@@ -279,15 +249,6 @@ const DirectorDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalDischarges}</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">OTS Count</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalOTS}</div>
               </CardContent>
             </Card>
           </div>
@@ -377,12 +338,7 @@ const DirectorDashboard = () => {
           <Card>
             <CardHeader>
               <CardTitle>Recent Director Reports</CardTitle>
-              <CardDescription>
-                {selectedLocation === "all" 
-                  ? "All submitted director reports with option to view details"
-                  : `Director reports for ${selectedLocation} with option to view details`
-                }
-              </CardDescription>
+              <CardDescription>All submitted director reports with option to view details</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -395,12 +351,11 @@ const DirectorDashboard = () => {
                     <TableHead>Phase 2</TableHead>
                     <TableHead>Total Intakes</TableHead>
                     <TableHead>Discharges</TableHead>
-                    <TableHead>OTS Count</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredSurveys.map((survey) => (
+                  {surveys.map((survey) => (
                     <TableRow key={survey.id}>
                       <TableCell>{new Date(survey.report_date).toLocaleDateString()}</TableCell>
                       <TableCell>{survey.program_name || 'N/A'}</TableCell>
@@ -409,7 +364,6 @@ const DirectorDashboard = () => {
                       <TableCell>{survey.phase2_count || 0}</TableCell>
                       <TableCell>{survey.total_intakes || 0}</TableCell>
                       <TableCell>{survey.discharges || 0}</TableCell>
-                      <TableCell>{survey.ots_count || 0}</TableCell>
                       <TableCell>
                         <Dialog>
                           <DialogTrigger asChild>
