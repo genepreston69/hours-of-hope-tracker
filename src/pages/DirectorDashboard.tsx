@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,19 +18,37 @@ interface RecoverySurvey {
   report_date: string;
   program_name: string;
   reporter_name: string;
+  week_summary: string;
+  events: string;
+  upcoming_events: string;
+  accomplishments: string;
   staff_meetings: number;
+  meeting_dates: string;
+  evaluations: string;
+  evaluation_details: string;
+  staffing_needs: string;
   phase1_count: number;
   phase2_count: number;
   phase1_completions: number;
+  phase1_next_steps: string;
   phase2_completions: number;
+  phase2_next_steps: string;
   peer_mentors: number;
   mat_clients: number;
   total_intakes: number;
   mat_intakes: number;
   court_intakes: number;
+  scheduled_intakes: number;
+  ots1_orientations: number;
   ots_count: number;
   discharges: number;
+  discharge_reasons: string;
   drug_screens: number;
+  facility_issues: string;
+  supply_needs: string;
+  program_concerns: string;
+  celebrations: string;
+  additional_comments: string;
   created_at: string;
   user_id: string;
 }
@@ -338,140 +357,289 @@ const DirectorDashboard = () => {
           <Card>
             <CardHeader>
               <CardTitle>Recent Director Reports</CardTitle>
-              <CardDescription>All submitted director reports with option to view details</CardDescription>
+              <CardDescription>All submitted director reports with complete field details</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Report Date</TableHead>
-                    <TableHead>Program Name</TableHead>
-                    <TableHead>Reporter</TableHead>
-                    <TableHead>Phase 1</TableHead>
-                    <TableHead>Phase 2</TableHead>
-                    <TableHead>Total Intakes</TableHead>
-                    <TableHead>Discharges</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {surveys.map((survey) => (
-                    <TableRow key={survey.id}>
-                      <TableCell>{new Date(survey.report_date).toLocaleDateString()}</TableCell>
-                      <TableCell>{survey.program_name || 'N/A'}</TableCell>
-                      <TableCell>{survey.reporter_name || 'N/A'}</TableCell>
-                      <TableCell>{survey.phase1_count || 0}</TableCell>
-                      <TableCell>{survey.phase2_count || 0}</TableCell>
-                      <TableCell>{survey.total_intakes || 0}</TableCell>
-                      <TableCell>{survey.discharges || 0}</TableCell>
-                      <TableCell>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => setSelectedSurvey(survey)}
-                            >
-                              <Eye className="h-4 w-4 mr-1" />
-                              View
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-4xl max-h-[80vh]">
-                            <DialogHeader>
-                              <DialogTitle>Director Report Details</DialogTitle>
-                              <DialogDescription>
-                                Report from {new Date(survey.report_date).toLocaleDateString()}
-                              </DialogDescription>
-                            </DialogHeader>
-                            {selectedSurvey && (
-                              <ScrollArea className="h-[60vh] pr-4">
-                                <div className="space-y-4">
-                                  <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                      <h4 className="font-semibold">Program Information</h4>
-                                      <p>Program: {selectedSurvey.program_name || 'N/A'}</p>
-                                      <p>Reporter: {selectedSurvey.reporter_name || 'N/A'}</p>
-                                      <p>Report Date: {new Date(selectedSurvey.report_date).toLocaleDateString()}</p>
-                                    </div>
-                                    <div>
-                                      <h4 className="font-semibold">Staff Meetings</h4>
-                                      <p>{selectedSurvey.staff_meetings || 0} meetings</p>
-                                    </div>
-                                  </div>
-                                  
-                                  <Separator />
-                                  
-                                  <div>
-                                    <h4 className="font-semibold mb-2">Resident Data</h4>
-                                    <div className="grid grid-cols-3 gap-4">
-                                      <div>
-                                        <p className="text-sm text-muted-foreground">Phase 1 Count</p>
-                                        <p className="text-lg font-semibold">{selectedSurvey.phase1_count || 0}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-sm text-muted-foreground">Phase 2 Count</p>
-                                        <p className="text-lg font-semibold">{selectedSurvey.phase2_count || 0}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-sm text-muted-foreground">Peer Mentors</p>
-                                        <p className="text-lg font-semibold">{selectedSurvey.peer_mentors || 0}</p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  
-                                  <Separator />
-                                  
-                                  <div>
-                                    <h4 className="font-semibold mb-2">Intake Information</h4>
-                                    <div className="grid grid-cols-4 gap-4">
-                                      <div>
-                                        <p className="text-sm text-muted-foreground">Total Intakes</p>
-                                        <p className="text-lg font-semibold">{selectedSurvey.total_intakes || 0}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-sm text-muted-foreground">MAT Intakes</p>
-                                        <p className="text-lg font-semibold">{selectedSurvey.mat_intakes || 0}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-sm text-muted-foreground">Court Intakes</p>
-                                        <p className="text-lg font-semibold">{selectedSurvey.court_intakes || 0}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-sm text-muted-foreground">OTS Count</p>
-                                        <p className="text-lg font-semibold">{selectedSurvey.ots_count || 0}</p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  
-                                  <Separator />
-                                  
-                                  <div>
-                                    <h4 className="font-semibold mb-2">Other Metrics</h4>
-                                    <div className="grid grid-cols-3 gap-4">
-                                      <div>
-                                        <p className="text-sm text-muted-foreground">Discharges</p>
-                                        <p className="text-lg font-semibold">{selectedSurvey.discharges || 0}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-sm text-muted-foreground">Drug Screens</p>
-                                        <p className="text-lg font-semibold">{selectedSurvey.drug_screens || 0}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-sm text-muted-foreground">MAT Clients</p>
-                                        <p className="text-lg font-semibold">{selectedSurvey.mat_clients || 0}</p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </ScrollArea>
-                            )}
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Report Date</TableHead>
+                      <TableHead>Program Name</TableHead>
+                      <TableHead>Reporter</TableHead>
+                      <TableHead>Week Summary</TableHead>
+                      <TableHead>Events</TableHead>
+                      <TableHead>Upcoming Events</TableHead>
+                      <TableHead>Accomplishments</TableHead>
+                      <TableHead>Staff Meetings</TableHead>
+                      <TableHead>Meeting Dates</TableHead>
+                      <TableHead>Evaluations</TableHead>
+                      <TableHead>Evaluation Details</TableHead>
+                      <TableHead>Staffing Needs</TableHead>
+                      <TableHead>Phase 1 Count</TableHead>
+                      <TableHead>Phase 2 Count</TableHead>
+                      <TableHead>Phase 1 Completions</TableHead>
+                      <TableHead>Phase 1 Next Steps</TableHead>
+                      <TableHead>Phase 2 Completions</TableHead>
+                      <TableHead>Phase 2 Next Steps</TableHead>
+                      <TableHead>Peer Mentors</TableHead>
+                      <TableHead>MAT Clients</TableHead>
+                      <TableHead>Total Intakes</TableHead>
+                      <TableHead>MAT Intakes</TableHead>
+                      <TableHead>Court Intakes</TableHead>
+                      <TableHead>Scheduled Intakes</TableHead>
+                      <TableHead>OTS1 Orientations</TableHead>
+                      <TableHead>OTS Count</TableHead>
+                      <TableHead>Discharges</TableHead>
+                      <TableHead>Discharge Reasons</TableHead>
+                      <TableHead>Drug Screens</TableHead>
+                      <TableHead>Facility Issues</TableHead>
+                      <TableHead>Supply Needs</TableHead>
+                      <TableHead>Program Concerns</TableHead>
+                      <TableHead>Celebrations</TableHead>
+                      <TableHead>Additional Comments</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {surveys.map((survey) => (
+                      <TableRow key={survey.id}>
+                        <TableCell>{survey.report_date ? new Date(survey.report_date).toLocaleDateString() : 'N/A'}</TableCell>
+                        <TableCell>{survey.program_name || 'N/A'}</TableCell>
+                        <TableCell>{survey.reporter_name || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.week_summary || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.events || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.upcoming_events || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.accomplishments || 'N/A'}</TableCell>
+                        <TableCell>{survey.staff_meetings || 0}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.meeting_dates || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.evaluations || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.evaluation_details || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.staffing_needs || 'N/A'}</TableCell>
+                        <TableCell>{survey.phase1_count || 0}</TableCell>
+                        <TableCell>{survey.phase2_count || 0}</TableCell>
+                        <TableCell>{survey.phase1_completions || 0}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.phase1_next_steps || 'N/A'}</TableCell>
+                        <TableCell>{survey.phase2_completions || 0}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.phase2_next_steps || 'N/A'}</TableCell>
+                        <TableCell>{survey.peer_mentors || 0}</TableCell>
+                        <TableCell>{survey.mat_clients || 0}</TableCell>
+                        <TableCell>{survey.total_intakes || 0}</TableCell>
+                        <TableCell>{survey.mat_intakes || 0}</TableCell>
+                        <TableCell>{survey.court_intakes || 0}</TableCell>
+                        <TableCell>{survey.scheduled_intakes || 0}</TableCell>
+                        <TableCell>{survey.ots1_orientations || 0}</TableCell>
+                        <TableCell>{survey.ots_count || 0}</TableCell>
+                        <TableCell>{survey.discharges || 0}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.discharge_reasons || 'N/A'}</TableCell>
+                        <TableCell>{survey.drug_screens || 0}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.facility_issues || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.supply_needs || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.program_concerns || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.celebrations || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{survey.additional_comments || 'N/A'}</TableCell>
+                        <TableCell>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => setSelectedSurvey(survey)}
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                View
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[80vh]">
+                              <DialogHeader>
+                                <DialogTitle>Director Report Details</DialogTitle>
+                                <DialogDescription>
+                                  Report from {survey.report_date ? new Date(survey.report_date).toLocaleDateString() : 'N/A'}
+                                </DialogDescription>
+                              </DialogHeader>
+                              {selectedSurvey && (
+                                <ScrollArea className="h-[60vh] pr-4">
+                                  <div className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <h4 className="font-semibold">Program Information</h4>
+                                        <p>Program: {selectedSurvey.program_name || 'N/A'}</p>
+                                        <p>Reporter: {selectedSurvey.reporter_name || 'N/A'}</p>
+                                        <p>Report Date: {selectedSurvey.report_date ? new Date(selectedSurvey.report_date).toLocaleDateString() : 'N/A'}</p>
+                                      </div>
+                                      <div>
+                                        <h4 className="font-semibold">Staff Meetings</h4>
+                                        <p>{selectedSurvey.staff_meetings || 0} meetings</p>
+                                        <p>Meeting Dates: {selectedSurvey.meeting_dates || 'N/A'}</p>
+                                      </div>
+                                    </div>
+                                    
+                                    <Separator />
+                                    
+                                    <div>
+                                      <h4 className="font-semibold mb-2">Weekly Summary & Events</h4>
+                                      <div className="space-y-2">
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Week Summary</p>
+                                          <p className="text-sm">{selectedSurvey.week_summary || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Events</p>
+                                          <p className="text-sm">{selectedSurvey.events || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Upcoming Events</p>
+                                          <p className="text-sm">{selectedSurvey.upcoming_events || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Accomplishments</p>
+                                          <p className="text-sm">{selectedSurvey.accomplishments || 'N/A'}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <Separator />
+                                    
+                                    <div>
+                                      <h4 className="font-semibold mb-2">Resident Data</h4>
+                                      <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Phase 1 Count</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.phase1_count || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Phase 2 Count</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.phase2_count || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Peer Mentors</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.peer_mentors || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Phase 1 Completions</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.phase1_completions || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Phase 2 Completions</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.phase2_completions || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">OTS Count</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.ots_count || 0}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <Separator />
+                                    
+                                    <div>
+                                      <h4 className="font-semibold mb-2">Intake Information</h4>
+                                      <div className="grid grid-cols-4 gap-4">
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Total Intakes</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.total_intakes || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">MAT Intakes</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.mat_intakes || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Court Intakes</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.court_intakes || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Scheduled Intakes</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.scheduled_intakes || 0}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <Separator />
+                                    
+                                    <div>
+                                      <h4 className="font-semibold mb-2">Other Metrics</h4>
+                                      <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Discharges</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.discharges || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Drug Screens</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.drug_screens || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">MAT Clients</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.mat_clients || 0}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">OTS1 Orientations</p>
+                                          <p className="text-lg font-semibold">{selectedSurvey.ots1_orientations || 0}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <Separator />
+                                    
+                                    <div>
+                                      <h4 className="font-semibold mb-2">Additional Information</h4>
+                                      <div className="space-y-3">
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Evaluations</p>
+                                          <p className="text-sm">{selectedSurvey.evaluations || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Evaluation Details</p>
+                                          <p className="text-sm">{selectedSurvey.evaluation_details || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Staffing Needs</p>
+                                          <p className="text-sm">{selectedSurvey.staffing_needs || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Phase 1 Next Steps</p>
+                                          <p className="text-sm">{selectedSurvey.phase1_next_steps || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Phase 2 Next Steps</p>
+                                          <p className="text-sm">{selectedSurvey.phase2_next_steps || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Discharge Reasons</p>
+                                          <p className="text-sm">{selectedSurvey.discharge_reasons || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Facility Issues</p>
+                                          <p className="text-sm">{selectedSurvey.facility_issues || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Supply Needs</p>
+                                          <p className="text-sm">{selectedSurvey.supply_needs || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Program Concerns</p>
+                                          <p className="text-sm">{selectedSurvey.program_concerns || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Celebrations</p>
+                                          <p className="text-sm">{selectedSurvey.celebrations || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-muted-foreground">Additional Comments</p>
+                                          <p className="text-sm">{selectedSurvey.additional_comments || 'N/A'}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </ScrollArea>
+                              )}
+                            </DialogContent>
+                          </Dialog>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </>
