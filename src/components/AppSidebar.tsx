@@ -78,12 +78,6 @@ export function AppSidebar() {
       requireAuth: true 
     },
     { 
-      name: "Director Dashboard", 
-      path: "/director-dashboard", 
-      icon: PieChart,
-      requireAuth: true 
-    },
-    { 
       name: "Incident Report", 
       path: "/incident-report", 
       icon: AlertTriangle,
@@ -99,6 +93,12 @@ export function AppSidebar() {
       name: "Reports", 
       path: "/reports", 
       icon: FileBarChart,
+      requireAuth: true 
+    },
+    { 
+      name: "Director Dashboard", 
+      path: "/director-dashboard", 
+      icon: PieChart,
       requireAuth: true 
     },
   ] : [];
