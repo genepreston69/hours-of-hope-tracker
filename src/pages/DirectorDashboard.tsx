@@ -1,17 +1,17 @@
+
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, Users, TrendingUp, FileText, Eye, AlertCircle } from "lucide-react";
+import { CalendarDays, Users, TrendingUp, FileText, Eye } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/sonner";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface RecoverySurvey {
   id: string;
@@ -43,7 +43,6 @@ const DirectorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSurvey, setSelectedSurvey] = useState<RecoverySurvey | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   useEffect(() => {
     document.title = "Director Dashboard | Service Community";
@@ -61,52 +60,22 @@ const DirectorDashboard = () => {
       console.log("DirectorDashboard: Starting survey fetch...");
       setError(null);
       
-      // First, let's check the current user ID
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      console.log("DirectorDashboard: Current user:", currentUser?.id);
-      
-      // Try to fetch surveys for the current user
-      const { data: userSurveys, error: userError } = await supabase
+      // Fetch all surveys (RLS policies now allow all authenticated users to view all surveys)
+      const { data: allSurveys, error: fetchError } = await supabase
         .from('recovery_surveys')
         .select('*')
-        .eq('user_id', currentUser?.id || '')
         .order('report_date', { ascending: false });
 
-      console.log("DirectorDashboard: User surveys result:", { userSurveys, userError });
-      
-      // Try to get a count of all surveys in the table (this might fail due to RLS)
-      const { count: totalCount, error: countError } = await supabase
-        .from('recovery_surveys')
-        .select('*', { count: 'exact', head: true });
+      console.log("DirectorDashboard: Survey fetch result:", { allSurveys, fetchError });
 
-      console.log("DirectorDashboard: Total count result:", { totalCount, countError });
-
-      // Try to get some sample data to see what user_ids exist
-      const { data: sampleData, error: sampleError } = await supabase
-        .from('recovery_surveys')
-        .select('user_id, created_at')
-        .limit(5);
-
-      console.log("DirectorDashboard: Sample data result:", { sampleData, sampleError });
-
-      setDebugInfo({
-        currentUserId: currentUser?.id,
-        userSurveysCount: userSurveys?.length || 0,
-        totalCount,
-        sampleUserIds: sampleData?.map(s => s.user_id) || [],
-        userError: userError?.message,
-        countError: countError?.message,
-        sampleError: sampleError?.message
-      });
-
-      if (userError) {
-        console.error('DirectorDashboard: Error fetching user surveys:', userError);
-        setError(`Failed to fetch surveys: ${userError.message}`);
-        throw userError;
+      if (fetchError) {
+        console.error('DirectorDashboard: Error fetching surveys:', fetchError);
+        setError(`Failed to fetch surveys: ${fetchError.message}`);
+        throw fetchError;
       }
       
-      console.log(`DirectorDashboard: Successfully fetched ${userSurveys?.length || 0} surveys for current user`);
-      setSurveys(userSurveys || []);
+      console.log(`DirectorDashboard: Successfully fetched ${allSurveys?.length || 0} surveys`);
+      setSurveys(allSurveys || []);
     } catch (error: any) {
       console.error('DirectorDashboard: Unexpected error:', error);
       setError(`Unexpected error: ${error.message || 'Unknown error'}`);
@@ -222,29 +191,12 @@ const DirectorDashboard = () => {
         </Button>
       </div>
 
-      {/* Debug Information Alert */}
-      {debugInfo && (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Debug Info:</strong> Current User ID: {debugInfo.currentUserId?.substring(0, 8)}..., 
-            User Surveys: {debugInfo.userSurveysCount}, 
-            {debugInfo.totalCount !== null ? `Total in DB: ${debugInfo.totalCount}` : 'Total count unavailable'}, 
-            Sample User IDs: {debugInfo.sampleUserIds?.length || 0} found
-            {debugInfo.userError && <span className="text-red-600"> | Error: {debugInfo.userError}</span>}
-          </AlertDescription>
-        </Alert>
-      )}
-
       {surveys.length === 0 ? (
         <div className="text-center py-16">
           <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-xl font-semibold mb-2">No Director Reports Found</h3>
           <p className="text-muted-foreground mb-4 max-w-md mx-auto">
-            {debugInfo?.totalCount > 0 
-              ? "There are surveys in the database, but none are associated with your user account. Surveys must be created by your current user to appear here."
-              : "Start by submitting director reports through the \"Director Report\" page to see comprehensive analytics and insights here."
-            }
+            Start by submitting director reports through the "Director Report" page to see comprehensive analytics and insights here.
           </p>
           <Button onClick={() => window.location.href = '/recovery-survey'}>
             Submit Report
