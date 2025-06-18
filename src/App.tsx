@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { AppProvider } from "@/context/AppContext";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Layout from "@/components/Layout";
@@ -32,10 +32,10 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route element={<Layout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/" element={<Layout><Outlet /></Layout>}>
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route 
-                  path="/service-entry" 
+                  path="service-entry" 
                   element={
                     <ProtectedRoute>
                       <ServiceEntry />
@@ -43,7 +43,7 @@ const App = () => (
                   } 
                 />
                 <Route 
-                  path="/customers" 
+                  path="customers" 
                   element={
                     <ProtectedRoute>
                       <Customers />
@@ -51,7 +51,7 @@ const App = () => (
                   } 
                 />
                 <Route 
-                  path="/recovery-survey" 
+                  path="recovery-survey" 
                   element={
                     <ProtectedRoute>
                       <RecoverySurvey />
@@ -59,7 +59,7 @@ const App = () => (
                   } 
                 />
                 <Route 
-                  path="/director-dashboard" 
+                  path="director-dashboard" 
                   element={
                     <ProtectedRoute>
                       <DirectorDashboard />
@@ -67,7 +67,7 @@ const App = () => (
                   } 
                 />
                 <Route 
-                  path="/incident-report" 
+                  path="incident-report" 
                   element={
                     <ProtectedRoute>
                       <IncidentReport />
@@ -75,7 +75,7 @@ const App = () => (
                   } 
                 />
                 <Route 
-                  path="/reports" 
+                  path="reports" 
                   element={
                     <ProtectedRoute>
                       <Reports />
