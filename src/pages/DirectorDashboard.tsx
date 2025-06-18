@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -91,8 +90,9 @@ const DirectorDashboard = () => {
     const totalPhase2 = surveys.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
     const totalIntakes = surveys.reduce((sum, s) => sum + (s.total_intakes || 0), 0);
     const totalDischarges = surveys.reduce((sum, s) => sum + (s.discharges || 0), 0);
+    const currentOTS = surveys.length > 0 ? surveys[0].ots_count || 0 : 0; // Get OTS count from most recent survey
 
-    return { totalSurveys, totalPhase1, totalPhase2, totalIntakes, totalDischarges };
+    return { totalSurveys, totalPhase1, totalPhase2, totalIntakes, totalDischarges, currentOTS };
   };
 
   const getPhaseDistributionData = () => {
@@ -208,11 +208,11 @@ const DirectorDashboard = () => {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
-                <FileText className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium">Current OTS Residents</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalSurveys}</div>
+                <div className="text-2xl font-bold">{stats.currentOTS}</div>
               </CardContent>
             </Card>
             <Card>
