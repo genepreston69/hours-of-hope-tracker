@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -60,27 +59,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signInWithAzure() {
-    // Force full page redirect for Azure AD authentication
-    // This cannot work in an iframe due to X-Frame-Options: deny
-    const currentOrigin = window.location.origin;
-    const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
-    
-    // Use window.location.href for immediate redirect
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'azure',
-      options: {
-        redirectTo: `${httpsOrigin}/`,
-        skipBrowserRedirect: false,
-      },
-    });
-    
-    // If there's a URL returned, immediately redirect
-    if (data?.url) {
-      window.location.href = data.url;
-      return { error: null };
+    try {
+      // Check if we're in an iframe (like Lovable preview)
+      const isInIframe = window.self !== window.top;
+      
+      if (isInIframe) {
+        // For iframe environments, open a popup window
+        const currentOrigin = window.location.origin;
+        const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
+        
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'azure',
+          options: {
+            redirectTo: `${httpsOrigin}/`,
+            skipBrowserRedirect: true, // Don't redirect, we'll handle it
+          },
+        });
+        
+        if (error) {
+          return { error };
+        }
+        
+        if (data?.url) {
+          // Open popup window for Azure authentication
+          const popup = window.open(
+            data.url,
+            'azure-auth',
+            'width=500,height=600,scrollbars=yes,resizable=yes'
+          );
+          
+          // Listen for the popup to close or complete
+          return new Promise((resolve) => {
+            const checkClosed = setInterval(() => {
+              if (popup?.closed) {
+                clearInterval(checkClosed);
+                // Check if authentication was successful
+                supabase.auth.getSession().then(({ data: { session } }) => {
+                  if (session) {
+                    resolve({ error: null });
+                  } else {
+                    resolve({ error: { message: 'Authentication was cancelled or failed' } });
+                  }
+                });
+              }
+            }, 1000);
+          });
+        }
+      } else {
+        // For non-iframe environments, use full page redirect
+        const currentOrigin = window.location.origin;
+        const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
+        
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'azure',
+          options: {
+            redirectTo: `${httpsOrigin}/`,
+            skipBrowserRedirect: false,
+          },
+        });
+        
+        if (data?.url) {
+          window.location.href = data.url;
+          return { error: null };
+        }
+        
+        return { error };
+      }
+    } catch (error) {
+      console.error('Azure sign-in error:', error);
+      return { error };
     }
-    
-    return { error };
   }
 
   async function signOut() {
