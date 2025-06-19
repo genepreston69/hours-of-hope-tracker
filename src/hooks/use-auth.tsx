@@ -1,7 +1,7 @@
+
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
 
 type AuthContextType = {
   user: User | null;
@@ -23,9 +23,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('Setting up auth state listener');
+    
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
+        console.log('Auth state changed:', event, currentSession?.user?.email);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         setLoading(false);
@@ -34,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Then check existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      console.log('Initial session check:', currentSession?.user?.email);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       setLoading(false);
@@ -60,77 +64,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signInWithAzure(): Promise<{ error: any }> {
     try {
-      // Check if we're in an iframe (like Lovable preview)
-      const isInIframe = window.self !== window.top;
+      console.log('Starting Azure sign-in');
       
-      if (isInIframe) {
-        // For iframe environments, open a popup window
-        const currentOrigin = window.location.origin;
-        const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
-        
-        const { data, error } = await supabase.auth.signInWithOAuth({
-          provider: 'azure',
-          options: {
-            redirectTo: `${httpsOrigin}/`,
-            skipBrowserRedirect: true, // Don't redirect, we'll handle it
-          },
-        });
-        
-        if (error) {
-          return { error };
-        }
-        
-        if (data?.url) {
-          // Open popup window for Azure authentication
-          const popup = window.open(
-            data.url,
-            'azure-auth',
-            'width=500,height=600,scrollbars=yes,resizable=yes'
-          );
-          
-          // Listen for the popup to close or complete
-          return new Promise<{ error: any }>((resolve) => {
-            const checkClosed = setInterval(() => {
-              if (popup?.closed) {
-                clearInterval(checkClosed);
-                // Check if authentication was successful
-                supabase.auth.getSession().then(({ data: { session } }) => {
-                  if (session) {
-                    resolve({ error: null });
-                  } else {
-                    resolve({ error: { message: 'Authentication was cancelled or failed' } });
-                  }
-                });
-              }
-            }, 1000);
-          });
-        }
-      } else {
-        // For non-iframe environments, use full page redirect
-        const currentOrigin = window.location.origin;
-        const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
-        
-        const { data, error } = await supabase.auth.signInWithOAuth({
-          provider: 'azure',
-          options: {
-            redirectTo: `${httpsOrigin}/`,
-            skipBrowserRedirect: false,
-          },
-        });
-        
-        if (data?.url) {
-          window.location.href = data.url;
-          return { error: null };
-        }
-        
+      // Use full page redirect for Azure authentication
+      const currentOrigin = window.location.origin;
+      const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'azure',
+        options: {
+          redirectTo: `${httpsOrigin}/`,
+        },
+      });
+      
+      if (error) {
+        console.error('Azure OAuth error:', error);
         return { error };
       }
+      
+      if (data?.url) {
+        console.log('Redirecting to Azure OAuth URL');
+        window.location.href = data.url;
+        return { error: null };
+      }
+      
+      return { error: { message: 'No OAuth URL received' } };
     } catch (error) {
       console.error('Azure sign-in error:', error);
       return { error };
     }
-    
-    return { error: { message: 'Unexpected error occurred' } };
   }
 
   async function signOut() {
