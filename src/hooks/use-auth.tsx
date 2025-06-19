@@ -60,21 +60,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signInWithAzure() {
-    // Ensure we use HTTPS for the redirect URL
+    // Force full page redirect for Azure AD authentication
+    // This cannot work in an iframe due to X-Frame-Options: deny
     const currentOrigin = window.location.origin;
     const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
     
-    const { error } = await supabase.auth.signInWithOAuth({
+    // Use window.location.href for immediate redirect
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'azure',
       options: {
         redirectTo: `${httpsOrigin}/`,
-        skipBrowserRedirect: false, // Ensure full browser redirect
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        }
+        skipBrowserRedirect: false,
       },
     });
+    
+    // If there's a URL returned, immediately redirect
+    if (data?.url) {
+      window.location.href = data.url;
+      return { error: null };
+    }
+    
     return { error };
   }
 
