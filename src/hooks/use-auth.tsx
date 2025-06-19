@@ -1,8 +1,6 @@
-
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
 
 type AuthContextType = {
   user: User | null;
@@ -21,7 +19,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Set up auth state listener first
@@ -61,7 +58,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signOut() {
     await supabase.auth.signOut();
-    navigate('/auth');
   }
 
   async function resetPassword(email: string) {
