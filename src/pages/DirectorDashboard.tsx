@@ -46,12 +46,12 @@ interface RecoverySurvey {
   program_concerns: string;
   celebrations: string;
   additional_comments: string;
-  created_at: string;
-  user_id: string;
   ged_preparation_starts: number;
   ged_completions: number;
   life_skills_starts: number;
   drivers_license_received: number;
+  created_at: string;
+  user_id: string;
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
