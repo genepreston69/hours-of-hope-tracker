@@ -14,6 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  SidebarHeader,
 } from "@/components/ui/sidebar"
 
 // Menu items.
@@ -72,6 +73,16 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
+      <SidebarHeader>
+        <div className="flex items-center gap-2 px-2 py-2">
+          <img 
+            src="/lovable-uploads/f4dd29f5-c1ea-4bf3-88c3-f13573496fe7.png" 
+            alt="Recovery Point Logo" 
+            className="h-8 w-auto" 
+          />
+          <span className="font-semibold text-sidebar-foreground">Recovery</span>
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Recovery Service Tracker</SidebarGroupLabel>
