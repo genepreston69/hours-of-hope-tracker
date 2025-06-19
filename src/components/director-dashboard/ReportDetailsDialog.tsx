@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -41,6 +40,10 @@ interface RecoverySurvey {
   program_concerns: string;
   celebrations: string;
   additional_comments: string;
+  ged_preparation_starts: number;
+  ged_completions: number;
+  life_skills_starts: number;
+  drivers_license_received: number;
   created_at: string;
   user_id: string;
 }
@@ -236,6 +239,31 @@ export const ReportDetailsDialog = ({ selectedSurvey, open, onOpenChange }: Repo
                     )}
                   </div>
                 )}
+              </div>
+
+              <Separator />
+
+              {/* Education & Life Skills */}
+              <div>
+                <h4 className="font-semibold mb-3">Education & Life Skills</h4>
+                <div className="grid grid-cols-4 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">GED Preparation Starts</p>
+                    <p className="text-lg font-semibold">{selectedSurvey.ged_preparation_starts || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">GED Completions</p>
+                    <p className="text-lg font-semibold">{selectedSurvey.ged_completions || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Life Skills Training Starts</p>
+                    <p className="text-lg font-semibold">{selectedSurvey.life_skills_starts || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Drivers Licenses Received</p>
+                    <p className="text-lg font-semibold">{selectedSurvey.drivers_license_received || 0}</p>
+                  </div>
+                </div>
               </div>
 
               <Separator />

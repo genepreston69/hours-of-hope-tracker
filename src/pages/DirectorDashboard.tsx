@@ -48,6 +48,10 @@ interface RecoverySurvey {
   additional_comments: string;
   created_at: string;
   user_id: string;
+  ged_preparation_starts: number;
+  ged_completions: number;
+  life_skills_starts: number;
+  drivers_license_received: number;
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
@@ -105,9 +109,24 @@ const DirectorDashboard = () => {
     const totalPhase2 = surveys.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
     const totalIntakes = surveys.reduce((sum, s) => sum + (s.total_intakes || 0), 0);
     const totalDischarges = surveys.reduce((sum, s) => sum + (s.discharges || 0), 0);
-    const currentOTS = surveys.length > 0 ? surveys[0].ots_count || 0 : 0; // Get OTS count from most recent survey
+    const currentOTS = surveys.length > 0 ? surveys[0].ots_count || 0 : 0;
+    const totalGEDStarts = surveys.reduce((sum, s) => sum + (s.ged_preparation_starts || 0), 0);
+    const totalGEDCompletions = surveys.reduce((sum, s) => sum + (s.ged_completions || 0), 0);
+    const totalLifeSkillsStarts = surveys.reduce((sum, s) => sum + (s.life_skills_starts || 0), 0);
+    const totalDriversLicenses = surveys.reduce((sum, s) => sum + (s.drivers_license_received || 0), 0);
 
-    return { totalSurveys, totalPhase1, totalPhase2, totalIntakes, totalDischarges, currentOTS };
+    return { 
+      totalSurveys, 
+      totalPhase1, 
+      totalPhase2, 
+      totalIntakes, 
+      totalDischarges, 
+      currentOTS,
+      totalGEDStarts,
+      totalGEDCompletions,
+      totalLifeSkillsStarts,
+      totalDriversLicenses
+    };
   };
 
   const getPhaseDistributionData = () => {
@@ -264,6 +283,46 @@ const DirectorDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalDischarges}</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Education & Life Skills Stats */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">GED Starts</CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalGEDStarts}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">GED Completions</CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalGEDCompletions}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Life Skills Starts</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalLifeSkillsStarts}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Drivers Licenses</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalDriversLicenses}</div>
               </CardContent>
             </Card>
           </div>
