@@ -331,18 +331,18 @@ const Auth = () => {
   );
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        <div className="flex flex-col space-y-2 text-center">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
           <img 
             src="/lovable-uploads/f4dd29f5-c1ea-4bf3-88c3-f13573496fe7.png" 
             alt="Recovery Point Logo" 
-            className="h-16 w-auto mx-auto mb-4" 
+            className="mx-auto h-16 w-auto mb-6" 
           />
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h2 className="text-3xl font-extrabold text-gray-900">
             Recovery Service Tracker
-          </h1>
-          <p className="text-sm text-muted-foreground">
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
             Sign in to access service tracking and reports
           </p>
         </div>
