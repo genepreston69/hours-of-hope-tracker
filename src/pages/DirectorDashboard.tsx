@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,50 +8,9 @@ import { CalendarDays, Users, TrendingUp, FileText, Eye } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import { toast } from "@/components/ui/sonner";
 import { ReportsTable } from "@/components/director-dashboard/ReportsTable";
+import { Tables } from "@/integrations/supabase/types";
 
-interface RecoverySurvey {
-  id: string;
-  report_date: string;
-  program_name: string;
-  reporter_name: string;
-  week_summary: string;
-  events: string;
-  upcoming_events: string;
-  accomplishments: string;
-  staff_meetings: number;
-  meeting_dates: string;
-  evaluations: string;
-  evaluation_details: string;
-  staffing_needs: string;
-  phase1_count: number;
-  phase2_count: number;
-  phase1_completions: number;
-  phase1_next_steps: string;
-  phase2_completions: number;
-  phase2_next_steps: string;
-  peer_mentors: number;
-  mat_clients: number;
-  total_intakes: number;
-  mat_intakes: number;
-  court_intakes: number;
-  scheduled_intakes: number;
-  ots1_orientations: number;
-  ots_count: number;
-  discharges: number;
-  discharge_reasons: string;
-  drug_screens: number;
-  facility_issues: string;
-  supply_needs: string;
-  program_concerns: string;
-  celebrations: string;
-  additional_comments: string;
-  ged_preparation_starts: number;
-  ged_completions: number;
-  life_skills_starts: number;
-  drivers_license_received: number;
-  created_at: string;
-  user_id: string;
-}
+type RecoverySurvey = Tables<'recovery_surveys'>;
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 

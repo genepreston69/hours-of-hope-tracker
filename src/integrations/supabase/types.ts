@@ -248,12 +248,16 @@ export type Database = {
           created_at: string
           discharge_reasons: string | null
           discharges: number | null
+          drivers_license_received: number | null
           drug_screens: number | null
           evaluation_details: string | null
           evaluations: string | null
           events: string | null
           facility_issues: string | null
+          ged_completions: number | null
+          ged_preparation_starts: number | null
           id: string
+          life_skills_starts: number | null
           mat_clients: number | null
           mat_intakes: number | null
           meeting_dates: string | null
@@ -288,12 +292,16 @@ export type Database = {
           created_at?: string
           discharge_reasons?: string | null
           discharges?: number | null
+          drivers_license_received?: number | null
           drug_screens?: number | null
           evaluation_details?: string | null
           evaluations?: string | null
           events?: string | null
           facility_issues?: string | null
+          ged_completions?: number | null
+          ged_preparation_starts?: number | null
           id?: string
+          life_skills_starts?: number | null
           mat_clients?: number | null
           mat_intakes?: number | null
           meeting_dates?: string | null
@@ -328,12 +336,16 @@ export type Database = {
           created_at?: string
           discharge_reasons?: string | null
           discharges?: number | null
+          drivers_license_received?: number | null
           drug_screens?: number | null
           evaluation_details?: string | null
           evaluations?: string | null
           events?: string | null
           facility_issues?: string | null
+          ged_completions?: number | null
+          ged_preparation_starts?: number | null
           id?: string
+          life_skills_starts?: number | null
           mat_clients?: number | null
           mat_intakes?: number | null
           meeting_dates?: string | null
