@@ -68,6 +68,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       provider: 'azure',
       options: {
         redirectTo: `${httpsOrigin}/`,
+        skipBrowserRedirect: false, // Ensure full browser redirect
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        }
       },
     });
     return { error };
