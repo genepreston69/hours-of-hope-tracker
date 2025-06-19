@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { data, error };
   }
 
-  async function signInWithAzure() {
+  async function signInWithAzure(): Promise<{ error: any }> {
     try {
       // Check if we're in an iframe (like Lovable preview)
       const isInIframe = window.self !== window.top;
@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           );
           
           // Listen for the popup to close or complete
-          return new Promise((resolve) => {
+          return new Promise<{ error: any }>((resolve) => {
             const checkClosed = setInterval(() => {
               if (popup?.closed) {
                 clearInterval(checkClosed);
@@ -129,6 +129,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Azure sign-in error:', error);
       return { error };
     }
+    
+    return { error: { message: 'Unexpected error occurred' } };
   }
 
   async function signOut() {
