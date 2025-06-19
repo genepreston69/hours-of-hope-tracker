@@ -2,6 +2,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 type AuthContextType = {
   user: User | null;
@@ -9,7 +10,6 @@ type AuthContextType = {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any, data: any }>;
-  signInWithAzure: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (newPassword: string) => Promise<{ error: any }>;
@@ -23,12 +23,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('Setting up auth state listener');
-    
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
-        console.log('Auth state changed:', event, currentSession?.user?.email);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         setLoading(false);
@@ -37,7 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Then check existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      console.log('Initial session check:', currentSession?.user?.email);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       setLoading(false);
@@ -62,50 +58,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { data, error };
   }
 
-  async function signInWithAzure(): Promise<{ error: any }> {
-    try {
-      console.log('Starting Azure sign-in');
-      
-      // Use full page redirect for Azure authentication
-      const currentOrigin = window.location.origin;
-      const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
-      
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'azure',
-        options: {
-          redirectTo: `${httpsOrigin}/`,
-        },
-      });
-      
-      if (error) {
-        console.error('Azure OAuth error:', error);
-        return { error };
-      }
-      
-      if (data?.url) {
-        console.log('Redirecting to Azure OAuth URL');
-        window.location.href = data.url;
-        return { error: null };
-      }
-      
-      return { error: { message: 'No OAuth URL received' } };
-    } catch (error) {
-      console.error('Azure sign-in error:', error);
-      return { error };
-    }
-  }
-
   async function signOut() {
     await supabase.auth.signOut();
   }
 
   async function resetPassword(email: string) {
-    // Ensure we use HTTPS for the redirect URL
-    const currentOrigin = window.location.origin;
-    const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
-    
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: httpsOrigin + '/auth?mode=update-password',
+      redirectTo: window.location.origin + '/auth?mode=update-password',
     });
     return { error };
   }
@@ -125,7 +84,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading, 
         signIn, 
         signUp, 
-        signInWithAzure,
         signOut,
         resetPassword,
         updatePassword
