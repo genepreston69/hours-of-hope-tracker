@@ -10,6 +10,7 @@ type AuthContextType = {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any, data: any }>;
+  signInWithAzure: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (newPassword: string) => Promise<{ error: any }>;
@@ -58,6 +59,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { data, error };
   }
 
+  async function signInWithAzure() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'azure',
+      options: {
+        redirectTo: `${window.location.origin}/`,
+      },
+    });
+    return { error };
+  }
+
   async function signOut() {
     await supabase.auth.signOut();
   }
@@ -84,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading, 
         signIn, 
         signUp, 
+        signInWithAzure,
         signOut,
         resetPassword,
         updatePassword

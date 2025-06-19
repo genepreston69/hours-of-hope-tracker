@@ -16,10 +16,11 @@ const Auth = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isAzureLoading, setIsAzureLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('signin');
   const [mode, setMode] = useState<'signin-signup' | 'forgot-password' | 'update-password'>('signin-signup');
   
-  const { signIn, signUp, resetPassword, updatePassword } = useAuth();
+  const { signIn, signUp, signInWithAzure, resetPassword, updatePassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -55,6 +56,25 @@ const Auth = () => {
       toast.error('An unexpected error occurred');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleAzureSignIn = async () => {
+    setIsAzureLoading(true);
+    
+    try {
+      const { error } = await signInWithAzure();
+      if (error) {
+        toast.error(error.message || 'Failed to sign in with Azure AD');
+        return;
+      }
+      
+      // The user will be redirected by Azure, so no need for success toast here
+    } catch (error) {
+      console.error('Azure sign in error:', error);
+      toast.error('An unexpected error occurred');
+    } finally {
+      setIsAzureLoading(false);
     }
   };
 
@@ -234,14 +254,41 @@ const Auth = () => {
       
       <TabsContent value="signin">
         <Card>
-          <form onSubmit={handleSignIn}>
-            <CardHeader>
-              <CardTitle>Sign In</CardTitle>
-              <CardDescription>
-                Enter your email and password to continue
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <CardHeader>
+            <CardTitle>Sign In</CardTitle>
+            <CardDescription>
+              Choose your preferred sign-in method
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button 
+              onClick={handleAzureSignIn} 
+              disabled={isAzureLoading}
+              variant="outline"
+              className="w-full"
+            >
+              {isAzureLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in with Azure AD...
+                </>
+              ) : (
+                'Sign in with Azure AD'
+              )}
+            </Button>
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with email
+                </span>
+              </div>
+            </div>
+            
+            <form onSubmit={handleSignIn} className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="email">Email</label>
                 <Input
@@ -274,13 +321,11 @@ const Auth = () => {
                   required
                 />
               </div>
-            </CardContent>
-            <CardFooter>
               <Button className="w-full" type="submit" disabled={isLoading}>
                 {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in...</> : 'Sign In'}
               </Button>
-            </CardFooter>
-          </form>
+            </form>
+          </CardContent>
         </Card>
       </TabsContent>
       
