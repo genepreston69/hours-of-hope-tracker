@@ -60,10 +60,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signInWithAzure() {
+    // Ensure we use HTTPS for the redirect URL
+    const currentOrigin = window.location.origin;
+    const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'azure',
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: `${httpsOrigin}/`,
       },
     });
     return { error };
@@ -74,8 +78,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function resetPassword(email: string) {
+    // Ensure we use HTTPS for the redirect URL
+    const currentOrigin = window.location.origin;
+    const httpsOrigin = currentOrigin.replace(/^http:/, 'https:');
+    
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/auth?mode=update-password',
+      redirectTo: httpsOrigin + '/auth?mode=update-password',
     });
     return { error };
   }
