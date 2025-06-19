@@ -1,4 +1,3 @@
-
 import { Calendar, Home, Inbox, Search, Settings, Users, FileText, ClipboardList, BarChart3, AlertTriangle, LogOut } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { useNavigate } from "react-router-dom"
@@ -74,13 +73,12 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-2">
+        <div className="flex items-center justify-center px-2 py-2">
           <img 
             src="/lovable-uploads/f4dd29f5-c1ea-4bf3-88c3-f13573496fe7.png" 
             alt="Recovery Point Logo" 
-            className="h-8 w-auto" 
+            className="h-16 w-auto" 
           />
-          <span className="font-semibold text-sidebar-foreground">Recovery</span>
         </div>
       </SidebarHeader>
       <SidebarContent>
