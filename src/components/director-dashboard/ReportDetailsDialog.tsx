@@ -1,6 +1,9 @@
+
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Printer } from "lucide-react";
 
 interface RecoverySurvey {
   id: string;
@@ -57,14 +60,26 @@ const stripHtml = (html: string) => {
 };
 
 export const ReportDetailsDialog = ({ selectedSurvey, open, onOpenChange }: ReportDetailsDialogProps) => {
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle>Director Report Details</DialogTitle>
-          <DialogDescription>
-            Report from {selectedSurvey && new Date(selectedSurvey.report_date).toLocaleDateString()}
-          </DialogDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle>Director Report Details</DialogTitle>
+              <DialogDescription>
+                Report from {selectedSurvey && new Date(selectedSurvey.report_date).toLocaleDateString()}
+              </DialogDescription>
+            </div>
+            <Button onClick={handlePrint} variant="outline" size="sm" className="print:hidden">
+              <Printer className="h-4 w-4 mr-2" />
+              Print
+            </Button>
+          </div>
         </DialogHeader>
         {selectedSurvey && (
           <ScrollArea className="h-[60vh] pr-4">
