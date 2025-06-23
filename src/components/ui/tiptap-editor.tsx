@@ -24,6 +24,7 @@ const TiptapEditor = memo(({
   const [instanceId] = useState(() => Math.random().toString(36).substr(2, 9));
   const onUpdateRef = useRef(onChange);
   const isUpdatingRef = useRef(false);
+  const isMountedRef = useRef(true);
 
   console.log(`🏗️ TiptapEditor[${fieldName}:${instanceId}] rendering`);
 
@@ -33,12 +34,17 @@ const TiptapEditor = memo(({
   // Track mount/unmount
   useEffect(() => {
     console.log(`🔵 TiptapEditor[${fieldName}:${instanceId}] mounted`);
-    return () => console.log(`🔴 TiptapEditor[${fieldName}:${instanceId}] unmounted`);
+    isMountedRef.current = true;
+    
+    return () => {
+      console.log(`🔴 TiptapEditor[${fieldName}:${instanceId}] unmounting`);
+      isMountedRef.current = false;
+    };
   }, [fieldName, instanceId]);
 
   // Memoized onUpdate callback to prevent editor recreation
   const handleUpdate = useCallback(({ editor }: { editor: any }) => {
-    if (isUpdatingRef.current) return; // Prevent recursive updates
+    if (isUpdatingRef.current || !isMountedRef.current) return;
     
     const html = editor.getHTML();
     console.log(`📝 Editor[${fieldName}:${instanceId}] updated, focused:`, editor.isFocused, 'HTML:', html);
@@ -46,7 +52,9 @@ const TiptapEditor = memo(({
     isUpdatingRef.current = true;
     onUpdateRef.current(html);
     setTimeout(() => {
-      isUpdatingRef.current = false;
+      if (isMountedRef.current) {
+        isUpdatingRef.current = false;
+      }
     }, 0);
   }, [fieldName, instanceId]);
 
@@ -63,26 +71,36 @@ const TiptapEditor = memo(({
         },
       }),
     ],
-    content, // Only used for initial content
+    content,
     editable,
     onCreate: ({ editor }) => {
-      console.log(`✅ Editor[${fieldName}:${instanceId}] created`);
+      if (isMountedRef.current) {
+        console.log(`✅ Editor[${fieldName}:${instanceId}] created`);
+      }
     },
     onDestroy: () => {
       console.log(`❌ Editor[${fieldName}:${instanceId}] destroyed`);
     },
     onUpdate: handleUpdate,
     onFocus: ({ editor, event }) => {
-      console.log(`🟢 Editor[${fieldName}:${instanceId}] FOCUSED`, event.type);
+      if (isMountedRef.current) {
+        console.log(`🟢 Editor[${fieldName}:${instanceId}] FOCUSED`, event.type);
+      }
     },
     onBlur: ({ editor, event }) => {
+      if (!isMountedRef.current) return;
+      
       console.log(`🔴 Editor[${fieldName}:${instanceId}] BLURRED`, event.type, 'Related target:', event.relatedTarget);
       
       // Only blur if we're not clicking on toolbar buttons
       const relatedTarget = event.relatedTarget as HTMLElement;
       if (relatedTarget && relatedTarget.closest('.tiptap-toolbar')) {
         event.preventDefault();
-        setTimeout(() => editor.commands.focus(), 0);
+        setTimeout(() => {
+          if (isMountedRef.current && editor && !editor.isDestroyed) {
+            editor.commands.focus();
+          }
+        }, 0);
         return;
       }
     },
@@ -104,7 +122,7 @@ const TiptapEditor = memo(({
 
   // Update editor content only when it differs significantly and editor is not focused
   useEffect(() => {
-    if (editor && !isUpdatingRef.current && !editor.isFocused) {
+    if (editor && !isUpdatingRef.current && !editor.isFocused && isMountedRef.current && !editor.isDestroyed) {
       const currentContent = editor.getHTML();
       if (currentContent !== content && content !== '') {
         console.log(`🔄 Updating editor content for ${fieldName}:${instanceId}`);
@@ -112,6 +130,15 @@ const TiptapEditor = memo(({
       }
     }
   }, [content, editor, fieldName, instanceId]);
+
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      if (editor && !editor.isDestroyed) {
+        editor.destroy();
+      }
+    };
+  }, [editor]);
 
   if (!editor) {
     console.log(`TiptapEditor[${fieldName}:${instanceId}] - editor not ready yet`);
@@ -130,10 +157,12 @@ const TiptapEditor = memo(({
         <div className="tiptap-toolbar border-b border-input p-2 flex flex-wrap gap-1">
           <button
             type="button"
-            onMouseDown={(e) => e.preventDefault()} // Prevent focus loss
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => {
-              console.log(`Bold button clicked on ${fieldName}:${instanceId}`);
-              editor.chain().focus().toggleBold().run();
+              if (editor && !editor.isDestroyed && isMountedRef.current) {
+                console.log(`Bold button clicked on ${fieldName}:${instanceId}`);
+                editor.chain().focus().toggleBold().run();
+              }
             }}
             className={cn(
               'px-2 py-1 text-sm rounded hover:bg-muted',
@@ -144,10 +173,12 @@ const TiptapEditor = memo(({
           </button>
           <button
             type="button"
-            onMouseDown={(e) => e.preventDefault()} // Prevent focus loss
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => {
-              console.log(`Italic button clicked on ${fieldName}:${instanceId}`);
-              editor.chain().focus().toggleItalic().run();
+              if (editor && !editor.isDestroyed && isMountedRef.current) {
+                console.log(`Italic button clicked on ${fieldName}:${instanceId}`);
+                editor.chain().focus().toggleItalic().run();
+              }
             }}
             className={cn(
               'px-2 py-1 text-sm rounded hover:bg-muted',
@@ -158,10 +189,12 @@ const TiptapEditor = memo(({
           </button>
           <button
             type="button"
-            onMouseDown={(e) => e.preventDefault()} // Prevent focus loss
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => {
-              console.log(`Bullet list button clicked on ${fieldName}:${instanceId}`);
-              editor.chain().focus().toggleBulletList().run();
+              if (editor && !editor.isDestroyed && isMountedRef.current) {
+                console.log(`Bullet list button clicked on ${fieldName}:${instanceId}`);
+                editor.chain().focus().toggleBulletList().run();
+              }
             }}
             className={cn(
               'px-2 py-1 text-sm rounded hover:bg-muted',
@@ -172,10 +205,12 @@ const TiptapEditor = memo(({
           </button>
           <button
             type="button"
-            onMouseDown={(e) => e.preventDefault()} // Prevent focus loss
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => {
-              console.log(`Ordered list button clicked on ${fieldName}:${instanceId}`);
-              editor.chain().focus().toggleOrderedList().run();
+              if (editor && !editor.isDestroyed && isMountedRef.current) {
+                console.log(`Ordered list button clicked on ${fieldName}:${instanceId}`);
+                editor.chain().focus().toggleOrderedList().run();
+              }
             }}
             className={cn(
               'px-2 py-1 text-sm rounded hover:bg-muted',
@@ -197,7 +232,6 @@ const TiptapEditor = memo(({
   );
 }, (prevProps, nextProps) => {
   // Only re-render if editable, placeholder, className, or fieldName changes
-  // Don't re-render when content changes since the editor manages its own state
   return (
     prevProps.editable === nextProps.editable &&
     prevProps.placeholder === nextProps.placeholder &&
