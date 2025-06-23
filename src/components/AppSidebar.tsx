@@ -1,7 +1,9 @@
-import { Calendar, Home, Inbox, Search, Settings, Users, FileText, ClipboardList, BarChart3, AlertTriangle, LogOut } from "lucide-react"
+
+import { Calendar, Home, Inbox, Search, Settings, Users, FileText, ClipboardList, BarChart3, AlertTriangle, LogOut, ChevronRight } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { useNavigate } from "react-router-dom"
 import { toast } from "@/components/ui/sonner"
+import { useState } from "react"
 
 import {
   Sidebar,
@@ -12,6 +14,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar"
@@ -22,6 +27,13 @@ const items = [
     title: "Dashboard",
     url: "/dashboard",
     icon: Home,
+    submenu: [
+      {
+        title: "Director Dashboard",
+        url: "/director-dashboard",
+        icon: BarChart3,
+      }
+    ]
   },
   {
     title: "Service Entry",
@@ -39,11 +51,6 @@ const items = [
     icon: ClipboardList,
   },
   {
-    title: "Director Dashboard",
-    url: "/director-dashboard",
-    icon: BarChart3,
-  },
-  {
     title: "Incident Report",
     url: "/incident-report",
     icon: AlertTriangle,
@@ -58,6 +65,7 @@ const items = [
 export function AppSidebar() {
   const { signOut, user } = useAuth()
   const navigate = useNavigate()
+  const [openMenus, setOpenMenus] = useState<string[]>([])
 
   const handleSignOut = async () => {
     try {
@@ -68,6 +76,14 @@ export function AppSidebar() {
       console.error("Sign out error:", error)
       toast.error("Failed to sign out")
     }
+  }
+
+  const toggleMenu = (title: string) => {
+    setOpenMenus(prev => 
+      prev.includes(title) 
+        ? prev.filter(item => item !== title)
+        : [...prev, title]
+    )
   }
 
   return (
@@ -88,12 +104,53 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
+                  {item.submenu ? (
+                    <>
+                      <SidebarMenuButton 
+                        onClick={() => toggleMenu(item.title)}
+                        className="w-full justify-between"
+                      >
+                        <div className="flex items-center gap-2">
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </div>
+                        <ChevronRight 
+                          className={`h-4 w-4 transition-transform ${
+                            openMenus.includes(item.title) ? 'rotate-90' : ''
+                          }`}
+                        />
+                      </SidebarMenuButton>
+                      {openMenus.includes(item.title) && (
+                        <SidebarMenuSub>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <a href={item.url}>
+                                <item.icon />
+                                <span>Main Dashboard</span>
+                              </a>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          {item.submenu.map((subItem) => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton asChild>
+                                <a href={subItem.url}>
+                                  <subItem.icon />
+                                  <span>{subItem.title}</span>
+                                </a>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      )}
+                    </>
+                  ) : (
+                    <SidebarMenuButton asChild>
+                      <a href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
