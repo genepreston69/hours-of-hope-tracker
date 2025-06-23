@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { useAuth } from "@/hooks/use-auth";
@@ -8,9 +9,7 @@ export const useDashboard = () => {
   const location = useLocation();
   const { serviceEntries, isLoading: contextLoading, refreshData } = useAppContext();
   const [refreshing, setRefreshing] = useState(false);
-  const [stableLoading, setStableLoading] = useState(true);
   const { user } = useAuth();
-  const initialLoadCompletedRef = useRef(false);
   const isMountedRef = useRef(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -19,7 +18,7 @@ export const useDashboard = () => {
   // Get forceRefresh parameter from location state
   const forceRefresh = location.state?.forceRefresh || false;
   
-  // Set document title
+  // Set document title and clean up
   useEffect(() => {
     document.title = "Dashboard | Service Community";
     
@@ -36,40 +35,31 @@ export const useDashboard = () => {
     };
   }, [forceRefresh, location.state]);
 
-  // Controlled initial data loading with force refresh support
+  // Only handle forced refresh, don't trigger additional data loads
   useEffect(() => {
-    const loadDashboardData = async () => {
-      // Check if we need to refresh data (either initial load or forced refresh)
-      if ((forceRefresh || !initialLoadCompletedRef.current) && refreshData) {
-        console.log(`Dashboard: ${forceRefresh ? 'Forced' : 'Initial'} data load started`);
-        
-        // Mark initial load as completed even if forced, to avoid double loading
-        initialLoadCompletedRef.current = true;
+    const handleForceRefresh = async () => {
+      if (forceRefresh && refreshData) {
+        console.log('Dashboard: Handling forced refresh');
         
         try {
           setRefreshing(true);
           await refreshData();
-          console.log(`Dashboard: ${forceRefresh ? 'Forced' : 'Initial'} data load completed`);
+          console.log('Dashboard: Forced refresh completed');
         } catch (error) {
-          console.error(`Dashboard: Error during ${forceRefresh ? 'forced' : 'initial'} load:`, error);
+          console.error('Dashboard: Error during forced refresh:', error);
           if (isMountedRef.current) {
-            toast.error("Failed to load dashboard data");
+            toast.error("Failed to refresh dashboard data");
           }
         } finally {
-          // Only update state if component is still mounted
           if (isMountedRef.current) {
             setRefreshing(false);
-            setStableLoading(false);
           }
         }
-      } else if (!refreshing) {
-        // If we don't need to refresh but are still in loading state, update it
-        setStableLoading(false);
       }
     };
     
-    loadDashboardData();
-  }, [refreshData, forceRefresh]);
+    handleForceRefresh();
+  }, [forceRefresh, refreshData]);
 
   // Update logging for debugging
   useEffect(() => {
@@ -131,8 +121,8 @@ export const useDashboard = () => {
     }
   };
 
-  // Enhanced loading check to ensure we wait for both initial and context loading
-  const isLoadingData = stableLoading || contextLoading || refreshing;
+  // Simple loading check - don't add additional complexity
+  const isLoadingData = contextLoading;
 
   return {
     serviceEntries,

@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { Customer, ServiceEntry, ServiceStats, LocationStats } from "../models/types";
 import { AppStateType } from "./AppStateTypes";
 import { useDataFetching } from "./useDataFetching";
@@ -29,6 +29,7 @@ export function useAppState(): [
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { user } = useAuth();
+  const initialLoadRef = useRef(false);
 
   // Import the data fetching functionality
   const { fetchData } = useDataFetching(user);
@@ -81,11 +82,19 @@ export function useAppState(): [
     }
   }, [fetchData]);
 
-  // Load data from Supabase when user is authenticated
+  // Load data from Supabase when user is authenticated - but only once
   React.useEffect(() => {
     const initialLoad = async () => {
+      if (initialLoadRef.current) {
+        console.log("Initial load already completed, skipping...");
+        return;
+      }
+      
+      initialLoadRef.current = true;
       setIsLoading(true);
+      
       try {
+        console.log("Starting initial data load...");
         const { 
           customers: initialCustomers, 
           serviceEntries: initialEntries,
@@ -100,15 +109,19 @@ export function useAppState(): [
         setTotalPages(Math.ceil(totalCount / 1000));
         setHasMore(moreData);
         
+        console.log("Initial data load completed successfully");
       } catch (error) {
         console.error("Error during initial data load:", error);
+        initialLoadRef.current = false; // Reset on error so it can retry
       } finally {
         setIsLoading(false);
       }
     };
     
-    initialLoad();
-  }, [fetchData]); // Run this effect when user changes
+    if (user) {
+      initialLoad();
+    }
+  }, [user]); // Only depend on user, not fetchData
 
   // Use the stats calculation hook
   useStatsCalculation(serviceEntries, setStats, setLocationStats);

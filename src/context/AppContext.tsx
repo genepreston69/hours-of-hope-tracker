@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext } from "react";
 import { Customer, ServiceEntry, ServiceStats, LocationStats } from "../models/types";
 import { useAppState, AppStateType } from "./AppState";
 import { createCustomerActions, CustomerActionsType } from "./CustomerActions";
@@ -26,9 +26,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const customerActions = createCustomerActions(customers, setCustomers, serviceEntries);
   const serviceActions = createServiceActions(serviceEntries, setServiceEntries, refreshData);
 
-  // Create a more consistent refreshData function that ensures all data is refreshed
+  // Create a consistent refreshData function that ensures all data is refreshed
   const handleRefreshData = async (page?: number) => {
-    console.log(`AppContext: Refreshing all data${page ? ` for page ${page}` : ''}`);
+    console.log(`AppContext: Refreshing data${page ? ` for page ${page}` : ''}`);
     try {
       await refreshData(page);
       console.log("AppContext: Data refresh completed successfully");
@@ -38,20 +38,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       throw error;
     }
   };
-
-  // Auto-refresh data once when the provider mounts
-  useEffect(() => {
-    const initialDataLoad = async () => {
-      try {
-        console.log("AppContext: Initial data load");
-        await handleRefreshData();
-      } catch (error) {
-        console.error("AppContext: Error during initial data load:", error);
-      }
-    };
-    
-    initialDataLoad();
-  }, []);
 
   const value: AppContextExtendedType = {
     // State
@@ -68,7 +54,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     // Service actions
     ...serviceActions,
     
-    // Data refresh function with better consistency
+    // Data refresh function
     refreshData: handleRefreshData
   };
 
