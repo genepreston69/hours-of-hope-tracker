@@ -15,20 +15,11 @@ import {
   SidebarMenuItem,
   SidebarFooter,
   SidebarHeader,
+  SidebarSeparator,
 } from "@/components/ui/sidebar"
 
-// Menu items in the order shown in the image
-const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: Home,
-  },
-  {
-    title: "Director Dashboard",
-    url: "/director-dashboard",
-    icon: BarChart3,
-  },
+// First group - Service items
+const serviceItems = [
   {
     title: "Service Entry",
     url: "/service-entry",
@@ -44,6 +35,24 @@ const items = [
     url: "/incident-report",
     icon: AlertTriangle,
   },
+]
+
+// Second group - Dashboard items
+const dashboardItems = [
+  {
+    title: "Director Dashboard",
+    url: "/director-dashboard",
+    icon: BarChart3,
+  },
+  {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: Home,
+  },
+]
+
+// Third group - Administrative items
+const adminItems = [
   {
     title: "Reports",
     url: "/reports",
@@ -87,7 +96,45 @@ export function AppSidebar() {
           <SidebarGroupLabel>Recovery Service Tracker</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {serviceItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {dashboardItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {adminItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
