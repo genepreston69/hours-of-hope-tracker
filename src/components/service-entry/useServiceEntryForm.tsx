@@ -10,7 +10,7 @@ import { getLocationIdByName } from "@/constants/locations";
 import { useNavigate } from "react-router-dom";
 
 export const useServiceEntryForm = () => {
-  const { customers, addServiceEntry, getCustomerById, refreshData } = useAppContext();
+  const { customers, addServiceEntry, getCustomerById } = useAppContext();
   const [totalHours, setTotalHours] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -119,27 +119,8 @@ export const useServiceEntryForm = () => {
       // Show success message
       toast.success("Service entry recorded successfully");
       
-      // IMPROVED APPROACH: Force a complete refresh of data and wait for it to complete
-      // before navigating to ensure the dashboard shows the latest data
-      try {
-        console.log("Forcing complete data refresh before navigation");
-        if (refreshData) {
-          // Wait for the refresh to complete
-          await refreshData();
-          console.log("Data refresh completed, ready to navigate to dashboard");
-          
-          // Add a small delay to ensure state updates are processed
-          setTimeout(() => {
-            navigate("/dashboard", { state: { forceRefresh: true } });
-          }, 300);
-        } else {
-          navigate("/dashboard");
-        }
-      } catch (refreshError) {
-        console.error("Error refreshing data before navigation:", refreshError);
-        // Navigate to dashboard even if refresh fails
-        navigate("/dashboard");
-      }
+      // Navigate immediately without forcing refresh - the AppContext will handle data consistency
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error submitting service entry:", error);
       toast.error("Failed to record service entry. Please try again.");
