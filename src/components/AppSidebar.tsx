@@ -26,7 +26,7 @@ const serviceItems = [
     icon: Calendar,
   },
   {
-    title: "Recovery Survey",
+    title: "Director Report",
     url: "/recovery-survey",
     icon: ClipboardList,
   },
