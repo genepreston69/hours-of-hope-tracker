@@ -45,7 +45,7 @@ const dashboardItems = [
     icon: BarChart3,
   },
   {
-    title: "Dashboard",
+    title: "Service Dashboard",
     url: "/dashboard",
     icon: Home,
   },
