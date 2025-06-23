@@ -1,3 +1,4 @@
+
 import { Calendar, Home, Inbox, Search, Settings, Users, FileText, ClipboardList, BarChart3, AlertTriangle, LogOut } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { useNavigate } from "react-router-dom"
@@ -16,7 +17,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar"
 
-// Menu items.
+// Menu items in the order shown in the image
 const items = [
   {
     title: "Dashboard",
@@ -24,24 +25,19 @@ const items = [
     icon: Home,
   },
   {
+    title: "Director Dashboard",
+    url: "/director-dashboard",
+    icon: BarChart3,
+  },
+  {
     title: "Service Entry",
     url: "/service-entry",
     icon: Calendar,
   },
   {
-    title: "Customers",
-    url: "/customers",
-    icon: Users,
-  },
-  {
     title: "Recovery Survey",
     url: "/recovery-survey",
     icon: ClipboardList,
-  },
-  {
-    title: "Director Dashboard",
-    url: "/director-dashboard",
-    icon: BarChart3,
   },
   {
     title: "Incident Report",
@@ -52,6 +48,11 @@ const items = [
     title: "Reports",
     url: "/reports",
     icon: FileText,
+  },
+  {
+    title: "Customers",
+    url: "/customers",
+    icon: Users,
   },
 ]
 
