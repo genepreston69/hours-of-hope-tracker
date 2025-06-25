@@ -1,5 +1,4 @@
-
-import { Calendar, Home, Inbox, Search, Settings, Users, FileText, ClipboardList, BarChart3, AlertTriangle, LogOut } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings, Users, FileText, ClipboardList, BarChart3, AlertTriangle, LogOut, FolderOpen } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { useNavigate } from "react-router-dom"
 import { toast } from "@/components/ui/sonner"
@@ -53,6 +52,11 @@ const dashboardItems = [
 
 // Third group - Administrative items
 const adminItems = [
+  {
+    title: "My Reports",
+    url: "/my-reports",
+    icon: FolderOpen,
+  },
   {
     title: "Reports",
     url: "/reports",

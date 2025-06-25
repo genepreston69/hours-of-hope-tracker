@@ -16,6 +16,7 @@ import RecoverySurvey from "./pages/RecoverySurvey";
 import DirectorDashboard from "./pages/DirectorDashboard";
 import IncidentReport from "./pages/IncidentReport";
 import Reports from "./pages/Reports";
+import MyReports from "./pages/MyReports";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -79,6 +80,14 @@ const App = () => (
                   element={
                     <ProtectedRoute>
                       <Reports />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="my-reports" 
+                  element={
+                    <ProtectedRoute>
+                      <MyReports />
                     </ProtectedRoute>
                   } 
                 />
