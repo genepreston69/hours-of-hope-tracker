@@ -25,10 +25,14 @@ export const EditReportDialog = ({
   if (!report) return null;
 
   const getReportStatus = (report: RecoverySurvey | IncidentReport) => {
-    if ('report_status' in report) {
-      return report.report_status || 'draft';
+    if (reportType === "incident" && 'submitted_at' in report) {
+      return report.submitted_at ? 'submitted' : 'draft';
     }
-    return report.submitted_at ? 'submitted' : 'draft';
+    if (reportType === "director" && 'report_date' in report) {
+      // For director reports, we'll consider them submitted if they have a report_date
+      return report.report_date ? 'submitted' : 'draft';
+    }
+    return 'draft';
   };
 
   const isDraft = getReportStatus(report) === 'draft';
@@ -43,17 +47,23 @@ export const EditReportDialog = ({
   };
 
   const getReportTitle = () => {
-    if ('program_name' in report) {
+    if (reportType === "director" && 'program_name' in report) {
       return report.program_name || 'Director Report';
     }
-    return `${report.incident_type || 'Incident'} - ${report.location || 'Unknown Location'}`;
+    if (reportType === "incident" && 'incident_type' in report) {
+      return `${report.incident_type || 'Incident'} - ${report.location || 'Unknown Location'}`;
+    }
+    return 'Report';
   };
 
   const getReportDate = () => {
-    if ('report_date' in report) {
+    if (reportType === "director" && 'report_date' in report) {
       return report.report_date ? new Date(report.report_date).toLocaleDateString() : 'N/A';
     }
-    return report.incident_date ? new Date(report.incident_date).toLocaleDateString() : 'N/A';
+    if (reportType === "incident" && 'incident_date' in report) {
+      return report.incident_date ? new Date(report.incident_date).toLocaleDateString() : 'N/A';
+    }
+    return 'N/A';
   };
 
   return (
@@ -94,7 +104,7 @@ export const EditReportDialog = ({
             </div>
           )}
 
-          {reportType === "incident" && (
+          {reportType === "incident" && 'incident_type' in report && (
             <div className="space-y-2">
               <h4 className="font-semibold">Incident Summary</h4>
               <div className="grid grid-cols-2 gap-4 text-sm">

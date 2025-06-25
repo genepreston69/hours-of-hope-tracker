@@ -13,7 +13,7 @@ export const ReportStatusBadge = ({ status }: ReportStatusBadgeProps) => {
       case 'submitted':
         return 'default';
       case 'reviewed':
-        return 'success';
+        return 'outline';
       default:
         return 'secondary';
     }
