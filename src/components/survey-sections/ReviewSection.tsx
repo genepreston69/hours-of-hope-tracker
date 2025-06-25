@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -44,12 +45,17 @@ export const ReviewSection: React.FC<SectionProps> = ({
         evaluations: formData.evaluations || null,
         evaluation_details: formData.evaluationDetails || null,
         staffing_needs: formData.staffingNeeds || null,
+        ots_count: formData.otsCount ? parseInt(formData.otsCount) : null,
         phase1_count: formData.phase1Count ? parseInt(formData.phase1Count) : null,
         phase2_count: formData.phase2Count ? parseInt(formData.phase2Count) : null,
         phase1_completions: formData.phase1Completions ? parseInt(formData.phase1Completions) : null,
         phase1_next_steps: formData.phase1NextSteps || null,
         phase2_completions: formData.phase2Completions ? parseInt(formData.phase2Completions) : null,
         phase2_next_steps: formData.phase2NextSteps || null,
+        ged_preparation_starts: formData.gedPreparationStarts ? parseInt(formData.gedPreparationStarts) : null,
+        ged_completions: formData.gedCompletions ? parseInt(formData.gedCompletions) : null,
+        life_skills_starts: formData.lifeSkillsStarts ? parseInt(formData.lifeSkillsStarts) : null,
+        drivers_license_received: formData.driversLicenseReceived ? parseInt(formData.driversLicenseReceived) : null,
         peer_mentors: formData.peerMentors ? parseInt(formData.peerMentors) : null,
         mat_clients: formData.matClients ? parseInt(formData.matClients) : null,
         total_intakes: formData.totalIntakes ? parseInt(formData.totalIntakes) : null,
@@ -124,6 +130,7 @@ export const ReviewSection: React.FC<SectionProps> = ({
         
         <div>
           <h3 className="font-semibold text-gray-700">Key Metrics</h3>
+          <p className="text-sm text-gray-600">OTS Residents: {formData.otsCount || '0'}</p>
           <p className="text-sm text-gray-600">Phase 1 Residents: {formData.phase1Count || '0'}</p>
           <p className="text-sm text-gray-600">Phase 2 Residents: {formData.phase2Count || '0'}</p>
           <p className="text-sm text-gray-600">Total Intakes: {formData.totalIntakes || '0'}</p>
