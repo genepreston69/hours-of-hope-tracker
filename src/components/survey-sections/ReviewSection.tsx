@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -25,6 +24,14 @@ export const ReviewSection: React.FC<SectionProps> = ({
     setIsSubmitting?.(true);
     
     try {
+      // Debug: Log the form data to see what we're working with
+      console.log('🔍 Full form data before processing:', formData);
+      console.log('🔍 OTS Count from form:', formData.otsCount);
+      console.log('🔍 GED Preparation Starts:', formData.gedPreparationStarts);
+      console.log('🔍 GED Completions:', formData.gedCompletions);
+      console.log('🔍 Life Skills Starts:', formData.lifeSkillsStarts);
+      console.log('🔍 Drivers License Received:', formData.driversLicenseReceived);
+
       // Convert meeting entries to a string format for the database
       const meetingDatesString = formData.meetingEntries
         .map(meeting => `${meeting.date} ${meeting.time} - ${meeting.name}`)
@@ -73,9 +80,8 @@ export const ReviewSection: React.FC<SectionProps> = ({
         additional_comments: formData.additionalComments || null
       };
 
-      console.log('Submitting survey data:', surveyData);
-      console.log('Photos to upload:', formData.photos.length);
-      console.log('Question photos:', formData.questionPhotos);
+      console.log('🔍 Survey data being sent to database:', surveyData);
+      console.log('🔍 OTS count being sent:', surveyData.ots_count);
 
       const { data, error } = await supabase
         .from('recovery_surveys')
@@ -135,6 +141,11 @@ export const ReviewSection: React.FC<SectionProps> = ({
           <p className="text-sm text-gray-600">Phase 2 Residents: {formData.phase2Count || '0'}</p>
           <p className="text-sm text-gray-600">Total Intakes: {formData.totalIntakes || '0'}</p>
           <p className="text-sm text-gray-600">Discharges: {formData.discharges || '0'}</p>
+          {/* Debug: Show education fields in review */}
+          <p className="text-sm text-gray-600">GED Preparation Starts: {formData.gedPreparationStarts || '0'}</p>
+          <p className="text-sm text-gray-600">GED Completions: {formData.gedCompletions || '0'}</p>
+          <p className="text-sm text-gray-600">Life Skills Starts: {formData.lifeSkillsStarts || '0'}</p>
+          <p className="text-sm text-gray-600">Driver's License Received: {formData.driversLicenseReceived || '0'}</p>
         </div>
         
         {formData.meetingEntries.length > 0 && (
