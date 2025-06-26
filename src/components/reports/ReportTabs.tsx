@@ -40,16 +40,16 @@ export const ReportTabs = ({
 }: ReportTabsProps) => {
   return (
     <Tabs defaultValue="all" value={currentTab} onValueChange={setCurrentTab}>
-      <TabsList className="grid w-full grid-cols-3 bg-white/60 backdrop-blur-xl border border-slate-200/60">
-        <TabsTrigger value="all" className="data-[state=active]:bg-white/80">All Entries</TabsTrigger>
-        <TabsTrigger value="by-location" className="data-[state=active]:bg-white/80">By Location</TabsTrigger>
-        <TabsTrigger value="by-customer" className="data-[state=active]:bg-white/80">By Customer</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-3">
+        <TabsTrigger value="all">All Entries</TabsTrigger>
+        <TabsTrigger value="by-location">By Location</TabsTrigger>
+        <TabsTrigger value="by-customer">By Customer</TabsTrigger>
       </TabsList>
       <TabsContent value="all">
-        <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-slate-900">Service Entries</CardTitle>
-            <CardDescription className="text-slate-600">
+            <CardTitle>Service Entries</CardTitle>
+            <CardDescription>
               Showing {sortedEntries.length} entries
               {filters.location !== "all" && ` for ${filters.location}`}
               {filters.customer !== "all" && ` from ${filters.customer}`}
@@ -108,10 +108,10 @@ export const ReportTabs = ({
         </Card>
       </TabsContent>
       <TabsContent value="by-location">
-        <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-slate-900">Service Hours by Location</CardTitle>
-            <CardDescription className="text-slate-600">
+            <CardTitle>Service Hours by Location</CardTitle>
+            <CardDescription>
               Summary of service hours grouped by location
               {filters.customer !== "all" && ` for ${filters.customer}`}
               {filters.dateFrom && ` from ${format(filters.dateFrom, "MMM d, yyyy")}`}
@@ -148,10 +148,10 @@ export const ReportTabs = ({
         </Card>
       </TabsContent>
       <TabsContent value="by-customer">
-        <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-slate-900">Service Hours by Customer</CardTitle>
-            <CardDescription className="text-slate-600">
+            <CardTitle>Service Hours by Customer</CardTitle>
+            <CardDescription>
               Summary of service hours grouped by customer
               {filters.location !== "all" && ` at ${filters.location}`}
               {filters.dateFrom && ` from ${format(filters.dateFrom, "MMM d, yyyy")}`}

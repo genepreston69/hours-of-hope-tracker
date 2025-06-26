@@ -12,7 +12,7 @@ const MyReports = () => {
   if (!user) {
     return (
       <div className="container mx-auto p-6">
-        <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow">
+        <Card>
           <CardHeader>
             <CardTitle>Access Denied</CardTitle>
             <CardDescription>
@@ -27,20 +27,20 @@ const MyReports = () => {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-900">My Reports</h1>
-        <p className="text-slate-600 mt-2">
+        <h1 className="text-3xl font-bold">My Reports</h1>
+        <p className="text-gray-600 mt-2">
           View and manage your submitted reports
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 bg-white/60 backdrop-blur-xl border border-slate-200/60">
-          <TabsTrigger value="director-reports" className="data-[state=active]:bg-white/80">Director Reports</TabsTrigger>
-          <TabsTrigger value="incident-reports" className="data-[state=active]:bg-white/80">Incident Reports</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="director-reports">Director Reports</TabsTrigger>
+          <TabsTrigger value="incident-reports">Incident Reports</TabsTrigger>
         </TabsList>
 
         <TabsContent value="director-reports">
-          <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow">
+          <Card>
             <CardHeader>
               <CardTitle>Director Reports</CardTitle>
               <CardDescription>
@@ -54,7 +54,7 @@ const MyReports = () => {
         </TabsContent>
 
         <TabsContent value="incident-reports">
-          <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow">
+          <Card>
             <CardHeader>
               <CardTitle>Incident Reports</CardTitle>
               <CardDescription>

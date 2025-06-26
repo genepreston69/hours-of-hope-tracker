@@ -57,10 +57,10 @@ const Reports = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-        <h1 className="text-3xl font-bold text-slate-900">Service Reports</h1>
+        <h1 className="text-3xl font-bold">Service Reports</h1>
         <div className="flex items-center gap-2 mt-2 sm:mt-0">
           {sortedEntries.length > 0 && (
-            <Button onClick={handleExportToCSV} className="mt-2 sm:mt-0 bg-gradient-to-r from-[#0077be] to-[#005a8f] hover:from-[#005a8f] hover:to-[#0077be]">
+            <Button onClick={handleExportToCSV} className="mt-2 sm:mt-0">
               <Download className="h-4 w-4 mr-2" />
               Export to CSV
             </Button>
@@ -68,15 +68,13 @@ const Reports = () => {
         </div>
       </div>
 
-      <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 nav-shadow">
-        <ReportFilters 
-          filters={filters}
-          setFilters={setFilters}
-          locations={locations}
-          customerNames={customerNames}
-          onResetFilters={handleResetFilters}
-        />
-      </div>
+      <ReportFilters 
+        filters={filters}
+        setFilters={setFilters}
+        locations={locations}
+        customerNames={customerNames}
+        onResetFilters={handleResetFilters}
+      />
 
       {sortedEntries.length > 0 ? (
         <>
