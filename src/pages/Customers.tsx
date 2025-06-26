@@ -41,7 +41,7 @@ const Customers = () => {
       <div className="flex items-center justify-center h-[60vh]">
         <div className="text-center space-y-4">
           <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
-          <p className="text-lg">Loading customers from database...</p>
+          <p className="text-lg text-slate-700">Loading customers from database...</p>
         </div>
       </div>
     );
@@ -50,7 +50,7 @@ const Customers = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-        <h1 className="text-3xl font-bold">Customer Management</h1>
+        <h1 className="text-3xl font-bold text-slate-900">Customer Management</h1>
         <CustomerActions
           onAddCustomer={addCustomer}
           onOpenImport={() => setIsImporting(true)}
@@ -72,10 +72,10 @@ const Customers = () => {
         onImportCustomers={importCustomers}
       />
 
-      <Card>
+      <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow">
         <CardHeader>
-          <CardTitle>Customers</CardTitle>
-          <CardDescription>Manage your customers and their contact information.</CardDescription>
+          <CardTitle className="text-slate-900">Customers</CardTitle>
+          <CardDescription className="text-slate-600">Manage your customers and their contact information.</CardDescription>
         </CardHeader>
         <CardContent>
           <CustomerList
