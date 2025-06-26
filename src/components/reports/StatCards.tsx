@@ -10,10 +10,10 @@ interface StatCardsProps {
 export const StatCards = ({ totalHours, totalResidents, avgHoursPerResident }: StatCardsProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg hover:bg-white/20 transition-all duration-200">
+      <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow hover:bg-white/90 transition-all duration-200">
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#0077be] to-[#005a8f] rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
               <div className="w-6 h-6 text-white font-bold text-lg">H</div>
             </div>
             <div>
@@ -24,7 +24,7 @@ export const StatCards = ({ totalHours, totalResidents, avgHoursPerResident }: S
         </CardContent>
       </Card>
       
-      <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg hover:bg-white/20 transition-all duration-200">
+      <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow hover:bg-white/90 transition-all duration-200">
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
@@ -38,7 +38,7 @@ export const StatCards = ({ totalHours, totalResidents, avgHoursPerResident }: S
         </CardContent>
       </Card>
       
-      <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg hover:bg-white/20 transition-all duration-200">
+      <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow hover:bg-white/90 transition-all duration-200">
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-gradient-to-br from-[#0077be] to-[#005a8f] rounded-xl flex items-center justify-center">
