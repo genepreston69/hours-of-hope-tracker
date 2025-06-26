@@ -138,7 +138,7 @@ export function AppSidebar() {
               />
             </div>
             <div>
-              <div className="font-semibold text-slate-900 tracking-tight">Director Reporting</div>
+              <div className="font-semibold text-slate-900 tracking-tight">Recovery Point</div>
               <div className="text-sm text-slate-500">Management System</div>
             </div>
           </div>
