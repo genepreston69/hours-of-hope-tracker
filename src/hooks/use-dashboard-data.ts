@@ -26,7 +26,8 @@ export const useDashboardData = (
         filteredStats: emptyStats,
         filteredLocationStats: [],
         recentEntries: [],
-        latestEntriesByLocation: []
+        latestEntriesByLocation: [],
+        allFilteredEntries: []
       };
     }
     
@@ -161,7 +162,8 @@ export const useDashboardData = (
         filteredStats,
         filteredLocationStats,
         recentEntries,
-        latestEntriesByLocation
+        latestEntriesByLocation,
+        allFilteredEntries: sortedEntries // Return all filtered entries for CSV export
       };
       
     } catch (error) {
@@ -172,7 +174,8 @@ export const useDashboardData = (
         filteredStats: emptyStats,
         filteredLocationStats: [],
         recentEntries: [],
-        latestEntriesByLocation: []
+        latestEntriesByLocation: [],
+        allFilteredEntries: []
       };
     }
   }, [serviceEntries, dateFilter]); // Only recalculate when these dependencies change

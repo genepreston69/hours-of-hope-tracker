@@ -1,4 +1,3 @@
-
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
@@ -96,7 +95,11 @@ const Dashboard = () => {
       <StatCards stats={dashboardData.filteredStats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentEntries entries={dashboardData.latestEntriesByLocation} />
+        <RecentEntries 
+          entries={dashboardData.latestEntriesByLocation} 
+          allFilteredEntries={dashboardData.allFilteredEntries}
+          dateFilter={dateFilter}
+        />
         <LocationStatsCard locationStats={dashboardData.filteredLocationStats} />
       </div>
       

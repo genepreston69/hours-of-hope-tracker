@@ -1,18 +1,53 @@
 
 import { ServiceEntry } from "@/models/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { exportToCSV } from "@/components/reports/ReportExport";
+import { DateFilterType } from "@/components/dashboard/DateFilter";
 
 interface RecentEntriesProps {
   entries: ServiceEntry[];
+  allFilteredEntries?: ServiceEntry[];
+  dateFilter?: DateFilterType;
 }
 
-export const RecentEntries = ({ entries }: RecentEntriesProps) => {
+export const RecentEntries = ({ entries, allFilteredEntries, dateFilter }: RecentEntriesProps) => {
+  const handleExportToCSV = () => {
+    if (!allFilteredEntries || allFilteredEntries.length === 0) return;
+    
+    // Create filters object for the export function
+    const filters = {
+      location: "all",
+      customer: "all",
+      dateFrom: undefined,
+      dateTo: undefined,
+    };
+    
+    exportToCSV(allFilteredEntries, filters, dateFilter);
+  };
+
   return (
     <Card className="col-span-1">
       <CardHeader>
-        <CardTitle>Last Service Entry by Location</CardTitle>
-        <CardDescription>Most recent service entry for each location</CardDescription>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle>Last Service Entry by Location</CardTitle>
+            <CardDescription>Most recent service entry for each location</CardDescription>
+          </div>
+          {allFilteredEntries && allFilteredEntries.length > 0 && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleExportToCSV}
+              className="shrink-0"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         {entries.length > 0 ? (

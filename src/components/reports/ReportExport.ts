@@ -2,8 +2,13 @@
 import { format } from "date-fns";
 import { ServiceEntry } from "@/models/types";
 import { ReportFilters } from "./ReportFilters";
+import { DateFilterType } from "@/components/dashboard/DateFilter";
 
-export const exportToCSV = (sortedEntries: ServiceEntry[], filters: ReportFilters) => {
+export const exportToCSV = (
+  sortedEntries: ServiceEntry[], 
+  filters: ReportFilters, 
+  dateFilter?: DateFilterType
+) => {
   let csvContent = "date,customer,location,residents,hours_worked,total_hours,notes\r\n";
 
   sortedEntries.forEach((entry) => {
@@ -28,6 +33,11 @@ export const exportToCSV = (sortedEntries: ServiceEntry[], filters: ReportFilter
   // Create filename with current date
   const today = format(new Date(), "yyyy-MM-dd");
   let filename = `service_report_${today}`;
+  
+  // Add date filter info to filename if provided
+  if (dateFilter) {
+    filename += `_${dateFilter.toUpperCase()}`;
+  }
   
   // Add filter info to filename
   if (filters.location !== "all") filename += `_${filters.location}`;
