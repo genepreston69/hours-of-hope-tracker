@@ -34,7 +34,7 @@ export const StatCards = ({ stats }: StatCardsProps) => {
       
       <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 nav-shadow hover:bg-white/90 transition-all duration-200">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl flex items-center justify-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-[#0077be] to-[#005a8f] rounded-xl flex items-center justify-center">
             <div className="w-6 h-6 text-white font-bold text-lg">A</div>
           </div>
           <div>

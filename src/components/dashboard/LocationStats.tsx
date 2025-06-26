@@ -24,7 +24,7 @@ export const LocationStatsCard = ({ locationStats }: LocationStatsProps) => {
                 <div className="space-y-2">
                   <div className="w-full bg-gradient-to-r from-slate-200/60 to-zinc-200/60 rounded-full h-3 overflow-hidden">
                     <div 
-                      className="bg-gradient-to-r from-violet-500 to-indigo-600 h-full rounded-full transition-all duration-300 ease-out" 
+                      className="bg-gradient-to-r from-[#0077be] to-[#005a8f] h-full rounded-full transition-all duration-300 ease-out" 
                       style={{ 
                         width: `${Math.min(100, (stat.hours / Math.max(...locationStats.map(s => s.hours))) * 100)}%` 
                       }}
