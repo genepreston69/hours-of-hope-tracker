@@ -55,6 +55,7 @@ const Customers = () => {
           onAddCustomer={addCustomer}
           onOpenImport={() => setIsImporting(true)}
           onDownloadTemplate={downloadSampleCSV}
+          customers={customers}
         />
       </div>
 
