@@ -132,7 +132,7 @@ export function AppSidebar() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
               <img 
-                src="/lovable-uploads/f4dd29f5-c1ea-4bf3-88c3-f13573496fe7.png" 
+                src="/lovable-uploads/e45e6154-5157-4684-8bd5-cb86dc63a61b.png" 
                 alt="Point Recovery" 
                 className="w-full h-full object-contain"
               />
