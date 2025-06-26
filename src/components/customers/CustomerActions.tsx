@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { PlusCircle, Upload, Download, FileDown } from "lucide-react";
 import { CustomerForm } from "./CustomerForm";
 import { exportCustomersToCSV } from "./CustomerExport";
+import { v4 as uuidv4 } from 'uuid';
 
 interface CustomerActionsProps {
   onAddCustomer: (customer: Customer) => void;
@@ -40,11 +41,23 @@ export const CustomerActions = ({ onAddCustomer, onOpenImport, onDownloadTemplat
             </DialogDescription>
           </DialogHeader>
           <CustomerForm
-            onSubmit={(customer) => {
+            onSubmit={(customerData) => {
+              const customer: Customer = {
+                id: uuidv4(),
+                name: customerData.name,
+                contactName: customerData.contactName || undefined,
+                contactEmail: customerData.contactEmail || undefined,
+                contactPhone: customerData.contactPhone || undefined,
+                street: customerData.street || undefined,
+                city: customerData.city || undefined,
+                state: customerData.state || undefined,
+                zip: customerData.zip || undefined,
+              };
               onAddCustomer(customer);
               setIsAddDialogOpen(false);
             }}
             onCancel={() => setIsAddDialogOpen(false)}
+            buttonText="Add Customer"
           />
         </DialogContent>
       </Dialog>
