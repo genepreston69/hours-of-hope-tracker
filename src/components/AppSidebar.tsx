@@ -134,8 +134,8 @@ export function AppSidebar() {
               <Activity className="w-5 h-5 text-white" />
             </div>
             <div>
-              <div className="font-semibold text-slate-900 tracking-tight">Recovery Service</div>
-              <div className="text-sm text-slate-500">Service Tracker</div>
+              <div className="font-semibold text-slate-900 tracking-tight">Director Reporting</div>
+              <div className="text-sm text-slate-500">Management System</div>
             </div>
           </div>
         </div>
