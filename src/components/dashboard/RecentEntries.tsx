@@ -28,8 +28,8 @@ export const RecentEntries = ({ entries, allFilteredEntries, dateFilter }: Recen
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl overflow-hidden nav-shadow">
-      <div className="p-6 border-b border-slate-100">
+    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden shadow-lg">
+      <div className="p-6 border-b border-white/10">
         <div className="flex justify-between items-start">
           <div>
             <h3 className="text-lg font-semibold text-slate-900 tracking-tight">Last Service Entry by Location</h3>
@@ -40,7 +40,7 @@ export const RecentEntries = ({ entries, allFilteredEntries, dateFilter }: Recen
               variant="outline" 
               size="sm" 
               onClick={handleExportToCSV}
-              className="shrink-0 bg-white/50 backdrop-blur-sm border-slate-200/60 hover:bg-white/70"
+              className="shrink-0 bg-white/50 backdrop-blur-sm border-white/30 hover:bg-white/70"
             >
               <Download className="h-4 w-4 mr-2" />
               Export CSV
