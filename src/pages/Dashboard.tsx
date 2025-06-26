@@ -1,3 +1,4 @@
+
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
@@ -65,46 +66,62 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <Button 
-          variant="outline"
-          onClick={handleRefresh}
-          disabled={refreshing}
-          className="mt-2 sm:mt-0"
-        >
-          {refreshing ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Refreshing...
-            </>
-          ) : (
-            <>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Refresh Data
-            </>
-          )}
-        </Button>
-      </div>
-      
-      {/* Task Notifications - Show at top for authenticated users */}
-      <TaskNotifications taskStatus={taskStatus} user={user} />
-      
-      <DateFilter dateFilter={dateFilter} setDateFilter={setDateFilter} />
-      <StatCards stats={dashboardData.filteredStats} />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-zinc-50 to-stone-50">
+      <div className="container mx-auto p-6">
+        <div className="space-y-6 animate-fade-in">
+          {/* Header Card with Glass Effect */}
+          <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 nav-shadow">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Service Dashboard</h1>
+                <p className="text-slate-500 mt-1">Track and monitor service hours</p>
+              </div>
+              <Button 
+                variant="outline"
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="mt-4 sm:mt-0 bg-white/50 backdrop-blur-sm border-slate-200/60 hover:bg-white/70"
+              >
+                {refreshing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Refreshing...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Refresh Data
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+          
+          {/* Task Notifications - Show at top for authenticated users */}
+          <TaskNotifications taskStatus={taskStatus} user={user} />
+          
+          {/* Date Filter Card */}
+          <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 nav-shadow">
+            <DateFilter dateFilter={dateFilter} setDateFilter={setDateFilter} />
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentEntries 
-          entries={dashboardData.latestEntriesByLocation} 
-          allFilteredEntries={dashboardData.allFilteredEntries}
-          dateFilter={dateFilter}
-        />
-        <LocationStatsCard locationStats={dashboardData.filteredLocationStats} />
+          {/* Stats Cards */}
+          <StatCards stats={dashboardData.filteredStats} />
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <RecentEntries 
+              entries={dashboardData.latestEntriesByLocation} 
+              allFilteredEntries={dashboardData.allFilteredEntries}
+              dateFilter={dateFilter}
+            />
+            <LocationStatsCard locationStats={dashboardData.filteredLocationStats} />
+          </div>
+          
+          {/* Pagination functionality is preserved but UI elements are removed */}
+          {/* The loadMore and pagination state are still available for other uses */}
+        </div>
       </div>
-      
-      {/* Pagination functionality is preserved but UI elements are removed */}
-      {/* The loadMore and pagination state are still available for other uses */}
     </div>
   );
 };

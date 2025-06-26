@@ -1,6 +1,5 @@
 
 import { ServiceEntry } from "@/models/types";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { formatDate } from "@/lib/utils";
@@ -29,46 +28,46 @@ export const RecentEntries = ({ entries, allFilteredEntries, dateFilter }: Recen
   };
 
   return (
-    <Card className="col-span-1">
-      <CardHeader>
+    <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl overflow-hidden nav-shadow">
+      <div className="p-6 border-b border-slate-100">
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle>Last Service Entry by Location</CardTitle>
-            <CardDescription>Most recent service entry for each location</CardDescription>
+            <h3 className="text-lg font-semibold text-slate-900 tracking-tight">Last Service Entry by Location</h3>
+            <p className="text-sm text-slate-500 mt-1">Most recent service entry for each location</p>
           </div>
           {allFilteredEntries && allFilteredEntries.length > 0 && (
             <Button 
               variant="outline" 
               size="sm" 
               onClick={handleExportToCSV}
-              className="shrink-0"
+              className="shrink-0 bg-white/50 backdrop-blur-sm border-slate-200/60 hover:bg-white/70"
             >
               <Download className="h-4 w-4 mr-2" />
               Export CSV
             </Button>
           )}
         </div>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div className="p-6">
         {entries.length > 0 ? (
           <div className="space-y-4">
             {entries.map((entry: ServiceEntry) => (
-              <div key={entry.id} className="flex flex-col gap-1 p-3 border rounded-lg">
-                <div className="flex justify-between">
-                  <span className="font-medium">{entry.customerName}</span>
-                  <span className="text-muted-foreground">{formatDate(entry.date)}</span>
+              <div key={entry.id} className="bg-gradient-to-r from-slate-50/80 to-zinc-50/80 backdrop-blur-sm border border-slate-200/40 rounded-xl p-4 hover:from-slate-50 hover:to-zinc-50 transition-all duration-200">
+                <div className="flex justify-between items-start mb-2">
+                  <span className="font-semibold text-slate-900">{entry.customerName}</span>
+                  <span className="text-sm text-slate-500 bg-white/60 px-2 py-1 rounded-lg">{formatDate(entry.date)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium">Location: {entry.location}</span>
-                  <span>{Math.round(entry.totalHours)} hours ({entry.numberOfResidents} volunteers)</span>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="font-medium text-slate-700">Location: {entry.location}</span>
+                  <span className="text-slate-600 bg-white/40 px-2 py-1 rounded-lg">{Math.round(entry.totalHours)} hours ({entry.numberOfResidents} volunteers)</span>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">No service entries yet.</p>
+          <p className="text-slate-500 text-center py-8">No service entries yet.</p>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };

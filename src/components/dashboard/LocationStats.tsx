@@ -1,6 +1,5 @@
 
 import { LocationStats } from "@/models/types";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface LocationStatsProps {
   locationStats: LocationStats[];
@@ -8,38 +7,41 @@ interface LocationStatsProps {
 
 export const LocationStatsCard = ({ locationStats }: LocationStatsProps) => {
   return (
-    <Card className="col-span-1">
-      <CardHeader>
-        <CardTitle>Service Hours by Location</CardTitle>
-        <CardDescription>Total hours for each recovery house location</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl overflow-hidden nav-shadow">
+      <div className="p-6 border-b border-slate-100">
+        <h3 className="text-lg font-semibold text-slate-900 tracking-tight">Service Hours by Location</h3>
+        <p className="text-sm text-slate-500 mt-1">Total hours for each recovery house location</p>
+      </div>
+      <div className="p-6">
         {locationStats.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {locationStats.map((stat) => (
-              <div key={stat.location} className="flex flex-col gap-1">
+              <div key={stat.location} className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">{stat.location}</span>
-                  <span className="text-sm text-muted-foreground">{stat.entries} entries</span>
+                  <span className="font-semibold text-slate-900">{stat.location}</span>
+                  <span className="text-sm text-slate-500 bg-white/60 px-2 py-1 rounded-lg">{stat.entries} entries</span>
                 </div>
-                <div className="flex justify-between items-center text-sm">
-                  <div className="w-full bg-muted rounded-full h-2.5">
+                <div className="space-y-2">
+                  <div className="w-full bg-gradient-to-r from-slate-200/60 to-zinc-200/60 rounded-full h-3 overflow-hidden">
                     <div 
-                      className="bg-primary h-2.5 rounded-full" 
+                      className="bg-gradient-to-r from-violet-500 to-indigo-600 h-full rounded-full transition-all duration-300 ease-out" 
                       style={{ 
                         width: `${Math.min(100, (stat.hours / Math.max(...locationStats.map(s => s.hours))) * 100)}%` 
                       }}
                     ></div>
                   </div>
-                  <span className="ml-2 font-medium">{stat.hours} hrs</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-slate-600">Total Hours</span>
+                    <span className="font-semibold text-slate-900 bg-white/60 px-2 py-1 rounded-lg">{stat.hours} hrs</span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">No location data available.</p>
+          <p className="text-slate-500 text-center py-8">No location data available.</p>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
