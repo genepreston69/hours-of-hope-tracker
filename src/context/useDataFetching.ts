@@ -6,7 +6,7 @@ import { toast } from "../components/ui/sonner";
 import { User } from "@supabase/supabase-js";
 
 // Define pagination constants
-const PAGE_SIZE = 2000; // Increased from 1000 to 2000 to get more historical data
+const PAGE_SIZE = 1000; // Items per page
 const DEFAULT_PAGE = 1; // Default starting page
 
 export const useDataFetching = (user: User | null) => {
@@ -62,7 +62,7 @@ export const useDataFetching = (user: User | null) => {
       const totalCount = count || 0;
       console.log(`Total service entries in database: ${totalCount}`);
       
-      // Fetch service entries with pagination - ordered by date descending to get recent entries first
+      // Fetch service entries with pagination
       const { data: entriesData, error: entriesError } = await supabase
         .from('service_entries')
         .select('*, customers(name)')

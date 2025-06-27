@@ -36,9 +36,6 @@ export const useDashboardData = (
       const now = new Date();
       const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const firstDayOfYear = new Date(now.getFullYear(), 0, 1);
-      const firstDayOf2023 = new Date(2023, 0, 1);
-      const firstDayOf2024 = new Date(2024, 0, 1);
-      const firstDayOf2025 = new Date(2025, 0, 1);
       
       let filtered: ServiceEntry[];
       
@@ -52,33 +49,11 @@ export const useDashboardData = (
             return false;
           }
         });
-      } else if (dateFilter === "ytd") {
+      } else {
         // Year to Date: Only entries from the beginning of the current year
         filtered = serviceEntries.filter(entry => {
           try {
             return new Date(entry.date) >= firstDayOfYear;
-          } catch (error) {
-            console.warn(`🚨 Invalid date found in entry ${entry.id}:`, entry.date);
-            return false;
-          }
-        });
-      } else if (dateFilter === "2023") {
-        // All entries from 2023
-        filtered = serviceEntries.filter(entry => {
-          try {
-            const entryDate = new Date(entry.date);
-            return entryDate >= firstDayOf2023 && entryDate < firstDayOf2024;
-          } catch (error) {
-            console.warn(`🚨 Invalid date found in entry ${entry.id}:`, entry.date);
-            return false;
-          }
-        });
-      } else if (dateFilter === "2024") {
-        // All entries from 2024
-        filtered = serviceEntries.filter(entry => {
-          try {
-            const entryDate = new Date(entry.date);
-            return entryDate >= firstDayOf2024 && entryDate < firstDayOf2025;
           } catch (error) {
             console.warn(`🚨 Invalid date found in entry ${entry.id}:`, entry.date);
             return false;

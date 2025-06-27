@@ -67,8 +67,8 @@ export function useAppState(): [
         setServiceEntries(newServiceEntries);
       }
       
-      // Calculate and update pagination state - updated for new page size
-      const calculatedTotalPages = Math.ceil(totalCount / 2000); // Updated from 1000 to 2000
+      // Calculate and update pagination state
+      const calculatedTotalPages = Math.ceil(totalCount / 1000);
       setTotalPages(calculatedTotalPages);
       setHasMore(moreData);
       setCurrentPage(page || 1);
@@ -105,8 +105,8 @@ export function useAppState(): [
         setCustomers(initialCustomers);
         setServiceEntries(initialEntries);
         
-        // Calculate and update pagination state - updated for new page size
-        setTotalPages(Math.ceil(totalCount / 2000)); // Updated from 1000 to 2000
+        // Calculate and update pagination state
+        setTotalPages(Math.ceil(totalCount / 1000));
         setHasMore(moreData);
         
         console.log("Initial data load completed successfully");
