@@ -23,11 +23,7 @@ export const useIncidentReports = () => {
 
     try {
       setLoading(true);
-      console.log("useIncidentReports: Fetching incident reports for user:", user.id);
-      console.log("useIncidentReports: User object:", user);
-      
-      // First, let's check if the table exists and what data is there
-      console.log("useIncidentReports: Attempting to query incident_reports table...");
+      console.log("useIncidentReports: Fetching all incident reports");
       
       const { data, error, count } = await supabase
         .from('incident_reports')
@@ -50,7 +46,6 @@ export const useIncidentReports = () => {
       console.log("useIncidentReports: Fetched", data?.length || 0, "incident reports");
       if (data && data.length > 0) {
         console.log("useIncidentReports: Sample report:", data[0]);
-        console.log("useIncidentReports: All user_ids in data:", data.map(r => r.user_id));
       }
       setIncidentReports(data || []);
     } catch (error) {
@@ -89,7 +84,7 @@ export const useIncidentReports = () => {
   useEffect(() => {
     if (user && !hasInitialized.current) {
       hasInitialized.current = true;
-      console.log("useIncidentReports: Initializing fetch for user:", user.id);
+      console.log("useIncidentReports: Initializing fetch for authenticated user");
       fetchIncidentReports();
     }
   }, [user, fetchIncidentReports]);
