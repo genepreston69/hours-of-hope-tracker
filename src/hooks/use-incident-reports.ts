@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Tables } from "@/integrations/supabase/types";
@@ -11,6 +11,7 @@ export const useIncidentReports = () => {
   const [incidentReports, setIncidentReports] = useState<IncidentReport[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const hasInitialized = useRef(false);
 
   const fetchIncidentReports = useCallback(async () => {
     if (!user) {
@@ -36,7 +37,9 @@ export const useIncidentReports = () => {
       }
 
       console.log("useIncidentReports: Fetched", data?.length || 0, "incident reports");
-      console.log("useIncidentReports: Sample report:", data?.[0]);
+      if (data && data.length > 0) {
+        console.log("useIncidentReports: Sample report:", data[0]);
+      }
       setIncidentReports(data || []);
     } catch (error) {
       console.error('useIncidentReports: Error fetching incident reports:', error);
@@ -67,9 +70,13 @@ export const useIncidentReports = () => {
     }
   }, [fetchIncidentReports]);
 
+  // Only fetch once when user is available and component hasn't initialized
   useEffect(() => {
-    fetchIncidentReports();
-  }, [fetchIncidentReports]);
+    if (user && !hasInitialized.current) {
+      hasInitialized.current = true;
+      fetchIncidentReports();
+    }
+  }, [user, fetchIncidentReports]);
 
   return {
     incidentReports,

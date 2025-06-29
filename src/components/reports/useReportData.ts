@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ServiceEntry } from "@/models/types";
 import { ReportFilters } from "./ReportFilters";
 
@@ -7,7 +7,7 @@ export const useReportData = (
   serviceEntries: ServiceEntry[],
   refreshData: (() => Promise<void>) | undefined
 ) => {
-  const [currentTab, setCurrentTab] = useState("all");
+  const [currentTab, setCurrentTab] = useState("service-entries");
   const [refreshing, setRefreshing] = useState(false);
   const [filters, setFilters] = useState<ReportFilters>({
     location: "all",
@@ -15,11 +15,14 @@ export const useReportData = (
     dateFrom: undefined,
     dateTo: undefined,
   });
+  
+  const hasInitialized = useRef(false);
 
-  // Auto-refresh data when component mounts
+  // Auto-refresh data when component mounts - but only once
   useEffect(() => {
     const refreshReportData = async () => {
-      if (refreshData) {
+      if (refreshData && !hasInitialized.current) {
+        hasInitialized.current = true;
         setRefreshing(true);
         try {
           console.log("Reports: Auto refreshing report data on mount");
@@ -34,7 +37,7 @@ export const useReportData = (
     };
     
     refreshReportData();
-  }, [refreshData]);
+  }, []); // Remove refreshData from dependencies to prevent loops
 
   // Extract unique locations and customers for filtering
   const locations = Array.from(new Set(serviceEntries.map((entry) => entry.location)));

@@ -33,24 +33,6 @@ const Reports = () => {
     handleResetFilters,
   } = useReportData(serviceEntries, refreshData);
   
-  // Function to refresh data manually (kept for future use but not displayed in UI)
-  const handleRefresh = async () => {
-    if (refreshing || !refreshData) return;
-    
-    setRefreshing(true);
-    try {
-      console.log("Reports: Manual refresh initiated");
-      await refreshData();
-      toast.success("Report data refreshed");
-      console.log("Reports: Manual refresh completed");
-    } catch (error) {
-      console.error("Reports: Error refreshing report data:", error);
-      toast.error("Failed to refresh report data");
-    } finally {
-      setRefreshing(false);
-    }
-  };
-  
   // Handler for CSV export
   const handleExportToCSV = () => {
     exportToCSV(sortedEntries, filters);
