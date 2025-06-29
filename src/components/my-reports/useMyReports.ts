@@ -19,6 +19,7 @@ export const useMyReports = ({ reportType, userId }: UseMyReportsProps) => {
   const fetchReports = async () => {
     try {
       setLoading(true);
+      console.log(`Fetching ${reportType} reports for user:`, userId);
       
       if (reportType === "director") {
         const { data, error } = await supabase
@@ -27,7 +28,12 @@ export const useMyReports = ({ reportType, userId }: UseMyReportsProps) => {
           .eq('user_id', userId)
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching recovery surveys:', error);
+          throw error;
+        }
+        
+        console.log('Recovery surveys fetched:', data?.length || 0);
         setReports(data || []);
       } else {
         const { data, error } = await supabase
@@ -36,12 +42,18 @@ export const useMyReports = ({ reportType, userId }: UseMyReportsProps) => {
           .eq('user_id', userId)
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching incident reports:', error);
+          throw error;
+        }
+        
+        console.log('Incident reports fetched:', data?.length || 0);
         setReports(data || []);
       }
     } catch (error) {
       console.error(`Error fetching ${reportType} reports:`, error);
       toast.error(`Failed to load ${reportType} reports`);
+      setReports([]);
     } finally {
       setLoading(false);
     }
@@ -51,14 +63,20 @@ export const useMyReports = ({ reportType, userId }: UseMyReportsProps) => {
     if (!confirm("Are you sure you want to delete this report?")) return;
 
     try {
+      console.log(`Deleting ${reportType} report:`, reportId);
+      
       const tableName = reportType === "director" ? "recovery_surveys" : "incident_reports";
       const { error } = await supabase
         .from(tableName)
         .delete()
         .eq('id', reportId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting report:', error);
+        throw error;
+      }
 
+      console.log(`${reportType} report deleted successfully`);
       toast.success("Report deleted successfully");
       fetchReports();
     } catch (error) {
@@ -68,7 +86,12 @@ export const useMyReports = ({ reportType, userId }: UseMyReportsProps) => {
   };
 
   useEffect(() => {
-    fetchReports();
+    if (userId) {
+      fetchReports();
+    } else {
+      console.warn('No userId provided to useMyReports');
+      setLoading(false);
+    }
   }, [reportType, userId]);
 
   return {
