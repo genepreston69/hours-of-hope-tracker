@@ -3,7 +3,7 @@ import { CalendarClock } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 // Define filter types
-export type DateFilterType = "mtd" | "ytd";
+export type DateFilterType = "mtd" | "ytd" | "2023" | "2024";
 
 interface DateFilterProps {
   dateFilter: DateFilterType;
@@ -23,6 +23,8 @@ export const DateFilter = ({ dateFilter, setDateFilter }: DateFilterProps) => {
         >
           <ToggleGroupItem value="mtd" size="sm">Month to Date</ToggleGroupItem>
           <ToggleGroupItem value="ytd" size="sm">Year to Date</ToggleGroupItem>
+          <ToggleGroupItem value="2023" size="sm">2023</ToggleGroupItem>
+          <ToggleGroupItem value="2024" size="sm">2024</ToggleGroupItem>
         </ToggleGroup>
       </div>
     </div>
