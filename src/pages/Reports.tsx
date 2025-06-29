@@ -93,7 +93,7 @@ const Reports = () => {
           )}
 
           <ReportTabs 
-            currentTab={currentTab}
+            currentTab={currentTab || "service-entries"}
             setCurrentTab={setCurrentTab}
             sortedEntries={sortedEntries}
             entriesByLocation={entriesByLocation}
