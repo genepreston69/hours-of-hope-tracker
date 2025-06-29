@@ -101,7 +101,7 @@ export const CustomerField = ({ control, customers }: CustomerFieldProps) => {
           <DialogHeader>
             <DialogTitle>Add New Customer</DialogTitle>
             <DialogDescription>
-              Enter the customer details below.
+              Enter the customer details below to add them to your customer list.
             </DialogDescription>
           </DialogHeader>
           <CustomerForm 

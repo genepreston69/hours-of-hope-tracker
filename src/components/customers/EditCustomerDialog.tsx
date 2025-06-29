@@ -38,7 +38,7 @@ export const EditCustomerDialog = ({
         <DialogHeader>
           <DialogTitle>Edit Customer</DialogTitle>
           <DialogDescription>
-            Update the customer details below.
+            Update the customer details below and save your changes.
           </DialogDescription>
         </DialogHeader>
         <CustomerForm
