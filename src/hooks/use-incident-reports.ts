@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Tables } from "@/integrations/supabase/types";
@@ -12,7 +12,7 @@ export const useIncidentReports = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const fetchIncidentReports = async () => {
+  const fetchIncidentReports = useCallback(async () => {
     if (!user) {
       console.log("useIncidentReports: No user, setting empty reports");
       setIncidentReports([]);
@@ -44,9 +44,9 @@ export const useIncidentReports = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
-  const deleteIncidentReport = async (reportId: string) => {
+  const deleteIncidentReport = useCallback(async (reportId: string) => {
     try {
       const { error } = await supabase
         .from('incident_reports')
@@ -65,11 +65,11 @@ export const useIncidentReports = () => {
       console.error('useIncidentReports: Error deleting incident report:', error);
       toast.error('Failed to delete incident report');
     }
-  };
+  }, [fetchIncidentReports]);
 
   useEffect(() => {
     fetchIncidentReports();
-  }, [user]);
+  }, [fetchIncidentReports]);
 
   return {
     incidentReports,
