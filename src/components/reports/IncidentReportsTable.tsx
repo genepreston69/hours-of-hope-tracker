@@ -17,7 +17,9 @@ interface IncidentReportsTableProps {
 
 export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport }: IncidentReportsTableProps) => {
   console.log("IncidentReportsTable: Rendering with", incidentReports.length, "reports");
-  console.log("IncidentReportsTable: Sample report data:", incidentReports[0]);
+  if (incidentReports.length > 0) {
+    console.log("IncidentReportsTable: Sample report data:", incidentReports[0]);
+  }
 
   return (
     <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60">
