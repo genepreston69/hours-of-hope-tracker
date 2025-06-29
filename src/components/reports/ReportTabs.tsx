@@ -8,6 +8,9 @@ import { ServiceEntry } from "@/models/types";
 import { formatDate } from "@/lib/utils";
 import { format } from "date-fns";
 import { ReportFilters } from "./ReportFilters";
+import { Tables } from "@/integrations/supabase/types";
+
+type IncidentReport = Tables<'incident_reports'>;
 
 interface ReportTabsProps {
   currentTab: string;
@@ -27,6 +30,8 @@ interface ReportTabsProps {
   }[];
   deleteServiceEntry: (id: string) => void;
   filters: ReportFilters;
+  incidentReports?: IncidentReport[];
+  deleteIncidentReport?: (id: string) => void;
 }
 
 export const ReportTabs = ({
@@ -36,15 +41,19 @@ export const ReportTabs = ({
   entriesByLocation,
   entriesByCustomer,
   deleteServiceEntry,
-  filters
+  filters,
+  incidentReports = [],
+  deleteIncidentReport
 }: ReportTabsProps) => {
   return (
     <Tabs defaultValue="all" value={currentTab} onValueChange={setCurrentTab}>
-      <TabsList className="grid w-full grid-cols-3 bg-white/60 backdrop-blur-xl border border-slate-200/60">
-        <TabsTrigger value="all" className="data-[state=active]:bg-white/80">All Entries</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-4 bg-white/60 backdrop-blur-xl border border-slate-200/60">
+        <TabsTrigger value="all" className="data-[state=active]:bg-white/80">Service Entries</TabsTrigger>
+        <TabsTrigger value="incident-reports" className="data-[state=active]:bg-white/80">Incident Reports</TabsTrigger>
         <TabsTrigger value="by-location" className="data-[state=active]:bg-white/80">By Location</TabsTrigger>
         <TabsTrigger value="by-customer" className="data-[state=active]:bg-white/80">By Customer</TabsTrigger>
       </TabsList>
+      
       <TabsContent value="all">
         <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow">
           <CardHeader>
@@ -107,6 +116,84 @@ export const ReportTabs = ({
           </CardContent>
         </Card>
       </TabsContent>
+
+      <TabsContent value="incident-reports">
+        <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow">
+          <CardHeader>
+            <CardTitle className="text-slate-900">Incident Reports</CardTitle>
+            <CardDescription className="text-slate-600">
+              Showing {incidentReports.length} incident reports
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="border rounded-md overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Severity</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {incidentReports.map((report: IncidentReport) => (
+                    <TableRow key={report.id}>
+                      <TableCell>{formatDate(new Date(report.incident_date))}</TableCell>
+                      <TableCell className="font-medium">{report.location}</TableCell>
+                      <TableCell>{report.incident_type}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          report.severity_level === 'Critical' ? 'bg-red-100 text-red-800' :
+                          report.severity_level === 'High' ? 'bg-orange-100 text-orange-800' :
+                          report.severity_level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {report.severity_level}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          report.report_status === 'submitted' ? 'bg-green-100 text-green-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {report.report_status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {deleteIncidentReport && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="destructive" size="sm">Delete</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently delete this incident report. This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => deleteIncidentReport(report.id)}>
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
       <TabsContent value="by-location">
         <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60 nav-shadow">
           <CardHeader>

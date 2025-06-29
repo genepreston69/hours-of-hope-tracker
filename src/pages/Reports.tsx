@@ -1,3 +1,4 @@
+
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
@@ -7,10 +8,12 @@ import { StatCards } from "@/components/reports/StatCards";
 import { ReportTabs } from "@/components/reports/ReportTabs";
 import { EmptyReportState } from "@/components/reports/EmptyReportState";
 import { useReportData } from "@/components/reports/useReportData";
+import { useIncidentReports } from "@/hooks/use-incident-reports";
 import { exportToCSV } from "@/components/reports/ReportExport";
 
 const Reports = () => {
   const { serviceEntries, deleteServiceEntry, refreshData } = useAppContext();
+  const { incidentReports, deleteIncidentReport } = useIncidentReports();
   
   const {
     currentTab,
@@ -53,10 +56,12 @@ const Reports = () => {
     exportToCSV(sortedEntries, filters);
   };
 
+  const hasData = sortedEntries.length > 0 || incidentReports.length > 0;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-        <h1 className="text-3xl font-bold text-slate-900">Service Reports</h1>
+        <h1 className="text-3xl font-bold text-slate-900">Reports</h1>
         <div className="flex items-center gap-2 mt-2 sm:mt-0">
           {sortedEntries.length > 0 && (
             <Button onClick={handleExportToCSV} className="mt-2 sm:mt-0">
@@ -77,13 +82,15 @@ const Reports = () => {
         />
       </div>
 
-      {sortedEntries.length > 0 ? (
+      {hasData ? (
         <>
-          <StatCards 
-            totalHours={totalHours}
-            totalResidents={totalResidents}
-            avgHoursPerResident={avgHoursPerResident}
-          />
+          {sortedEntries.length > 0 && (
+            <StatCards 
+              totalHours={totalHours}
+              totalResidents={totalResidents}
+              avgHoursPerResident={avgHoursPerResident}
+            />
+          )}
 
           <ReportTabs 
             currentTab={currentTab}
@@ -93,6 +100,8 @@ const Reports = () => {
             entriesByCustomer={entriesByCustomer}
             deleteServiceEntry={deleteServiceEntry}
             filters={filters}
+            incidentReports={incidentReports}
+            deleteIncidentReport={deleteIncidentReport}
           />
         </>
       ) : (
