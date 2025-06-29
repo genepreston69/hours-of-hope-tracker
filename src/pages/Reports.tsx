@@ -2,9 +2,7 @@
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import { toast } from "@/components/ui/sonner";
 // import { ReportFilters } from "@/components/reports/ReportFilters";
-import { StatCards } from "@/components/reports/StatCards";
 import { ReportTabs } from "@/components/reports/ReportTabs";
 import { EmptyReportState } from "@/components/reports/EmptyReportState";
 import { useReportData } from "@/components/reports/useReportData";
@@ -68,27 +66,17 @@ const Reports = () => {
       */}
 
       {hasData ? (
-        <>
-          {sortedEntries.length > 0 && (
-            <StatCards 
-              totalHours={totalHours}
-              totalResidents={totalResidents}
-              avgHoursPerResident={avgHoursPerResident}
-            />
-          )}
-
-          <ReportTabs 
-            currentTab={currentTab || "service-entries"}
-            setCurrentTab={setCurrentTab}
-            sortedEntries={sortedEntries}
-            entriesByLocation={entriesByLocation}
-            entriesByCustomer={entriesByCustomer}
-            deleteServiceEntry={deleteServiceEntry}
-            filters={filters}
-            incidentReports={incidentReports}
-            deleteIncidentReport={deleteIncidentReport}
-          />
-        </>
+        <ReportTabs 
+          currentTab={currentTab || "service-entries"}
+          setCurrentTab={setCurrentTab}
+          sortedEntries={sortedEntries}
+          entriesByLocation={entriesByLocation}
+          entriesByCustomer={entriesByCustomer}
+          deleteServiceEntry={deleteServiceEntry}
+          filters={filters}
+          incidentReports={incidentReports}
+          deleteIncidentReport={deleteIncidentReport}
+        />
       ) : (
         <EmptyReportState onResetFilters={handleResetFilters} />
       )}
