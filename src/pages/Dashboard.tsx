@@ -1,6 +1,4 @@
-
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
-import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
 import { LocationStatsCard } from "@/components/dashboard/LocationStats";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
@@ -104,9 +102,6 @@ const Dashboard = () => {
           <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 nav-shadow">
             <DateFilter dateFilter={dateFilter} setDateFilter={setDateFilter} />
           </div>
-
-          {/* Stats Cards */}
-          <StatCards stats={dashboardData.filteredStats} />
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
