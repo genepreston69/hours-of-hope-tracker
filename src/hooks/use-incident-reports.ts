@@ -25,10 +25,10 @@ export const useIncidentReports = () => {
       setLoading(true);
       console.log("useIncidentReports: Fetching incident reports for user:", user.id);
       
+      // Remove user_id filtering to match service entries pattern
       const { data, error } = await supabase
         .from('incident_reports')
         .select('*')
-        .eq('user_id', user.id)
         .order('incident_date', { ascending: false });
 
       if (error) {
