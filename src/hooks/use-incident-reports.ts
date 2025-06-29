@@ -24,16 +24,25 @@ export const useIncidentReports = () => {
     try {
       setLoading(true);
       console.log("useIncidentReports: Fetching incident reports for user:", user.id);
+      console.log("useIncidentReports: User object:", user);
       
-      // Remove user_id filtering to match service entries pattern
-      const { data, error } = await supabase
+      // First, let's check if the table exists and what data is there
+      console.log("useIncidentReports: Attempting to query incident_reports table...");
+      
+      const { data, error, count } = await supabase
         .from('incident_reports')
-        .select('*')
+        .select('*', { count: 'exact' })
         .order('incident_date', { ascending: false });
+
+      console.log("useIncidentReports: Query completed");
+      console.log("useIncidentReports: Error:", error);
+      console.log("useIncidentReports: Data:", data);
+      console.log("useIncidentReports: Count:", count);
 
       if (error) {
         console.error('useIncidentReports: Error fetching incident reports:', error);
-        toast.error('Failed to fetch incident reports');
+        console.error('useIncidentReports: Error details:', JSON.stringify(error, null, 2));
+        toast.error('Failed to fetch incident reports: ' + error.message);
         setIncidentReports([]);
         return;
       }
@@ -41,10 +50,11 @@ export const useIncidentReports = () => {
       console.log("useIncidentReports: Fetched", data?.length || 0, "incident reports");
       if (data && data.length > 0) {
         console.log("useIncidentReports: Sample report:", data[0]);
+        console.log("useIncidentReports: All user_ids in data:", data.map(r => r.user_id));
       }
       setIncidentReports(data || []);
     } catch (error) {
-      console.error('useIncidentReports: Error fetching incident reports:', error);
+      console.error('useIncidentReports: Catch block - Error fetching incident reports:', error);
       toast.error('Failed to fetch incident reports');
       setIncidentReports([]);
     } finally {
@@ -54,6 +64,8 @@ export const useIncidentReports = () => {
 
   const deleteIncidentReport = useCallback(async (reportId: string) => {
     try {
+      console.log("useIncidentReports: Attempting to delete report:", reportId);
+      
       const { error } = await supabase
         .from('incident_reports')
         .delete()
@@ -61,14 +73,14 @@ export const useIncidentReports = () => {
 
       if (error) {
         console.error('useIncidentReports: Error deleting incident report:', error);
-        toast.error('Failed to delete incident report');
+        toast.error('Failed to delete incident report: ' + error.message);
         return;
       }
 
       toast.success('Incident report deleted successfully');
       await fetchIncidentReports(); // Refresh the list
     } catch (error) {
-      console.error('useIncidentReports: Error deleting incident report:', error);
+      console.error('useIncidentReports: Catch block - Error deleting incident report:', error);
       toast.error('Failed to delete incident report');
     }
   }, [fetchIncidentReports]);
@@ -77,6 +89,7 @@ export const useIncidentReports = () => {
   useEffect(() => {
     if (user && !hasInitialized.current) {
       hasInitialized.current = true;
+      console.log("useIncidentReports: Initializing fetch for user:", user.id);
       fetchIncidentReports();
     }
   }, [user, fetchIncidentReports]);
