@@ -28,11 +28,13 @@ export const useIncidentReports = () => {
       const { data, error } = await supabase
         .from('incident_reports')
         .select('*')
+        .eq('user_id', user.id)
         .order('incident_date', { ascending: false });
 
       if (error) {
         console.error('useIncidentReports: Error fetching incident reports:', error);
         toast.error('Failed to fetch incident reports');
+        setIncidentReports([]);
         return;
       }
 
@@ -44,6 +46,7 @@ export const useIncidentReports = () => {
     } catch (error) {
       console.error('useIncidentReports: Error fetching incident reports:', error);
       toast.error('Failed to fetch incident reports');
+      setIncidentReports([]);
     } finally {
       setLoading(false);
     }
