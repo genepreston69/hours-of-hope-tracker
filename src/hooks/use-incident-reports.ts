@@ -23,17 +23,17 @@ export const useIncidentReports = () => {
 
     try {
       setLoading(true);
-      console.log("useIncidentReports: Fetching all incident reports");
+      console.log("useIncidentReports: Fetching all incident reports with optimized RLS");
       
       const { data, error, count } = await supabase
         .from('incident_reports')
         .select('*', { count: 'exact' })
         .order('incident_date', { ascending: false });
 
-      console.log("useIncidentReports: Query completed");
+      console.log("useIncidentReports: Query completed with optimized policies");
       console.log("useIncidentReports: Error:", error);
-      console.log("useIncidentReports: Data:", data);
-      console.log("useIncidentReports: Count:", count);
+      console.log("useIncidentReports: Data count:", data?.length);
+      console.log("useIncidentReports: Total count:", count);
 
       if (error) {
         console.error('useIncidentReports: Error fetching incident reports:', error);
@@ -43,9 +43,9 @@ export const useIncidentReports = () => {
         return;
       }
 
-      console.log("useIncidentReports: Fetched", data?.length || 0, "incident reports");
+      console.log("useIncidentReports: Successfully fetched", data?.length || 0, "incident reports");
       if (data && data.length > 0) {
-        console.log("useIncidentReports: Sample report:", data[0]);
+        console.log("useIncidentReports: Sample report structure:", Object.keys(data[0]));
       }
       setIncidentReports(data || []);
     } catch (error) {
@@ -59,7 +59,7 @@ export const useIncidentReports = () => {
 
   const deleteIncidentReport = useCallback(async (reportId: string) => {
     try {
-      console.log("useIncidentReports: Attempting to delete report:", reportId);
+      console.log("useIncidentReports: Attempting to delete report with optimized RLS:", reportId);
       
       const { error } = await supabase
         .from('incident_reports')
@@ -72,6 +72,7 @@ export const useIncidentReports = () => {
         return;
       }
 
+      console.log("useIncidentReports: Report deleted successfully with optimized policies");
       toast.success('Incident report deleted successfully');
       await fetchIncidentReports(); // Refresh the list
     } catch (error) {
@@ -84,7 +85,7 @@ export const useIncidentReports = () => {
   useEffect(() => {
     if (user && !hasInitialized.current) {
       hasInitialized.current = true;
-      console.log("useIncidentReports: Initializing fetch for authenticated user");
+      console.log("useIncidentReports: Initializing fetch with optimized RLS for authenticated user");
       fetchIncidentReports();
     }
   }, [user, fetchIncidentReports]);
