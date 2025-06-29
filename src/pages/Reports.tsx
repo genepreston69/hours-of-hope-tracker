@@ -3,7 +3,7 @@ import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
-import { ReportFilters } from "@/components/reports/ReportFilters";
+// import { ReportFilters } from "@/components/reports/ReportFilters";
 import { StatCards } from "@/components/reports/StatCards";
 import { ReportTabs } from "@/components/reports/ReportTabs";
 import { EmptyReportState } from "@/components/reports/EmptyReportState";
@@ -54,6 +54,8 @@ const Reports = () => {
         </div>
       </div>
 
+      {/* Report Filters card removed - saved for later use */}
+      {/* 
       <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-lg">
         <ReportFilters 
           filters={filters}
@@ -63,6 +65,7 @@ const Reports = () => {
           onResetFilters={handleResetFilters}
         />
       </div>
+      */}
 
       {hasData ? (
         <>
