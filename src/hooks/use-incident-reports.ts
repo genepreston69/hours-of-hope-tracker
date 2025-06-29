@@ -14,6 +14,7 @@ export const useIncidentReports = () => {
 
   const fetchIncidentReports = async () => {
     if (!user) {
+      console.log("useIncidentReports: No user, setting empty reports");
       setIncidentReports([]);
       setLoading(false);
       return;
@@ -21,20 +22,24 @@ export const useIncidentReports = () => {
 
     try {
       setLoading(true);
+      console.log("useIncidentReports: Fetching incident reports for user:", user.id);
+      
       const { data, error } = await supabase
         .from('incident_reports')
         .select('*')
         .order('incident_date', { ascending: false });
 
       if (error) {
-        console.error('Error fetching incident reports:', error);
+        console.error('useIncidentReports: Error fetching incident reports:', error);
         toast.error('Failed to fetch incident reports');
         return;
       }
 
+      console.log("useIncidentReports: Fetched", data?.length || 0, "incident reports");
+      console.log("useIncidentReports: Sample report:", data?.[0]);
       setIncidentReports(data || []);
     } catch (error) {
-      console.error('Error fetching incident reports:', error);
+      console.error('useIncidentReports: Error fetching incident reports:', error);
       toast.error('Failed to fetch incident reports');
     } finally {
       setLoading(false);
@@ -49,7 +54,7 @@ export const useIncidentReports = () => {
         .eq('id', reportId);
 
       if (error) {
-        console.error('Error deleting incident report:', error);
+        console.error('useIncidentReports: Error deleting incident report:', error);
         toast.error('Failed to delete incident report');
         return;
       }
@@ -57,7 +62,7 @@ export const useIncidentReports = () => {
       toast.success('Incident report deleted successfully');
       await fetchIncidentReports(); // Refresh the list
     } catch (error) {
-      console.error('Error deleting incident report:', error);
+      console.error('useIncidentReports: Error deleting incident report:', error);
       toast.error('Failed to delete incident report');
     }
   };
