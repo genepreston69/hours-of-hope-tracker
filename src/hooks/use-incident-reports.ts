@@ -88,6 +88,11 @@ export const useIncidentReports = () => {
       hasInitialized.current = true;
       console.log("useIncidentReports: Initializing fetch for submitted reports only");
       fetchIncidentReports();
+    } else if (!user) {
+      // Reset when user logs out
+      hasInitialized.current = false;
+      setIncidentReports([]);
+      setLoading(false);
     }
   }, [user, fetchIncidentReports]);
 
