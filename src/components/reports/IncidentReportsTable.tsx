@@ -16,7 +16,7 @@ interface IncidentReportsTableProps {
 }
 
 export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport }: IncidentReportsTableProps) => {
-  console.log("IncidentReportsTable: Rendering with", incidentReports.length, "reports");
+  console.log("IncidentReportsTable: Rendering with", incidentReports.length, "submitted reports");
   if (incidentReports.length > 0) {
     console.log("IncidentReportsTable: Sample report data:", incidentReports[0]);
   }
@@ -24,15 +24,15 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport }: 
   return (
     <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60">
       <CardHeader>
-        <CardTitle className="text-slate-900">Incident Reports</CardTitle>
+        <CardTitle className="text-slate-900">Submitted Incident Reports</CardTitle>
         <CardDescription className="text-slate-600">
-          Showing {incidentReports.length} incident reports
+          Showing {incidentReports.length} submitted incident reports
         </CardDescription>
       </CardHeader>
       <CardContent>
         {incidentReports.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">No incident reports found.</p>
+            <p className="text-muted-foreground">No submitted incident reports found.</p>
           </div>
         ) : (
           <div className="border rounded-md overflow-hidden">
@@ -64,11 +64,8 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport }: 
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        report.report_status === 'submitted' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {report.report_status}
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Submitted
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
@@ -115,11 +112,8 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport }: 
                                 </div>
                                 <div>
                                   <h4 className="font-semibold text-sm text-gray-600">Status</h4>
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    report.report_status === 'submitted' ? 'bg-green-100 text-green-800' :
-                                    'bg-gray-100 text-gray-800'
-                                  }`}>
-                                    {report.report_status}
+                                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Submitted
                                   </span>
                                 </div>
                               </div>

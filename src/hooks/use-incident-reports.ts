@@ -23,14 +23,15 @@ export const useIncidentReports = () => {
 
     try {
       setLoading(true);
-      console.log("useIncidentReports: Fetching all incident reports with optimized RLS");
+      console.log("useIncidentReports: Fetching submitted incident reports only");
       
       const { data, error, count } = await supabase
         .from('incident_reports')
         .select('*', { count: 'exact' })
+        .eq('report_status', 'submitted')
         .order('incident_date', { ascending: false });
 
-      console.log("useIncidentReports: Query completed with optimized policies");
+      console.log("useIncidentReports: Query completed for submitted reports only");
       console.log("useIncidentReports: Error:", error);
       console.log("useIncidentReports: Data count:", data?.length);
       console.log("useIncidentReports: Total count:", count);
@@ -43,7 +44,7 @@ export const useIncidentReports = () => {
         return;
       }
 
-      console.log("useIncidentReports: Successfully fetched", data?.length || 0, "incident reports");
+      console.log("useIncidentReports: Successfully fetched", data?.length || 0, "submitted incident reports");
       if (data && data.length > 0) {
         console.log("useIncidentReports: Sample report structure:", Object.keys(data[0]));
       }
@@ -59,7 +60,7 @@ export const useIncidentReports = () => {
 
   const deleteIncidentReport = useCallback(async (reportId: string) => {
     try {
-      console.log("useIncidentReports: Attempting to delete report with optimized RLS:", reportId);
+      console.log("useIncidentReports: Attempting to delete report:", reportId);
       
       const { error } = await supabase
         .from('incident_reports')
@@ -72,7 +73,7 @@ export const useIncidentReports = () => {
         return;
       }
 
-      console.log("useIncidentReports: Report deleted successfully with optimized policies");
+      console.log("useIncidentReports: Report deleted successfully");
       toast.success('Incident report deleted successfully');
       await fetchIncidentReports(); // Refresh the list
     } catch (error) {
@@ -85,7 +86,7 @@ export const useIncidentReports = () => {
   useEffect(() => {
     if (user && !hasInitialized.current) {
       hasInitialized.current = true;
-      console.log("useIncidentReports: Initializing fetch with optimized RLS for authenticated user");
+      console.log("useIncidentReports: Initializing fetch for submitted reports only");
       fetchIncidentReports();
     }
   }, [user, fetchIncidentReports]);
