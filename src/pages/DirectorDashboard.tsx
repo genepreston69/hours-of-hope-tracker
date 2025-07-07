@@ -63,10 +63,41 @@ const DirectorDashboard = () => {
 
   const getOverviewStats = () => {
     const totalSurveys = surveys.length;
-    // Point-in-time values from most recent report
-    const currentPhase1 = surveys.length > 0 ? surveys[0].phase1_count || 0 : 0;
-    const currentPhase2 = surveys.length > 0 ? surveys[0].phase2_count || 0 : 0;
-    const currentOTS = surveys.length > 0 ? surveys[0].ots_count || 0 : 0;
+    
+    // Log surveys for debugging
+    console.log("DirectorDashboard: Processing surveys for stats:", surveys.length, surveys.map(s => ({
+      program_name: s.program_name,
+      report_date: s.report_date,
+      phase1_count: s.phase1_count,
+      phase2_count: s.phase2_count,
+      ots_count: s.ots_count,
+      total_intakes: s.total_intakes
+    })));
+    
+    // Point-in-time values from most recent report PER LOCATION
+    const getMostRecentByLocation = () => {
+      const locationMap = new Map();
+      surveys.forEach(survey => {
+        const location = survey.program_name;
+        if (location && (!locationMap.has(location) || new Date(survey.report_date) > new Date(locationMap.get(location).report_date))) {
+          locationMap.set(location, survey);
+        }
+      });
+      return Array.from(locationMap.values());
+    };
+    
+    const mostRecentByLocation = getMostRecentByLocation();
+    const currentPhase1 = mostRecentByLocation.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
+    const currentPhase2 = mostRecentByLocation.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
+    const currentOTS = mostRecentByLocation.reduce((sum, s) => sum + (s.ots_count || 0), 0);
+    
+    console.log("DirectorDashboard: Most recent by location:", mostRecentByLocation);
+    console.log("DirectorDashboard: Current point-in-time values:", {
+      currentPhase1,
+      currentPhase2,
+      currentOTS
+    });
+    
     // Cumulative values that should be summed
     const totalIntakes = surveys.reduce((sum, s) => sum + (s.total_intakes || 0), 0);
     const totalDischarges = surveys.reduce((sum, s) => sum + (s.discharges || 0), 0);
@@ -74,6 +105,15 @@ const DirectorDashboard = () => {
     const totalGEDCompletions = surveys.reduce((sum, s) => sum + (s.ged_completions || 0), 0);
     const totalLifeSkillsStarts = surveys.reduce((sum, s) => sum + (s.life_skills_starts || 0), 0);
     const totalDriversLicenses = surveys.reduce((sum, s) => sum + (s.drivers_license_received || 0), 0);
+
+    console.log("DirectorDashboard: Calculated totals:", {
+      totalIntakes,
+      totalDischarges,
+      totalGEDStarts,
+      totalGEDCompletions,
+      totalLifeSkillsStarts,
+      totalDriversLicenses
+    });
 
     return { 
       totalSurveys, 
@@ -90,9 +130,21 @@ const DirectorDashboard = () => {
   };
 
   const getPhaseDistributionData = () => {
-    // Use point-in-time values from most recent report
-    const currentPhase1 = surveys.length > 0 ? surveys[0].phase1_count || 0 : 0;
-    const currentPhase2 = surveys.length > 0 ? surveys[0].phase2_count || 0 : 0;
+    // Use point-in-time values from most recent report PER LOCATION
+    const getMostRecentByLocation = () => {
+      const locationMap = new Map();
+      surveys.forEach(survey => {
+        const location = survey.program_name;
+        if (location && (!locationMap.has(location) || new Date(survey.report_date) > new Date(locationMap.get(location).report_date))) {
+          locationMap.set(location, survey);
+        }
+      });
+      return Array.from(locationMap.values());
+    };
+    
+    const mostRecentByLocation = getMostRecentByLocation();
+    const currentPhase1 = mostRecentByLocation.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
+    const currentPhase2 = mostRecentByLocation.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
     
     return [
       { name: 'Phase 1', value: currentPhase1, count: currentPhase1 },
