@@ -63,11 +63,13 @@ const DirectorDashboard = () => {
 
   const getOverviewStats = () => {
     const totalSurveys = surveys.length;
-    const totalPhase1 = surveys.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
-    const totalPhase2 = surveys.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
+    // Point-in-time values from most recent report
+    const currentPhase1 = surveys.length > 0 ? surveys[0].phase1_count || 0 : 0;
+    const currentPhase2 = surveys.length > 0 ? surveys[0].phase2_count || 0 : 0;
+    const currentOTS = surveys.length > 0 ? surveys[0].ots_count || 0 : 0;
+    // Cumulative values that should be summed
     const totalIntakes = surveys.reduce((sum, s) => sum + (s.total_intakes || 0), 0);
     const totalDischarges = surveys.reduce((sum, s) => sum + (s.discharges || 0), 0);
-    const currentOTS = surveys.length > 0 ? surveys[0].ots_count || 0 : 0;
     const totalGEDStarts = surveys.reduce((sum, s) => sum + (s.ged_preparation_starts || 0), 0);
     const totalGEDCompletions = surveys.reduce((sum, s) => sum + (s.ged_completions || 0), 0);
     const totalLifeSkillsStarts = surveys.reduce((sum, s) => sum + (s.life_skills_starts || 0), 0);
@@ -75,8 +77,8 @@ const DirectorDashboard = () => {
 
     return { 
       totalSurveys, 
-      totalPhase1, 
-      totalPhase2, 
+      currentPhase1, 
+      currentPhase2, 
       totalIntakes, 
       totalDischarges, 
       currentOTS,
@@ -88,12 +90,13 @@ const DirectorDashboard = () => {
   };
 
   const getPhaseDistributionData = () => {
-    const phase1Total = surveys.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
-    const phase2Total = surveys.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
+    // Use point-in-time values from most recent report
+    const currentPhase1 = surveys.length > 0 ? surveys[0].phase1_count || 0 : 0;
+    const currentPhase2 = surveys.length > 0 ? surveys[0].phase2_count || 0 : 0;
     
     return [
-      { name: 'Phase 1', value: phase1Total, count: phase1Total },
-      { name: 'Phase 2', value: phase2Total, count: phase2Total }
+      { name: 'Phase 1', value: currentPhase1, count: currentPhase1 },
+      { name: 'Phase 2', value: currentPhase2, count: currentPhase2 }
     ];
   };
 
@@ -213,7 +216,7 @@ const DirectorDashboard = () => {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalPhase1}</div>
+                <div className="text-2xl font-bold">{stats.currentPhase1}</div>
               </CardContent>
             </Card>
             <Card>
@@ -222,7 +225,7 @@ const DirectorDashboard = () => {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalPhase2}</div>
+                <div className="text-2xl font-bold">{stats.currentPhase2}</div>
               </CardContent>
             </Card>
             <Card>
