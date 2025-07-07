@@ -52,6 +52,12 @@ const dashboardItems = [
     url: "/dashboard",
     icon: Home,
   },
+  {
+    title: "Policies",
+    url: "https://policy.rpwv.org/",
+    icon: FileText,
+    external: true,
+  },
 ]
 
 // Third group - Administrative items
@@ -191,7 +197,11 @@ export function AppSidebar() {
                         : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
-                    <a href={item.url} className="flex items-center gap-3 w-full">
+                    <a 
+                      href={item.url} 
+                      className="flex items-center gap-3 w-full"
+                      {...(item.external && { target: "_blank", rel: "noopener noreferrer" })}
+                    >
                       <item.icon className="w-5 h-5" />
                       <span>{item.title}</span>
                     </a>
