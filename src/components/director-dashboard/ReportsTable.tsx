@@ -38,6 +38,7 @@ export const ReportsTable = ({ surveys }: ReportsTableProps) => {
                 <TableHead>Reporter</TableHead>
                 <TableHead>Phase 1</TableHead>
                 <TableHead>Phase 2</TableHead>
+                <TableHead>OTS Total</TableHead>
                 <TableHead>Total Intakes</TableHead>
                 <TableHead>Discharges</TableHead>
                 <TableHead>Actions</TableHead>
@@ -51,6 +52,7 @@ export const ReportsTable = ({ surveys }: ReportsTableProps) => {
                   <TableCell>{survey.reporter_name || 'N/A'}</TableCell>
                   <TableCell>{survey.phase1_count || 0}</TableCell>
                   <TableCell>{survey.phase2_count || 0}</TableCell>
+                  <TableCell>{survey.ots_count || 0}</TableCell>
                   <TableCell>{survey.total_intakes || 0}</TableCell>
                   <TableCell>{survey.discharges || 0}</TableCell>
                   <TableCell>
