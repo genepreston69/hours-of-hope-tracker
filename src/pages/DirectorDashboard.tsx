@@ -74,28 +74,38 @@ const DirectorDashboard = () => {
       total_intakes: s.total_intakes
     })));
     
-    // Point-in-time values from most recent report PER LOCATION
-    const getMostRecentByLocation = () => {
-      const locationMap = new Map();
-      surveys.forEach(survey => {
-        const location = survey.program_name;
-        if (location && (!locationMap.has(location) || new Date(survey.report_date) > new Date(locationMap.get(location).report_date))) {
-          locationMap.set(location, survey);
-        }
-      });
-      return Array.from(locationMap.values());
+    // Point-in-time values from CURRENT REPORTING WEEK only
+    const getCurrentWeekReports = () => {
+      if (surveys.length === 0) return [];
+      
+      // Get the most recent report date to determine current reporting week
+      const mostRecentDate = surveys[0].report_date;
+      console.log("DirectorDashboard: Current reporting week date:", mostRecentDate);
+      
+      // Only include reports from the current reporting week
+      const currentWeekReports = surveys.filter(survey => survey.report_date === mostRecentDate);
+      
+      console.log("DirectorDashboard: Current week reports:", currentWeekReports.map(s => ({
+        program_name: s.program_name,
+        report_date: s.report_date,
+        phase1_count: s.phase1_count,
+        phase2_count: s.phase2_count,
+        ots_count: s.ots_count
+      })));
+      
+      return currentWeekReports;
     };
     
-    const mostRecentByLocation = getMostRecentByLocation();
-    const currentPhase1 = mostRecentByLocation.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
-    const currentPhase2 = mostRecentByLocation.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
-    const currentOTS = mostRecentByLocation.reduce((sum, s) => sum + (s.ots_count || 0), 0);
+    const currentWeekReports = getCurrentWeekReports();
+    const currentPhase1 = currentWeekReports.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
+    const currentPhase2 = currentWeekReports.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
+    const currentOTS = currentWeekReports.reduce((sum, s) => sum + (s.ots_count || 0), 0);
     
-    console.log("DirectorDashboard: Most recent by location:", mostRecentByLocation);
-    console.log("DirectorDashboard: Current point-in-time values:", {
+    console.log("DirectorDashboard: Current week totals:", {
       currentPhase1,
       currentPhase2,
-      currentOTS
+      currentOTS,
+      locationsReported: currentWeekReports.map(s => s.program_name)
     });
     
     // Cumulative values that should be summed
@@ -130,21 +140,20 @@ const DirectorDashboard = () => {
   };
 
   const getPhaseDistributionData = () => {
-    // Use point-in-time values from most recent report PER LOCATION
-    const getMostRecentByLocation = () => {
-      const locationMap = new Map();
-      surveys.forEach(survey => {
-        const location = survey.program_name;
-        if (location && (!locationMap.has(location) || new Date(survey.report_date) > new Date(locationMap.get(location).report_date))) {
-          locationMap.set(location, survey);
-        }
-      });
-      return Array.from(locationMap.values());
+    // Use point-in-time values from CURRENT REPORTING WEEK only
+    const getCurrentWeekReports = () => {
+      if (surveys.length === 0) return [];
+      
+      // Get the most recent report date to determine current reporting week
+      const mostRecentDate = surveys[0].report_date;
+      
+      // Only include reports from the current reporting week
+      return surveys.filter(survey => survey.report_date === mostRecentDate);
     };
     
-    const mostRecentByLocation = getMostRecentByLocation();
-    const currentPhase1 = mostRecentByLocation.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
-    const currentPhase2 = mostRecentByLocation.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
+    const currentWeekReports = getCurrentWeekReports();
+    const currentPhase1 = currentWeekReports.reduce((sum, s) => sum + (s.phase1_count || 0), 0);
+    const currentPhase2 = currentWeekReports.reduce((sum, s) => sum + (s.phase2_count || 0), 0);
     
     return [
       { name: 'Phase 1', value: currentPhase1, count: currentPhase1 },
