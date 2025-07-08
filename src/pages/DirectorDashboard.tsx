@@ -265,58 +265,63 @@ const DirectorDashboard = () => {
         <>
           {/* Overview Stats */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">OTS Residents</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.currentOTS}</div>
+            <Card className="overflow-hidden">
+              <div className="bg-orange-100 px-4 py-2">
+                <CardTitle className="text-xs font-medium text-orange-800 uppercase tracking-wide">OTS</CardTitle>
+              </div>
+              <CardContent className="p-4">
+                <div className="text-4xl font-bold text-gray-900 mb-1">{stats.currentOTS}</div>
+                <p className="text-sm text-gray-600">OTS Residents</p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Phase 1 Residents</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.currentPhase1}</div>
+            
+            <Card className="overflow-hidden">
+              <div className="bg-green-100 px-4 py-2">
+                <CardTitle className="text-xs font-medium text-green-800 uppercase tracking-wide">Phase 1</CardTitle>
+              </div>
+              <CardContent className="p-4">
+                <div className="text-4xl font-bold text-gray-900 mb-1">{stats.currentPhase1}</div>
+                <p className="text-sm text-gray-600">Phase 1 Residents</p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Phase 2 Residents</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.currentPhase2}</div>
+            
+            <Card className="overflow-hidden">
+              <div className="bg-blue-100 px-4 py-2">
+                <CardTitle className="text-xs font-medium text-blue-800 uppercase tracking-wide">Phase 2</CardTitle>
+              </div>
+              <CardContent className="p-4">
+                <div className="text-4xl font-bold text-gray-900 mb-1">{stats.currentPhase2}</div>
+                <p className="text-sm text-gray-600">Phase 2 Residents</p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Residents</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalCurrentResidents}</div>
+            
+            <Card className="overflow-hidden">
+              <div className="bg-purple-100 px-4 py-2">
+                <CardTitle className="text-xs font-medium text-purple-800 uppercase tracking-wide">Total</CardTitle>
+              </div>
+              <CardContent className="p-4">
+                <div className="text-4xl font-bold text-gray-900 mb-1">{stats.totalCurrentResidents}</div>
+                <p className="text-sm text-gray-600">Total Residents</p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Intakes</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalIntakes}</div>
+            
+            <Card className="overflow-hidden">
+              <div className="bg-teal-100 px-4 py-2">
+                <CardTitle className="text-xs font-medium text-teal-800 uppercase tracking-wide">Intakes</CardTitle>
+              </div>
+              <CardContent className="p-4">
+                <div className="text-4xl font-bold text-gray-900 mb-1">{stats.totalIntakes}</div>
+                <p className="text-sm text-gray-600">Total Intakes</p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Discharges</CardTitle>
-                <CalendarDays className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalDischarges}</div>
+            
+            <Card className="overflow-hidden">
+              <div className="bg-red-100 px-4 py-2">
+                <CardTitle className="text-xs font-medium text-red-800 uppercase tracking-wide">Discharges</CardTitle>
+              </div>
+              <CardContent className="p-4">
+                <div className="text-4xl font-bold text-gray-900 mb-1">{stats.totalDischarges}</div>
+                <p className="text-sm text-gray-600">Total Discharges</p>
               </CardContent>
             </Card>
           </div>
