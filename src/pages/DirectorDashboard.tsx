@@ -125,6 +125,8 @@ const DirectorDashboard = () => {
       totalDriversLicenses
     });
 
+    const totalCurrentResidents = currentOTS + currentPhase1 + currentPhase2;
+
     return { 
       totalSurveys, 
       currentPhase1, 
@@ -132,6 +134,7 @@ const DirectorDashboard = () => {
       totalIntakes, 
       totalDischarges, 
       currentOTS,
+      totalCurrentResidents,
       totalGEDStarts,
       totalGEDCompletions,
       totalLifeSkillsStarts,
@@ -261,7 +264,7 @@ const DirectorDashboard = () => {
       ) : (
         <>
           {/* Overview Stats */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">OTS Residents</CardTitle>
@@ -287,6 +290,15 @@ const DirectorDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.currentPhase2}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Residents</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalCurrentResidents}</div>
               </CardContent>
             </Card>
             <Card>
