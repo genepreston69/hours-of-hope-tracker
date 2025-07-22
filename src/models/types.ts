@@ -38,6 +38,7 @@ export interface LocationStats {
   entries: number;
   hours: number;
   residents: number;
+  lastYearHours?: number;
 }
 
 export interface CSVServiceEntry {

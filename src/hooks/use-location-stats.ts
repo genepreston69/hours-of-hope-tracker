@@ -13,11 +13,19 @@ export const useLocationStats = (dateFilter: DateFilterType) => {
     setError(null);
     
     try {
-      console.log(`🏢 Fetching location stats from Supabase for filter: ${dateFilter}`);
+      console.log(`🏢 Fetching location stats from Supabase view for filter: ${dateFilter}`);
       
-      const { data, error } = await supabase.rpc('get_location_stats_with_date_filter', {
-        date_filter_type: dateFilter
-      });
+      // Query the location_hours_summary view and join with facility_locations to get names
+      const { data, error } = await supabase
+        .from('location_hours_summary')
+        .select(`
+          facility_location_id,
+          mtd_hours,
+          ytd_hours,
+          ly_mtd_hours,
+          ly_ytd_hours,
+          facility_locations(name)
+        `);
 
       if (error) {
         console.error('❌ Error fetching location stats:', error);
@@ -25,14 +33,38 @@ export const useLocationStats = (dateFilter: DateFilterType) => {
         return;
       }
 
-      const transformedStats: LocationStats[] = data?.map((row: any) => ({
-        location: row.location_name,
-        hours: Number(row.total_hours),
-        residents: Number(row.total_residents),
-        entries: Number(row.entry_count)
-      })) || [];
+      // Transform the data for the component
+      const transformedStats: LocationStats[] = data?.map((row: any) => {
+        // Determine which hours value to use based on the dateFilter
+        let hours = 0;
+        let lastYearHours = 0;
+        
+        if (dateFilter === "mtd") {
+          hours = Number(row.mtd_hours || 0);
+          lastYearHours = Number(row.ly_mtd_hours || 0);
+        } else if (dateFilter === "ytd") {
+          hours = Number(row.ytd_hours || 0);
+          lastYearHours = Number(row.ly_ytd_hours || 0);
+        } else if (dateFilter === "ly_mtd") {
+          hours = Number(row.ly_mtd_hours || 0);
+        } else if (dateFilter === "ly_ytd") {
+          hours = Number(row.ly_ytd_hours || 0);
+        }
 
-      console.log(`✅ Fetched ${transformedStats.length} location stats from Supabase:`, transformedStats);
+        return {
+          location: row.facility_locations.name,
+          hours: hours,
+          lastYearHours: lastYearHours,
+          // These values aren't available in the view, so we'll set defaults
+          entries: 0,
+          residents: 0
+        };
+      }) || [];
+
+      // Sort by hours in descending order
+      transformedStats.sort((a, b) => b.hours - a.hours);
+
+      console.log(`✅ Fetched ${transformedStats.length} location stats from Supabase view:`, transformedStats);
       setLocationStats(transformedStats);
     } catch (error) {
       console.error('❌ Error fetching location stats:', error);
