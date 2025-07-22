@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
 import { LocationStatsCard } from "@/components/dashboard/LocationStats";
@@ -8,7 +9,6 @@ import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
 import { TaskNotifications } from "@/components/dashboard/TaskNotifications";
 import { useDashboard } from "@/hooks/use-dashboard";
 import { useTaskTracking } from "@/hooks/use-task-tracking";
-import { useState, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Loader2 } from "lucide-react";
