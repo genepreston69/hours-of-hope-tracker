@@ -438,7 +438,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      location_hours_summary: {
+        Row: {
+          facility_location_id: string | null
+          ly_mtd_hours: number | null
+          ly_ytd_hours: number | null
+          mtd_hours: number | null
+          ytd_hours: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_entries_facility_location_id_fkey"
+            columns: ["facility_location_id"]
+            isOneToOne: false
+            referencedRelation: "facility_locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_location_stats_with_date_filter: {
