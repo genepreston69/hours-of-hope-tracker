@@ -15,28 +15,48 @@ export const useLocationStats = (dateFilter: DateFilterType) => {
     try {
       console.log(`🏢 Fetching location stats from Supabase view for filter: ${dateFilter}`);
       
-      // Query using the existing RPC function for location stats
-      const { data, error } = await supabase.rpc('get_location_stats_with_date_filter', {
-        date_filter_type: dateFilter
-      });
+      // For views, we need to use a raw query since the view isn't in the TypeScript types
+      const { data, error } = await supabase
+        .from('location_hours_summary')
+        .select(`
+          facility_location_id,
+          mtd_hours,
+          ytd_hours,
+          ly_mtd_hours,
+          ly_ytd_hours,
+          facility_locations(name)
+        `);
 
       if (error) {
         console.error('❌ Error fetching location stats:', error);
-        setError(error.message);
-        return;
+        setError(error.message || 'Error fetching stats');
       }
 
       // Transform the data for the component
       const transformedStats: LocationStats[] = data?.map((row: any) => {
-        const hours = Number(row.total_hours || 0);
-        const lastYearHours = Number(row.last_year_hours || 0);
+        // Determine which hours value to use based on the dateFilter
+        let hours = 0;
+        let lastYearHours = 0;
         
+        if (dateFilter === "mtd") {
+          hours = Number(row.mtd_hours || 0);
+          lastYearHours = Number(row.ly_mtd_hours || 0);
+        } else if (dateFilter === "ytd") {
+          hours = Number(row.ytd_hours || 0);
+          lastYearHours = Number(row.ly_ytd_hours || 0);
+        } else if (dateFilter === "ly_mtd") {
+          hours = Number(row.ly_mtd_hours || 0);
+        } else if (dateFilter === "ly_ytd") {
+          hours = Number(row.ly_ytd_hours || 0);
+        }
+
         return {
-          location: row.location_name,
+          location: row.facility_locations.name,
           hours: hours,
           lastYearHours: lastYearHours,
-          residents: Number(row.total_residents || 0),
-          entries: Number(row.entry_count || 0)
+          // These values aren't available in the view, so we'll set defaults
+          entries: 0,
+          residents: 0
         };
       }) || [];
 
