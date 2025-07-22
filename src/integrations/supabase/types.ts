@@ -441,7 +441,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_location_stats_with_date_filter: {
+        Args: { date_filter_type?: string }
+        Returns: {
+          location_name: string
+          total_hours: number
+          total_residents: number
+          entry_count: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

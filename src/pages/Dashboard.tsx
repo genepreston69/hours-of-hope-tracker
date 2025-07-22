@@ -2,6 +2,7 @@ import { DateFilter, DateFilterType } from "@/components/dashboard/DateFilter";
 import { RecentEntries } from "@/components/dashboard/RecentEntries";
 import { LocationStatsCard } from "@/components/dashboard/LocationStats";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
+import { useLocationStats } from "@/hooks/use-location-stats";
 import { DashboardLoader } from "@/components/dashboard/DashboardLoader";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
 import { TaskNotifications } from "@/components/dashboard/TaskNotifications";
@@ -35,10 +36,13 @@ const Dashboard = () => {
   // Pre-process data outside of render conditions to avoid hook count mismatch
   const dashboardData = useDashboardData(serviceEntries, dateFilter);
   
+  // Get location stats from Supabase
+  const { locationStats, loading: locationStatsLoading, refetch: refetchLocationStats } = useLocationStats(dateFilter);
+  
   // Debug: Log location stats being passed to component
   useEffect(() => {
-    console.log("📊 Dashboard Location Stats:", dashboardData.filteredLocationStats);
-  }, [dashboardData.filteredLocationStats]);
+    console.log("📊 Dashboard Location Stats from Supabase:", locationStats);
+  }, [locationStats]);
   
   // Log when dashboard is rendered/re-rendered for debugging
   useEffect(() => {
@@ -58,8 +62,14 @@ const Dashboard = () => {
     }
   };
 
+  // Enhanced refresh function
+  const handleRefreshWithLocationStats = async () => {
+    await handleRefresh();
+    await refetchLocationStats();
+  };
+
   // Show loading state during loading
-  if (isLoadingData) {
+  if (isLoadingData || locationStatsLoading) {
     return <DashboardLoader />;
   }
   
@@ -81,11 +91,11 @@ const Dashboard = () => {
               </div>
               <Button 
                 variant="outline"
-                onClick={handleRefresh}
-                disabled={refreshing}
+                onClick={handleRefreshWithLocationStats}
+                disabled={refreshing || locationStatsLoading}
                 className="mt-4 sm:mt-0 bg-white/50 backdrop-blur-sm border-slate-200/60 hover:bg-white/70"
               >
-                {refreshing ? (
+                {(refreshing || locationStatsLoading) ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Refreshing...
@@ -115,7 +125,7 @@ const Dashboard = () => {
               allFilteredEntries={dashboardData.allFilteredEntries}
               dateFilter={dateFilter}
             />
-            <LocationStatsCard locationStats={dashboardData.filteredLocationStats} />
+            <LocationStatsCard locationStats={locationStats} />
           </div>
           
           {/* Pagination functionality is preserved but UI elements are removed */}
