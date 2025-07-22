@@ -34,6 +34,23 @@ export const LocationStatsCard = ({ locationStats }: LocationStatsProps) => {
                     <span className="text-sm text-slate-600">Total Hours</span>
                     <span className="font-semibold text-slate-900 bg-white/60 px-2 py-1 rounded-lg">{stat.hours} hrs</span>
                   </div>
+                  
+                  {stat.lastYearHours && stat.lastYearHours > 0 && (
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-sm text-slate-600">Last Year</span>
+                      <span className="text-sm text-slate-500 bg-white/60 px-2 py-1 rounded-lg">
+                        {stat.lastYearHours} hrs
+                        {stat.hours > 0 && stat.lastYearHours > 0 && (
+                          <span className={`ml-2 text-xs ${stat.hours > stat.lastYearHours ? 'text-green-500' : 'text-red-500'}`}>
+                            {stat.hours > stat.lastYearHours 
+                              ? `+${((stat.hours - stat.lastYearHours) / stat.lastYearHours * 100).toFixed(0)}%`
+                              : `-${((stat.lastYearHours - stat.hours) / stat.lastYearHours * 100).toFixed(0)}%`
+                            }
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

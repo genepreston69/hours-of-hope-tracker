@@ -28,14 +28,8 @@ export const useLocationStats = (dateFilter: DateFilterType) => {
 
       // Transform the data for the component
       const transformedStats: LocationStats[] = data?.map((row: any) => {
-        let hours = Number(row.total_hours || 0);
-        let lastYearHours = 0;
-        
-        // For comparison with last year (only applies to current year views)
-        if (dateFilter === "mtd" || dateFilter === "ytd") {
-          // We don't have last year data in the RPC function yet
-          // This would need to be added to the backend function
-        }
+        const hours = Number(row.total_hours || 0);
+        const lastYearHours = Number(row.last_year_hours || 0);
         
         return {
           location: row.location_name,

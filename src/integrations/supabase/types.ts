@@ -465,6 +465,7 @@ export type Database = {
           total_hours: number
           total_residents: number
           entry_count: number
+          last_year_hours: number
         }[]
       }
     }
