@@ -32,18 +32,14 @@ export const useDashboardData = (
     }
     
     try {
-      // Filter entries based on date filter
+      // Filter entries based on date filter for overall stats
       const now = new Date();
       const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const firstDayOfYear = new Date(now.getFullYear(), 0, 1);
-      const firstDayOf2023 = new Date(2023, 0, 1);
-      const firstDayOf2024 = new Date(2024, 0, 1);
-      const firstDayOf2025 = new Date(2025, 0, 1);
       
       let filtered: ServiceEntry[];
       
       if (dateFilter === "mtd") {
-        // Month to Date: Only entries from the beginning of the current month
         filtered = serviceEntries.filter(entry => {
           try {
             return new Date(entry.date) >= firstDayOfMonth;
@@ -53,7 +49,6 @@ export const useDashboardData = (
           }
         });
       } else if (dateFilter === "ytd") {
-        // Year to Date: Only entries from the beginning of the current year
         filtered = serviceEntries.filter(entry => {
           try {
             return new Date(entry.date) >= firstDayOfYear;
@@ -62,23 +57,11 @@ export const useDashboardData = (
             return false;
           }
         });
-      } else if (dateFilter === "2023") {
-        // All entries from 2023
+      } else {
+        // Default to YTD if unknown filter
         filtered = serviceEntries.filter(entry => {
           try {
-            const entryDate = new Date(entry.date);
-            return entryDate >= firstDayOf2023 && entryDate < firstDayOf2024;
-          } catch (error) {
-            console.warn(`🚨 Invalid date found in entry ${entry.id}:`, entry.date);
-            return false;
-          }
-        });
-      } else if (dateFilter === "2024") {
-        // All entries from 2024
-        filtered = serviceEntries.filter(entry => {
-          try {
-            const entryDate = new Date(entry.date);
-            return entryDate >= firstDayOf2024 && entryDate < firstDayOf2025;
+            return new Date(entry.date) >= firstDayOfYear;
           } catch (error) {
             console.warn(`🚨 Invalid date found in entry ${entry.id}:`, entry.date);
             return false;
@@ -98,14 +81,13 @@ export const useDashboardData = (
             return 0;
           }
         })
-        .slice(0, 1000); // Limit to 1000 entries to prevent memory issues
+        .slice(0, 1000);
       
       // Calculate filtered stats with error handling
       const totalEntries = sortedEntries.length;
       let totalHours = 0;
       let totalResidents = 0;
       
-      // Process entries in batches to avoid blocking the main thread
       for (let i = 0; i < sortedEntries.length; i++) {
         const entry = sortedEntries[i];
         try {
@@ -128,37 +110,111 @@ export const useDashboardData = (
       
       console.log(`🔍 Calculated stats:`, filteredStats);
       
-      // Calculate location stats from filtered entries with error handling
-      const locationMap = new Map();
+      // NEW APPROACH: Calculate location stats using last 1,000 entries per location
+      console.log(`🔍 Starting location-specific processing with last 1,000 entries per location`);
       
-      sortedEntries.forEach(entry => {
+      // Step 1: Group all entries by location
+      const entriesByLocationMap = new Map<string, ServiceEntry[]>();
+      
+      serviceEntries.forEach(entry => {
         try {
           const location = entry.location || 'Unknown';
-          if (!locationMap.has(location)) {
-            locationMap.set(location, {
-              location,
-              entries: 0,
-              hours: 0,
-              residents: 0
-            });
+          if (!entriesByLocationMap.has(location)) {
+            entriesByLocationMap.set(location, []);
           }
-          
-          const locationStat = locationMap.get(location);
-          locationStat.entries += 1;
-          locationStat.hours += Math.max(0, entry.totalHours || 0);
-          locationStat.residents += Math.max(0, entry.numberOfResidents || 0);
+          entriesByLocationMap.get(location)!.push(entry);
         } catch (error) {
-          console.warn(`🚨 Error processing location stats for entry ${entry.id}:`, error);
+          console.warn(`🚨 Error grouping entry by location:`, error);
         }
       });
       
-      // Round hours in location stats
-      locationMap.forEach(stat => {
-        stat.hours = Math.round(stat.hours);
+      console.log(`🔍 Grouped entries into ${entriesByLocationMap.size} locations`);
+      
+      // Step 2: For each location, take last 1,000 entries and apply date filter
+      const locationStatsArray: LocationStats[] = [];
+      
+      entriesByLocationMap.forEach((locationEntries, location) => {
+        try {
+          // Sort by date (newest first) and take last 1,000 entries
+          const last1000Entries = [...locationEntries]
+            .sort((a, b) => {
+              try {
+                return new Date(b.date).getTime() - new Date(a.date).getTime();
+              } catch (error) {
+                console.warn(`🚨 Error sorting location entries:`, error);
+                return 0;
+              }
+            })
+            .slice(0, 1000);
+          
+          console.log(`🔍 Location "${location}": Using ${last1000Entries.length} entries (from ${locationEntries.length} total)`);
+          
+          // Apply date filter to this location's 1,000 entries
+          let filteredLocationEntries: ServiceEntry[];
+          
+          if (dateFilter === "mtd") {
+            filteredLocationEntries = last1000Entries.filter(entry => {
+              try {
+                return new Date(entry.date) >= firstDayOfMonth;
+              } catch (error) {
+                console.warn(`🚨 Invalid date in location entry:`, error);
+                return false;
+              }
+            });
+          } else if (dateFilter === "ytd") {
+            filteredLocationEntries = last1000Entries.filter(entry => {
+              try {
+                return new Date(entry.date) >= firstDayOfYear;
+              } catch (error) {
+                console.warn(`🚨 Invalid date in location entry:`, error);
+                return false;
+              }
+            });
+          } else {
+            // Default to YTD filtering
+            filteredLocationEntries = last1000Entries.filter(entry => {
+              try {
+                return new Date(entry.date) >= firstDayOfYear;
+              } catch (error) {
+                console.warn(`🚨 Invalid date in location entry:`, error);
+                return false;
+              }
+            });
+          }
+          
+          console.log(`🔍 Location "${location}": ${filteredLocationEntries.length} entries after ${dateFilter} filter`);
+          
+          // Calculate stats for this location
+          let locationHours = 0;
+          let locationResidents = 0;
+          
+          filteredLocationEntries.forEach(entry => {
+            try {
+              locationHours += Math.max(0, entry.totalHours || 0);
+              locationResidents += Math.max(0, entry.numberOfResidents || 0);
+            } catch (error) {
+              console.warn(`🚨 Error processing location entry:`, error);
+            }
+          });
+          
+          locationHours = Math.round(locationHours);
+          
+          // Only include locations that have entries in the filtered period
+          if (filteredLocationEntries.length > 0) {
+            locationStatsArray.push({
+              location,
+              entries: filteredLocationEntries.length,
+              hours: locationHours,
+              residents: locationResidents,
+            });
+          }
+          
+        } catch (error) {
+          console.warn(`🚨 Error processing location "${location}":`, error);
+        }
       });
       
-      const filteredLocationStats = Array.from(locationMap.values());
-      console.log(`🔍 Calculated location stats for ${filteredLocationStats.length} locations`);
+      console.log(`🔍 Calculated location stats for ${locationStatsArray.length} locations with data in ${dateFilter} period`);
       
       // Find the latest entry for each location with error handling
       const latestByLocation = new Map<string, ServiceEntry>();
@@ -185,16 +241,15 @@ export const useDashboardData = (
       
       return {
         filteredStats,
-        filteredLocationStats,
+        filteredLocationStats: locationStatsArray,
         recentEntries,
         latestEntriesByLocation,
-        allFilteredEntries: sortedEntries // Return all filtered entries for CSV export
+        allFilteredEntries: sortedEntries
       };
       
     } catch (error) {
       console.error("🚨 Error processing dashboard data:", error);
       
-      // Return safe fallback data
       return {
         filteredStats: emptyStats,
         filteredLocationStats: [],
@@ -203,5 +258,5 @@ export const useDashboardData = (
         allFilteredEntries: []
       };
     }
-  }, [serviceEntries, dateFilter]); // Only recalculate when these dependencies change
+  }, [serviceEntries, dateFilter]);
 };
