@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 export const useServiceEntryForm = () => {
   const { customers, addServiceEntry, getCustomerById } = useAppContext();
   const [totalHours, setTotalHours] = useState<number | null>(null);
+  const [hoursWorked, setHoursWorked] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -71,30 +72,23 @@ export const useServiceEntryForm = () => {
         return;
       }
 
-      // Calculate hours based on time fields if both are provided
-      let hoursWorked = data.hoursWorked || 0;
-      if (data.startTime && data.endTime) {
-        hoursWorked = calculateHoursFromTime(data.startTime, data.endTime);
-      }
-
-      const calculatedTotalHours = calculateTotalHours(
-        hoursWorked,
-        data.numberOfResidents
-      );
+      // Calculate hours from time fields (required)
+      const calculatedHours = calculateHoursFromTime(data.startTime, data.endTime);
+      const calculatedTotalHours = calculateTotalHours(calculatedHours, data.numberOfResidents);
 
       const serviceEntry = {
-        id: uuidv4(), // Use proper UUID generation
+        id: uuidv4(),
         date: data.date,
         customerId: data.customerId,
         customerName: customer.name,
-        facilityLocationId: locationId, // Use the UUID instead of the name
-        location: data.facilityLocationId, // Keep the location name for display
-        hoursWorked: hoursWorked,
+        facilityLocationId: locationId,
+        location: data.facilityLocationId,
+        hoursWorked: calculatedHours,
         numberOfResidents: data.numberOfResidents,
         totalHours: calculatedTotalHours,
         notes: data.notes || "",
-        startTime: data.startTime || null,
-        endTime: data.endTime || null,
+        startTime: data.startTime,
+        endTime: data.endTime,
         createdAt: new Date(),
       };
 
@@ -109,17 +103,14 @@ export const useServiceEntryForm = () => {
         facilityLocationId: undefined,
         startTime: "",
         endTime: "",
-        hoursWorked: undefined,
         numberOfResidents: undefined,
         notes: "",
       });
       
       setTotalHours(null);
+      setHoursWorked(null);
       
-      // Show success message
       toast.success("Service entry recorded successfully");
-      
-      // Navigate immediately without forcing refresh - the AppContext will handle data consistency
       navigate("/dashboard");
     } catch (error) {
       console.error("Error submitting service entry:", error);
@@ -132,33 +123,30 @@ export const useServiceEntryForm = () => {
   // Watch for changes to calculate hours and total hours
   const startTime = form.watch("startTime");
   const endTime = form.watch("endTime");
-  const manualHoursWorked = form.watch("hoursWorked");
   const numberOfResidents = form.watch("numberOfResidents");
 
-  // Update hours worked field when time changes
+  // Update hours worked and total hours when values change
   useEffect(() => {
     if (startTime && endTime) {
       const calculatedHours = calculateHoursFromTime(startTime, endTime);
-      form.setValue("hoursWorked", calculatedHours);
-    }
-  }, [startTime, endTime, form]);
-
-  // Update total hours when either value changes
-  useEffect(() => {
-    const hours = manualHoursWorked ?? 
-      (startTime && endTime ? calculateHoursFromTime(startTime, endTime) : 0);
-    
-    if (hours && numberOfResidents) {
-      setTotalHours(calculateTotalHours(hours, numberOfResidents));
+      setHoursWorked(calculatedHours);
+      
+      if (numberOfResidents) {
+        setTotalHours(calculateTotalHours(calculatedHours, numberOfResidents));
+      } else {
+        setTotalHours(null);
+      }
     } else {
+      setHoursWorked(null);
       setTotalHours(null);
     }
-  }, [startTime, endTime, manualHoursWorked, numberOfResidents]);
+  }, [startTime, endTime, numberOfResidents]);
 
   return {
     form,
     onSubmit,
     totalHours,
+    hoursWorked,
     customers,
     isSubmitting
   };

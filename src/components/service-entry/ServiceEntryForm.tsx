@@ -14,7 +14,7 @@ import { Loader2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const ServiceEntryForm = () => {
-  const { form, onSubmit, totalHours, customers, isSubmitting } = useServiceEntryForm();
+  const { form, onSubmit, totalHours, hoursWorked, customers, isSubmitting } = useServiceEntryForm();
   const isMobile = useIsMobile();
 
   return (
@@ -22,7 +22,7 @@ const ServiceEntryForm = () => {
       <CardHeader className={isMobile ? 'px-0' : ''}>
         <CardTitle>New Service Entry</CardTitle>
         <CardDescription>
-          Record hours worked by recovery volunteers for a customer.
+          Record hours worked by recovery volunteers for a customer. Enter start and end times to automatically calculate hours.
         </CardDescription>
       </CardHeader>
       <CardContent className={isMobile ? 'px-0 pb-6' : ''}>
@@ -33,7 +33,7 @@ const ServiceEntryForm = () => {
             <LocationField control={form.control} />
             <TimeFields control={form.control} />
             <NumberFields control={form.control} />
-            <TotalHoursDisplay totalHours={totalHours} />
+            <TotalHoursDisplay totalHours={totalHours} hoursWorked={hoursWorked} />
             <NotesField control={form.control} />
 
             <Button 

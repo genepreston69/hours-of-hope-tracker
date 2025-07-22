@@ -16,10 +16,11 @@ export const TimeFields = ({ control }: TimeFieldsProps) => {
         name="startTime"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Start Time</FormLabel>
+            <FormLabel>Start Time *</FormLabel>
             <FormControl>
               <Input 
                 type="time" 
+                required
                 {...field} 
               />
             </FormControl>
@@ -33,10 +34,11 @@ export const TimeFields = ({ control }: TimeFieldsProps) => {
         name="endTime"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>End Time</FormLabel>
+            <FormLabel>End Time *</FormLabel>
             <FormControl>
               <Input 
                 type="time" 
+                required
                 {...field} 
               />
             </FormControl>
