@@ -35,6 +35,11 @@ const Dashboard = () => {
   // Pre-process data outside of render conditions to avoid hook count mismatch
   const dashboardData = useDashboardData(serviceEntries, dateFilter);
   
+  // Debug: Log location stats being passed to component
+  useEffect(() => {
+    console.log("📊 Dashboard Location Stats:", dashboardData.filteredLocationStats);
+  }, [dashboardData.filteredLocationStats]);
+  
   // Log when dashboard is rendered/re-rendered for debugging
   useEffect(() => {
     console.log("Dashboard rendered with", serviceEntries.length, "entries, loading:", isLoadingData);
