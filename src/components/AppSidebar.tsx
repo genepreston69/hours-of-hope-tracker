@@ -1,5 +1,5 @@
 
-import { Calendar, Home, Inbox, Search, Settings, Users, FileText, ClipboardList, BarChart3, AlertTriangle, LogOut, FolderOpen, Activity, ChevronRight } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings, Users, FileText, ClipboardList, BarChart3, AlertTriangle, LogOut, FolderOpen, Activity, ChevronRight, Bell } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { useNavigate, useLocation } from "react-router-dom"
 import { toast } from "@/components/ui/sonner"
@@ -80,6 +80,11 @@ const adminItems = [
     icon: Users,
     badgeCount: "247",
     badgeColor: "blue",
+  },
+  {
+    title: "Notification Settings",
+    url: "/notification-admin",
+    icon: Bell,
   },
 ]
 

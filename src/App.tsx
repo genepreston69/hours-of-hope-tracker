@@ -17,6 +17,7 @@ import DirectorDashboard from "./pages/DirectorDashboard";
 import IncidentReport from "./pages/IncidentReport";
 import Reports from "./pages/Reports";
 import MyReports from "./pages/MyReports";
+import NotificationAdmin from "./pages/NotificationAdmin";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -88,6 +89,14 @@ const App = () => (
                   element={
                     <ProtectedRoute>
                       <MyReports />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="notification-admin" 
+                  element={
+                    <ProtectedRoute>
+                      <NotificationAdmin />
                     </ProtectedRoute>
                   } 
                 />
