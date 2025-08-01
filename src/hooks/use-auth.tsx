@@ -1,6 +1,8 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useIdleLogout } from './use-idle-logout';
+import { IdleWarningDialog } from '@/components/IdleWarningDialog';
 
 type AuthContextType = {
   user: User | null;
@@ -74,6 +76,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   }
 
+  const {
+    showWarning,
+    handleStayLoggedIn,
+    handleLogout,
+    warningDuration,
+  } = useIdleLogout({
+    onLogout: signOut,
+    enabled: !!user && !loading,
+  });
+
   return (
     <AuthContext.Provider
       value={{ 
@@ -88,6 +100,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
+      <IdleWarningDialog
+        open={showWarning}
+        onStayLoggedIn={handleStayLoggedIn}
+        onLogout={handleLogout}
+        warningDuration={warningDuration}
+      />
     </AuthContext.Provider>
   );
 }
