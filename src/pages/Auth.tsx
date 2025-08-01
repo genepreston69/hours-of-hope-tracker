@@ -331,8 +331,8 @@ const Auth = () => {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-8 md:px-16 lg:px-24">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12">
+      <div className="w-full max-w-md mx-auto px-8 space-y-8">
         <div className="text-center">
           <img 
             src="/lovable-uploads/f4dd29f5-c1ea-4bf3-88c3-f13573496fe7.png" 
