@@ -223,6 +223,90 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          notification_type: string
+          recipient_email: string
+          recipient_phone: string | null
+          report_id: string
+          report_type: string
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          notification_type: string
+          recipient_email: string
+          recipient_phone?: string | null
+          report_id: string
+          report_type: string
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          notification_type?: string
+          recipient_email?: string
+          recipient_phone?: string | null
+          report_id?: string
+          report_type?: string
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      notification_recipients: {
+        Row: {
+          created_at: string
+          critical_only: boolean
+          director_reports_enabled: boolean
+          email: string
+          email_enabled: boolean
+          id: string
+          incident_reports_enabled: boolean
+          name: string
+          phone: string | null
+          role: string
+          sms_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          critical_only?: boolean
+          director_reports_enabled?: boolean
+          email: string
+          email_enabled?: boolean
+          id?: string
+          incident_reports_enabled?: boolean
+          name: string
+          phone?: string | null
+          role?: string
+          sms_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          critical_only?: boolean
+          director_reports_enabled?: boolean
+          email?: string
+          email_enabled?: boolean
+          id?: string
+          incident_reports_enabled?: boolean
+          name?: string
+          phone?: string | null
+          role?: string
+          sms_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -376,6 +460,72 @@ export type Database = {
           updated_at?: string
           user_id?: string
           week_summary?: string | null
+        }
+        Relationships: []
+      }
+      routes_data: {
+        Row: {
+          account_code: string | null
+          created_at: string | null
+          dropoff_address: string | null
+          dropoff_city: string | null
+          dropoff_name: string | null
+          dropoff_zip: string | null
+          first_name: string | null
+          id: number
+          last_name: string | null
+          miles: number | null
+          pickup_address: string | null
+          pickup_city: string | null
+          pickup_name: string | null
+          pickup_zip: string | null
+          ride_date: string
+          ride_time: number | null
+          sheet_year: string | null
+          total: number | null
+          trip_number: number | null
+        }
+        Insert: {
+          account_code?: string | null
+          created_at?: string | null
+          dropoff_address?: string | null
+          dropoff_city?: string | null
+          dropoff_name?: string | null
+          dropoff_zip?: string | null
+          first_name?: string | null
+          id?: number
+          last_name?: string | null
+          miles?: number | null
+          pickup_address?: string | null
+          pickup_city?: string | null
+          pickup_name?: string | null
+          pickup_zip?: string | null
+          ride_date: string
+          ride_time?: number | null
+          sheet_year?: string | null
+          total?: number | null
+          trip_number?: number | null
+        }
+        Update: {
+          account_code?: string | null
+          created_at?: string | null
+          dropoff_address?: string | null
+          dropoff_city?: string | null
+          dropoff_name?: string | null
+          dropoff_zip?: string | null
+          first_name?: string | null
+          id?: number
+          last_name?: string | null
+          miles?: number | null
+          pickup_address?: string | null
+          pickup_city?: string | null
+          pickup_name?: string | null
+          pickup_zip?: string | null
+          ride_date?: string
+          ride_time?: number | null
+          sheet_year?: string | null
+          total?: number | null
+          trip_number?: number | null
         }
         Relationships: []
       }

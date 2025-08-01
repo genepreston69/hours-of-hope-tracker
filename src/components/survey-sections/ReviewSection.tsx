@@ -98,6 +98,29 @@ export const ReviewSection: React.FC<SectionProps> = ({
         return;
       }
 
+      // Send notifications
+      try {
+        const reportId = data[0].id;
+        console.log("Sending notifications for director report:", reportId);
+        
+        const notificationResponse = await supabase.functions.invoke('send-notifications', {
+          body: {
+            reportId,
+            reportType: 'director',
+            reportData: data[0]
+          }
+        });
+        
+        if (notificationResponse.error) {
+          console.error("Error sending notifications:", notificationResponse.error);
+        } else {
+          console.log("Notifications sent successfully:", notificationResponse.data);
+        }
+      } catch (notificationError) {
+        console.error("Notification error:", notificationError);
+        // Don't fail the submission if notifications fail
+      }
+
       console.log('Survey submitted successfully:', data);
       toast({
         title: "Success",

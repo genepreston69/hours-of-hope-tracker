@@ -68,11 +68,35 @@ export const ReviewSubmitSection = ({
         submitted_at: new Date().toISOString()
       };
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('incident_reports')
-        .insert(reportData);
+        .insert(reportData)
+        .select();
 
       if (error) throw error;
+
+      // Send notifications
+      try {
+        const reportId = data[0].id;
+        console.log("Sending notifications for incident report:", reportId);
+        
+        const notificationResponse = await supabase.functions.invoke('send-notifications', {
+          body: {
+            reportId,
+            reportType: 'incident',
+            reportData: data[0]
+          }
+        });
+        
+        if (notificationResponse.error) {
+          console.error("Error sending notifications:", notificationResponse.error);
+        } else {
+          console.log("Notifications sent successfully:", notificationResponse.data);
+        }
+      } catch (notificationError) {
+        console.error("Notification error:", notificationError);
+        // Don't fail the submission if notifications fail
+      }
 
       handleInputChange('reportStatus', 'submitted');
       navigate('/dashboard');
