@@ -2,6 +2,7 @@
 import { Customer } from "../models/types";
 import { toast } from "../components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useUserOrganization } from "@/hooks/use-user-organization";
 
 export interface CustomerActionsType {
   addCustomer: (customer: Customer) => Promise<void>;
@@ -14,11 +15,17 @@ export interface CustomerActionsType {
 export const createCustomerActions = (
   customers: Customer[],
   setCustomers: React.Dispatch<React.SetStateAction<Customer[]>>,
-  serviceEntries: any[]
+  serviceEntries: any[],
+  organizationId: string | null
 ): CustomerActionsType => {
   
   const addCustomer = async (customer: Customer) => {
     try {
+      if (!organizationId) {
+        toast.error("Organization not found. Please try again.");
+        return;
+      }
+
       // Transform to Supabase format
       const supabaseCustomer = {
         id: customer.id,
@@ -29,7 +36,8 @@ export const createCustomerActions = (
         street: customer.street || null,
         city: customer.city || null,
         state: customer.state || null,
-        zip: customer.zip || null
+        zip: customer.zip || null,
+        organization_id: organizationId
       };
       
       const { error } = await supabase

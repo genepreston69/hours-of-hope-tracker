@@ -4,6 +4,7 @@ import { Customer, ServiceEntry, ServiceStats, LocationStats } from "../models/t
 import { useAppState, AppStateType } from "./AppState";
 import { createCustomerActions, CustomerActionsType } from "./CustomerActions";
 import { createServiceActions, ServiceActionsType } from "./ServiceActions";
+import { useUserOrganization } from "@/hooks/use-user-organization";
 import { toast } from "@/components/ui/sonner";
 
 interface AppContextExtendedType extends AppStateType, CustomerActionsType, ServiceActionsType {
@@ -22,9 +23,10 @@ export function useAppContext() {
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [{ customers, serviceEntries, stats, locationStats, isLoading, pagination }, setCustomers, setServiceEntries, refreshData] = useAppState();
+  const { organizationId } = useUserOrganization();
   
-  const customerActions = createCustomerActions(customers, setCustomers, serviceEntries);
-  const serviceActions = createServiceActions(serviceEntries, setServiceEntries, refreshData);
+  const customerActions = createCustomerActions(customers, setCustomers, serviceEntries, organizationId);
+  const serviceActions = createServiceActions(serviceEntries, setServiceEntries, refreshData, organizationId);
 
   // Create a consistent refreshData function that ensures all data is refreshed
   const handleRefreshData = async (page?: number) => {

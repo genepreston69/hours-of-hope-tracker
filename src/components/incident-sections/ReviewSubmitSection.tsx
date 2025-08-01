@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { IncidentFormData } from './useIncidentForm';
 import { supabase } from '@/integrations/supabase/client';
+import { useUserOrganization } from '@/hooks/use-user-organization';
 
 interface ReviewSubmitSectionProps {
   formData: IncidentFormData;
@@ -26,8 +27,15 @@ export const ReviewSubmitSection = ({
   navigate,
   user
 }: ReviewSubmitSectionProps) => {
+  const { organizationId } = useUserOrganization();
+
   const handleSubmit = async () => {
     if (!user) return;
+    
+    if (!organizationId) {
+      console.error('No organization found for user');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -65,7 +73,8 @@ export const ReviewSubmitSection = ({
         evidence_collected: formData.evidenceCollected,
         additional_documentation: formData.additionalDocumentation,
         report_status: 'submitted',
-        submitted_at: new Date().toISOString()
+        submitted_at: new Date().toISOString(),
+        organization_id: organizationId
       };
 
       const { data, error } = await supabase

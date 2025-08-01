@@ -14,11 +14,17 @@ export interface ServiceActionsType {
 export const createServiceActions = (
   serviceEntries: ServiceEntry[],
   setServiceEntries: React.Dispatch<React.SetStateAction<ServiceEntry[]>>,
-  refreshData: () => Promise<void>
+  refreshData: () => Promise<void>,
+  organizationId: string | null
 ): ServiceActionsType => {
   
   const addServiceEntry = async (entry: ServiceEntry) => {
     try {
+      if (!organizationId) {
+        toast.error("Organization not found. Please try again.");
+        return;
+      }
+
       // Generate a proper UUID for the service entry
       const entryId = uuidv4();
       
@@ -37,7 +43,8 @@ export const createServiceActions = (
         facility_location_id: roundedEntry.facilityLocationId,
         volunteer_count: roundedEntry.numberOfResidents,
         hours: roundedEntry.totalHours,
-        description: roundedEntry.notes || ''
+        description: roundedEntry.notes || '',
+        organization_id: organizationId
       };
       
       console.log("Adding service entry to Supabase:", supabaseEntry);

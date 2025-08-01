@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useUserOrganization } from '@/hooks/use-user-organization';
 
 export interface PersonInvolved {
   id: string;
@@ -61,6 +62,7 @@ export interface IncidentFormData {
 }
 
 export const useIncidentForm = (user: any) => {
+  const { organizationId } = useUserOrganization();
   const [formData, setFormData] = useState<IncidentFormData>(() => ({
     // Basic incident details
     incidentDate: new Date().toISOString().split('T')[0],
@@ -121,7 +123,7 @@ export const useIncidentForm = (user: any) => {
   }, []);
 
   const autoSave = useCallback(async () => {
-    if (!user || !formData.incidentDescription) return;
+    if (!user || !formData.incidentDescription || !organizationId) return;
 
     try {
       const reportData = {
@@ -159,7 +161,8 @@ export const useIncidentForm = (user: any) => {
         additional_documentation: formData.additionalDocumentation,
         report_status: formData.reportStatus,
         last_saved_at: new Date().toISOString(),
-        auto_save_data: JSON.parse(JSON.stringify(formData))
+        auto_save_data: JSON.parse(JSON.stringify(formData)),
+        organization_id: organizationId
       };
 
       if (reportId) {
@@ -181,7 +184,7 @@ export const useIncidentForm = (user: any) => {
     } catch (error) {
       console.error('Auto-save failed:', error);
     }
-  }, [user, formData, reportId]);
+  }, [user, formData, reportId, organizationId]);
 
   // Auto-save every 30 seconds
   useEffect(() => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useUserOrganization } from '@/hooks/use-user-organization';
 import { SectionProps } from './types';
 
 export const ReviewSection: React.FC<SectionProps> = ({ 
@@ -11,11 +12,22 @@ export const ReviewSection: React.FC<SectionProps> = ({
   navigate, 
   user 
 }) => {
+  const { organizationId } = useUserOrganization();
+
   const handleSubmit = async () => {
     if (!user) {
       toast({
         title: "Error",
         description: "You must be logged in to submit a survey",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!organizationId) {
+      toast({
+        title: "Error",
+        description: "Organization not found. Please try again.",
         variant: "destructive"
       });
       return;
@@ -77,7 +89,8 @@ export const ReviewSection: React.FC<SectionProps> = ({
         supply_needs: formData.supplyNeeds || null,
         program_concerns: formData.programConcerns || null,
         celebrations: formData.celebrations || null,
-        additional_comments: formData.additionalComments || null
+        additional_comments: formData.additionalComments || null,
+        organization_id: organizationId
       };
 
       console.log('🔍 Survey data being sent to database:', surveyData);
