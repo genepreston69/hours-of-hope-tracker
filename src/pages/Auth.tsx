@@ -331,25 +331,27 @@ const Auth = () => {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <img 
-            src="/lovable-uploads/f4dd29f5-c1ea-4bf3-88c3-f13573496fe7.png" 
-            alt="Recovery Point Logo" 
-            className="mx-auto h-16 w-auto mb-6" 
-          />
-          <h2 className="text-3xl font-extrabold text-gray-900">
-            Recovery Service Tracker
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to access service tracking and reports
-          </p>
-        </div>
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+      <div className="w-full max-w-md mx-auto px-6 py-12">
+        <div className="space-y-8">
+          <div className="text-center">
+            <img 
+              src="/lovable-uploads/f4dd29f5-c1ea-4bf3-88c3-f13573496fe7.png" 
+              alt="Recovery Point Logo" 
+              className="mx-auto h-16 w-auto mb-6" 
+            />
+            <h2 className="text-3xl font-extrabold text-gray-900">
+              Recovery Service Tracker
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Sign in to access service tracking and reports
+            </p>
+          </div>
 
-        {mode === 'signin-signup' && renderSignInSignUpTabs()}
-        {mode === 'forgot-password' && renderForgotPasswordForm()}
-        {mode === 'update-password' && renderUpdatePasswordForm()}
+          {mode === 'signin-signup' && renderSignInSignUpTabs()}
+          {mode === 'forgot-password' && renderForgotPasswordForm()}
+          {mode === 'update-password' && renderUpdatePasswordForm()}
+        </div>
       </div>
     </div>
   );
