@@ -750,6 +750,10 @@ export type Database = {
       }
     }
     Functions: {
+      get_current_user_organization: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_location_stats_with_date_filter: {
         Args: { date_filter_type?: string }
         Returns: {
@@ -761,11 +765,13 @@ export type Database = {
         }[]
       }
       has_role: {
-        Args: {
-          _user_id: string
-          _organization_id: string
-          _role: Database["public"]["Enums"]["app_role"]
-        }
+        Args:
+          | {
+              _user_id: string
+              _organization_id: string
+              _role: Database["public"]["Enums"]["app_role"]
+            }
+          | { required_role: string }
         Returns: boolean
       }
     }
