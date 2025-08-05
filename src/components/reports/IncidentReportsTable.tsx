@@ -81,7 +81,7 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport, on
                     <TableCell>
                       {report.resolved === null ? (
                         <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                          Pending Review
+                          Pending
                         </span>
                       ) : report.resolved ? (
                         <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
