@@ -33,6 +33,7 @@ interface ReportTabsProps {
   filters: ReportFilters;
   incidentReports?: IncidentReport[];
   deleteIncidentReport?: (id: string) => void;
+  onIncidentReportUpdate?: () => void;
 }
 
 export const ReportTabs = ({
@@ -44,7 +45,8 @@ export const ReportTabs = ({
   deleteServiceEntry,
   filters,
   incidentReports = [],
-  deleteIncidentReport
+  deleteIncidentReport,
+  onIncidentReportUpdate
 }: ReportTabsProps) => {
   return (
     <Tabs defaultValue="service-entries" value={currentTab} onValueChange={setCurrentTab}>
@@ -120,6 +122,7 @@ export const ReportTabs = ({
         <IncidentReportsTable 
           incidentReports={incidentReports}
           deleteIncidentReport={deleteIncidentReport}
+          onReportUpdate={onIncidentReportUpdate}
         />
       </TabsContent>
     </Tabs>

@@ -6,20 +6,35 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { formatDate } from "@/lib/utils";
 import { Tables } from "@/integrations/supabase/types";
-import { Eye } from "lucide-react";
+import { Eye, Settings } from "lucide-react";
+import { ManagerReviewDialog } from "@/components/incident-reports/ManagerReviewDialog";
+import { useState } from "react";
 
 type IncidentReport = Tables<'incident_reports'>;
 
 interface IncidentReportsTableProps {
   incidentReports: IncidentReport[];
   deleteIncidentReport?: (id: string) => void;
+  onReportUpdate?: () => void;
 }
 
-export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport }: IncidentReportsTableProps) => {
+export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport, onReportUpdate }: IncidentReportsTableProps) => {
+  const [selectedReport, setSelectedReport] = useState<IncidentReport | null>(null);
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  
   console.log("IncidentReportsTable: Rendering with", incidentReports.length, "submitted reports");
   if (incidentReports.length > 0) {
     console.log("IncidentReportsTable: Sample report data:", incidentReports[0]);
   }
+
+  const handleManagerReview = (report: IncidentReport) => {
+    setSelectedReport(report);
+    setReviewDialogOpen(true);
+  };
+
+  const handleReviewComplete = () => {
+    onReportUpdate?.();
+  };
 
   return (
     <Card className="bg-white/80 backdrop-blur-xl border border-slate-200/60">
@@ -44,6 +59,7 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport }: 
                   <TableHead>Type</TableHead>
                   <TableHead>Severity</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Resolved</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -67,6 +83,21 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport }: 
                       <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                         Submitted
                       </span>
+                    </TableCell>
+                    <TableCell>
+                      {report.resolved === null ? (
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                          Pending Review
+                        </span>
+                      ) : report.resolved ? (
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          Resolved
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          Not Resolved
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
@@ -142,6 +173,15 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport }: 
                           </DialogContent>
                         </Dialog>
                         
+                        <Button 
+                          variant="secondary" 
+                          size="sm"
+                          onClick={() => handleManagerReview(report)}
+                        >
+                          <Settings className="h-4 w-4 mr-1" />
+                          Review
+                        </Button>
+                        
                         {deleteIncidentReport && (
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -172,6 +212,13 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport }: 
           </div>
         )}
       </CardContent>
+      
+      <ManagerReviewDialog 
+        report={selectedReport}
+        open={reviewDialogOpen}
+        onOpenChange={setReviewDialogOpen}
+        onReviewComplete={handleReviewComplete}
+      />
     </Card>
   );
 };

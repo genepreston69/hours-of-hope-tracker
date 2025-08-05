@@ -11,7 +11,7 @@ import { exportToCSV } from "@/components/reports/ReportExport";
 
 const Reports = () => {
   const { serviceEntries, deleteServiceEntry, refreshData } = useAppContext();
-  const { incidentReports, deleteIncidentReport } = useIncidentReports();
+  const { incidentReports, deleteIncidentReport, fetchIncidentReports } = useIncidentReports();
   
   const {
     currentTab,
@@ -76,6 +76,7 @@ const Reports = () => {
           filters={filters}
           incidentReports={incidentReports}
           deleteIncidentReport={deleteIncidentReport}
+          onIncidentReportUpdate={fetchIncidentReports}
         />
       ) : (
         <EmptyReportState onResetFilters={handleResetFilters} />

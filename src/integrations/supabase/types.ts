@@ -125,6 +125,7 @@ export type Database = {
       }
       incident_reports: {
         Row: {
+          actions_taken_outcome: string | null
           additional_documentation: string | null
           auto_save_data: Json | null
           contributing_factors: string | null
@@ -155,6 +156,7 @@ export type Database = {
           regulatory_reporting_required: boolean | null
           report_status: string | null
           residents_involved: Json | null
+          resolved: boolean | null
           reviewed_at: string | null
           reviewed_by: string | null
           severity_level: string
@@ -169,6 +171,7 @@ export type Database = {
           witnesses: Json | null
         }
         Insert: {
+          actions_taken_outcome?: string | null
           additional_documentation?: string | null
           auto_save_data?: Json | null
           contributing_factors?: string | null
@@ -199,6 +202,7 @@ export type Database = {
           regulatory_reporting_required?: boolean | null
           report_status?: string | null
           residents_involved?: Json | null
+          resolved?: boolean | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           severity_level: string
@@ -213,6 +217,7 @@ export type Database = {
           witnesses?: Json | null
         }
         Update: {
+          actions_taken_outcome?: string | null
           additional_documentation?: string | null
           auto_save_data?: Json | null
           contributing_factors?: string | null
@@ -243,6 +248,7 @@ export type Database = {
           regulatory_reporting_required?: boolean | null
           report_status?: string | null
           residents_involved?: Json | null
+          resolved?: boolean | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           severity_level?: string
