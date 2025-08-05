@@ -36,7 +36,7 @@ async function sendSMS(to: string, message: string): Promise<boolean> {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        From: '+15005550006', // Twilio test number that will fail gracefully
+        From: '+18884169408',
         To: to,
         Body: message,
       }),
