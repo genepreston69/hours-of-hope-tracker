@@ -33,6 +33,7 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport, on
   };
 
   const handleReviewComplete = () => {
+    console.log("IncidentReportsTable: handleReviewComplete called, calling onReportUpdate");
     onReportUpdate?.();
   };
 

@@ -45,6 +45,8 @@ export const ManagerReviewDialog = ({
     setLoading(true);
 
     try {
+      console.log("ManagerReviewDialog: Updating report", report.id, "with resolved:", resolved === "yes");
+      
       const { error } = await supabase
         .from('incident_reports')
         .update({
@@ -56,11 +58,12 @@ export const ManagerReviewDialog = ({
 
       if (error) throw error;
 
+      console.log("ManagerReviewDialog: Update successful, calling onReviewComplete");
       toast.success("Manager review completed successfully");
       onReviewComplete();
       onOpenChange(false);
     } catch (error) {
-      console.error('Error updating incident report:', error);
+      console.error('ManagerReviewDialog: Error updating incident report:', error);
       toast.error('Failed to complete manager review');
     } finally {
       setLoading(false);

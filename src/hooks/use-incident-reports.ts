@@ -23,7 +23,7 @@ export const useIncidentReports = () => {
 
     try {
       setLoading(true);
-      console.log("useIncidentReports: Fetching submitted incident reports only");
+      console.log("useIncidentReports: Fetching submitted incident reports only - refetch triggered");
       
       const { data, error, count } = await supabase
         .from('incident_reports')
@@ -35,6 +35,11 @@ export const useIncidentReports = () => {
       console.log("useIncidentReports: Error:", error);
       console.log("useIncidentReports: Data count:", data?.length);
       console.log("useIncidentReports: Total count:", count);
+      
+      if (data && data.length > 0) {
+        console.log("useIncidentReports: Sample report resolved status:", data[0].resolved);
+        console.log("useIncidentReports: Sample report actions_taken_outcome:", data[0].actions_taken_outcome);
+      }
 
       if (error) {
         console.error('useIncidentReports: Error fetching incident reports:', error);
