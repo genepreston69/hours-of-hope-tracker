@@ -36,7 +36,7 @@ async function sendSMS(to: string, message: string): Promise<boolean> {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        From: '+1234567890', // Replace with your Twilio phone number
+        From: '+15005550006', // Twilio test number that will fail gracefully
         To: to,
         Body: message,
       }),
@@ -58,7 +58,7 @@ async function sendSMS(to: string, message: string): Promise<boolean> {
 async function sendEmail(to: string, subject: string, html: string): Promise<boolean> {
   try {
     const { error } = await resend.emails.send({
-      from: 'Reports <notifications@yourdomain.com>',
+      from: 'Recovery Point <onboarding@resend.dev>',
       to: [to],
       subject,
       html,
