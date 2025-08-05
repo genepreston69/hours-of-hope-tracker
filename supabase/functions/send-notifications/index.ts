@@ -169,12 +169,20 @@ serve(async (req) => {
     const smsMessage = generateSMSContent(reportType, reportData);
 
     const notificationPromises = [];
+    let emailDelay = 0;
 
     for (const recipient of recipients || []) {
       // Send email if enabled
       if (recipient.email_enabled && recipient.email) {
+        const currentDelay = emailDelay;
+        emailDelay += 1000; // Add 1 second delay between emails to avoid rate limits
+        
         notificationPromises.push(
           (async () => {
+            // Add delay to avoid rate limiting
+            if (currentDelay > 0) {
+              await new Promise(resolve => setTimeout(resolve, currentDelay));
+            }
             const result = await sendEmail(recipient.email, subject, html);
             
             // Log the attempt
