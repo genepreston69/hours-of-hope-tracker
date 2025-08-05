@@ -61,7 +61,7 @@ async function sendEmail(to: string, subject: string, html: string): Promise<{ s
   try {
     console.log(`Attempting to send email to: ${to}`);
     const { error } = await resend.emails.send({
-      from: 'Recovery Point <onboarding@resend.dev>',
+      from: 'Recovery Point <notifications@recoverypointwv.org>',
       to: [to],
       subject,
       html,
