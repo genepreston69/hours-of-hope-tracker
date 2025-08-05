@@ -21,13 +21,14 @@ interface NotificationRequest {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-async function sendSMS(to: string, message: string): Promise<boolean> {
+async function sendSMS(to: string, message: string): Promise<{ success: boolean; error?: string }> {
   if (!twilioSid || !twilioToken) {
     console.log('Twilio not configured, skipping SMS');
-    return false;
+    return { success: false, error: 'Twilio not configured' };
   }
 
   try {
+    console.log(`Attempting to send SMS to: ${to}`);
     const auth = btoa(`${twilioSid}:${twilioToken}`);
     const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
       method: 'POST',
@@ -45,18 +46,20 @@ async function sendSMS(to: string, message: string): Promise<boolean> {
     if (!response.ok) {
       const error = await response.text();
       console.error('Twilio SMS error:', error);
-      return false;
+      return { success: false, error: error };
     }
 
-    return true;
+    console.log(`SMS sent successfully to: ${to}`);
+    return { success: true };
   } catch (error) {
     console.error('SMS send error:', error);
-    return false;
+    return { success: false, error: error.message };
   }
 }
 
-async function sendEmail(to: string, subject: string, html: string): Promise<boolean> {
+async function sendEmail(to: string, subject: string, html: string): Promise<{ success: boolean; error?: string }> {
   try {
+    console.log(`Attempting to send email to: ${to}`);
     const { error } = await resend.emails.send({
       from: 'Recovery Point <onboarding@resend.dev>',
       to: [to],
@@ -66,13 +69,14 @@ async function sendEmail(to: string, subject: string, html: string): Promise<boo
 
     if (error) {
       console.error('Resend email error:', error);
-      return false;
+      return { success: false, error: JSON.stringify(error) };
     }
 
-    return true;
+    console.log(`Email sent successfully to: ${to}`);
+    return { success: true };
   } catch (error) {
     console.error('Email send error:', error);
-    return false;
+    return { success: false, error: error.message };
   }
 }
 
@@ -171,7 +175,7 @@ serve(async (req) => {
       if (recipient.email_enabled && recipient.email) {
         notificationPromises.push(
           (async () => {
-            const success = await sendEmail(recipient.email, subject, html);
+            const result = await sendEmail(recipient.email, subject, html);
             
             // Log the attempt
             await supabase.from('notification_logs').insert({
@@ -179,12 +183,12 @@ serve(async (req) => {
               report_type: reportType,
               recipient_email: recipient.email,
               notification_type: 'email',
-              status: success ? 'sent' : 'failed',
-              sent_at: success ? new Date().toISOString() : null,
-              error_message: success ? null : 'Failed to send email'
+              status: result.success ? 'sent' : 'failed',
+              sent_at: result.success ? new Date().toISOString() : null,
+              error_message: result.success ? null : result.error || 'Failed to send email'
             });
 
-            return { type: 'email', recipient: recipient.email, success };
+            return { type: 'email', recipient: recipient.email, success: result.success };
           })()
         );
       }
@@ -193,7 +197,7 @@ serve(async (req) => {
       if (recipient.sms_enabled && recipient.phone) {
         notificationPromises.push(
           (async () => {
-            const success = await sendSMS(recipient.phone, smsMessage);
+            const result = await sendSMS(recipient.phone, smsMessage);
             
             // Log the attempt
             await supabase.from('notification_logs').insert({
@@ -202,12 +206,12 @@ serve(async (req) => {
               recipient_email: recipient.email,
               recipient_phone: recipient.phone,
               notification_type: 'sms',
-              status: success ? 'sent' : 'failed',
-              sent_at: success ? new Date().toISOString() : null,
-              error_message: success ? null : 'Failed to send SMS'
+              status: result.success ? 'sent' : 'failed',
+              sent_at: result.success ? new Date().toISOString() : null,
+              error_message: result.success ? null : result.error || 'Failed to send SMS'
             });
 
-            return { type: 'sms', recipient: recipient.phone, success };
+            return { type: 'sms', recipient: recipient.phone, success: result.success };
           })()
         );
       }
