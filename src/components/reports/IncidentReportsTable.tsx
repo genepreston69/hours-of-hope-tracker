@@ -59,7 +59,6 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport, on
                   <TableHead>Type</TableHead>
                   <TableHead>Severity</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Resolved</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -80,21 +79,16 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport, on
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Submitted
-                      </span>
-                    </TableCell>
-                    <TableCell>
                       {report.resolved === null ? (
-                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                        <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
                           Pending Review
                         </span>
                       ) : report.resolved ? (
-                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
                           Resolved
                         </span>
                       ) : (
-                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
                           Not Resolved
                         </span>
                       )}
