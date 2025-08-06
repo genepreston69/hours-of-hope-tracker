@@ -70,47 +70,25 @@ export const ReportTabs = ({
           <CardContent>
             <div className="border rounded-md overflow-hidden">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead className="text-right">Residents</TableHead>
-                    <TableHead className="text-right">Hours</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
+                 <TableHeader>
+                   <TableRow>
+                     <TableHead>Date</TableHead>
+                     <TableHead>Customer</TableHead>
+                     <TableHead>Location</TableHead>
+                     <TableHead className="text-right">Residents</TableHead>
+                     <TableHead className="text-right">Hours</TableHead>
+                   </TableRow>
+                 </TableHeader>
                 <TableBody>
-                  {sortedEntries.map((entry: ServiceEntry) => (
-                    <TableRow key={entry.id}>
-                      <TableCell>{formatDate(entry.date)}</TableCell>
-                      <TableCell className="font-medium">{entry.customerName}</TableCell>
-                      <TableCell>{entry.location}</TableCell>
-                      <TableCell className="text-right">{entry.numberOfResidents}</TableCell>
-                      <TableCell className="text-right">{entry.totalHours}</TableCell>
-                      <TableCell className="text-right">
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="sm">Delete</Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This will permanently delete this service entry. This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deleteServiceEntry(entry.id)}>
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                   {sortedEntries.map((entry: ServiceEntry) => (
+                     <TableRow key={entry.id}>
+                       <TableCell>{formatDate(entry.date)}</TableCell>
+                       <TableCell className="font-medium">{entry.customerName}</TableCell>
+                       <TableCell>{entry.location}</TableCell>
+                       <TableCell className="text-right">{entry.numberOfResidents}</TableCell>
+                       <TableCell className="text-right">{entry.totalHours}</TableCell>
+                     </TableRow>
+                   ))}
                 </TableBody>
               </Table>
             </div>
