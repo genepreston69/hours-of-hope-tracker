@@ -6,7 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { formatDate } from "@/lib/utils";
 import { Tables } from "@/integrations/supabase/types";
-import { Eye, Settings } from "lucide-react";
+import { Eye, Settings, Archive } from "lucide-react";
 import { ManagerReviewDialog } from "@/components/incident-reports/ManagerReviewDialog";
 import { useState } from "react";
 
@@ -30,6 +30,11 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport, on
   const handleManagerReview = (report: IncidentReport) => {
     setSelectedReport(report);
     setReviewDialogOpen(true);
+  };
+
+  const handleArchive = (report: IncidentReport) => {
+    // TODO: Implement archive functionality
+    console.log("Archive report:", report.id);
   };
 
   const handleReviewComplete = () => {
@@ -398,35 +403,24 @@ export const IncidentReportsTable = ({ incidentReports, deleteIncidentReport, on
                           </DialogContent>
                         </Dialog>
                         
-                        <Button 
-                          variant="secondary" 
-                          size="sm"
-                          onClick={() => handleManagerReview(report)}
-                        >
-                          <Settings className="h-4 w-4 mr-1" />
-                          Review
-                        </Button>
-                        
-                        {deleteIncidentReport && (
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="destructive" size="sm">Delete</Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This will permanently delete this incident report. This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => deleteIncidentReport(report.id)}>
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                        {report.resolved === null ? (
+                          <Button 
+                            variant="secondary" 
+                            size="sm"
+                            onClick={() => handleManagerReview(report)}
+                          >
+                            <Settings className="h-4 w-4 mr-1" />
+                            Review
+                          </Button>
+                        ) : (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleArchive(report)}
+                          >
+                            <Archive className="h-4 w-4 mr-1" />
+                            Archive
+                          </Button>
                         )}
                       </div>
                     </TableCell>
