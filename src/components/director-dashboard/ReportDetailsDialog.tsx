@@ -3,6 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
+import { stripHtml } from "@/lib/utils";
 
 interface RecoverySurvey {
   id: string;
@@ -54,13 +55,6 @@ interface ReportDetailsDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-// Function to strip HTML tags from text
-const stripHtml = (html: string) => {
-  if (!html) return '';
-  const temp = document.createElement('div');
-  temp.innerHTML = html;
-  return temp.textContent || temp.innerText || '';
-};
 
 export const ReportDetailsDialog = ({ selectedSurvey, open, onOpenChange }: ReportDetailsDialogProps) => {
   const handlePrint = () => {
