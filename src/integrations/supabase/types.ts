@@ -123,6 +123,89 @@ export type Database = {
           },
         ]
       }
+      grievances: {
+        Row: {
+          additional_info: string | null
+          advocate_help: boolean
+          anonymous_request: boolean
+          assigned_to: string | null
+          categories: string[]
+          created_at: string
+          date_of_incident: string
+          description: string
+          desired_resolution: string
+          facility_id: string
+          id: string
+          organization_id: string | null
+          preferred_contact: string
+          previous_action: string | null
+          resident_name: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          status: string
+          updated_at: string
+          urgency: string
+          user_id: string
+          witnesses: string | null
+        }
+        Insert: {
+          additional_info?: string | null
+          advocate_help?: boolean
+          anonymous_request?: boolean
+          assigned_to?: string | null
+          categories?: string[]
+          created_at?: string
+          date_of_incident: string
+          description: string
+          desired_resolution: string
+          facility_id: string
+          id?: string
+          organization_id?: string | null
+          preferred_contact: string
+          previous_action?: string | null
+          resident_name: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+          urgency: string
+          user_id: string
+          witnesses?: string | null
+        }
+        Update: {
+          additional_info?: string | null
+          advocate_help?: boolean
+          anonymous_request?: boolean
+          assigned_to?: string | null
+          categories?: string[]
+          created_at?: string
+          date_of_incident?: string
+          description?: string
+          desired_resolution?: string
+          facility_id?: string
+          id?: string
+          organization_id?: string | null
+          preferred_contact?: string
+          previous_action?: string | null
+          resident_name?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+          urgency?: string
+          user_id?: string
+          witnesses?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_grievances_facility"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       incident_reports: {
         Row: {
           actions_taken_outcome: string | null
@@ -271,6 +354,81 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      innovations: {
+        Row: {
+          additional_ideas: string | null
+          assigned_to: string | null
+          budget: string | null
+          categories: string[]
+          created_at: string
+          help_implement: boolean
+          id: string
+          idea_description: string
+          idea_title: string
+          impact: string | null
+          implementation: string | null
+          implementation_date: string | null
+          innovator_name: string | null
+          inspiration: string | null
+          organization_id: string | null
+          problem_solved: string | null
+          review_notes: string | null
+          status: string
+          time_at_facility: string | null
+          updated_at: string
+          user_id: string
+          want_recognition: boolean
+        }
+        Insert: {
+          additional_ideas?: string | null
+          assigned_to?: string | null
+          budget?: string | null
+          categories?: string[]
+          created_at?: string
+          help_implement?: boolean
+          id?: string
+          idea_description: string
+          idea_title: string
+          impact?: string | null
+          implementation?: string | null
+          implementation_date?: string | null
+          innovator_name?: string | null
+          inspiration?: string | null
+          organization_id?: string | null
+          problem_solved?: string | null
+          review_notes?: string | null
+          status?: string
+          time_at_facility?: string | null
+          updated_at?: string
+          user_id: string
+          want_recognition?: boolean
+        }
+        Update: {
+          additional_ideas?: string | null
+          assigned_to?: string | null
+          budget?: string | null
+          categories?: string[]
+          created_at?: string
+          help_implement?: boolean
+          id?: string
+          idea_description?: string
+          idea_title?: string
+          impact?: string | null
+          implementation?: string | null
+          implementation_date?: string | null
+          innovator_name?: string | null
+          inspiration?: string | null
+          organization_id?: string | null
+          problem_solved?: string | null
+          review_notes?: string | null
+          status?: string
+          time_at_facility?: string | null
+          updated_at?: string
+          user_id?: string
+          want_recognition?: boolean
+        }
+        Relationships: []
       }
       notification_logs: {
         Row: {
@@ -568,6 +726,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      resident_emails: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          message: string
+          organization_id: string | null
+          recipient_email: string
+          recipient_name: string
+          relationship: string
+          sent_at: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message: string
+          organization_id?: string | null
+          recipient_email: string
+          recipient_name: string
+          relationship: string
+          sent_at?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message?: string
+          organization_id?: string | null
+          recipient_email?: string
+          recipient_name?: string
+          relationship?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       routes_data: {
         Row: {
