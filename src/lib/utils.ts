@@ -29,6 +29,16 @@ export function generateUUID(): string {
   });
 }
 
+export function stripHtml(html: string): string {
+  // Use DOMParser for safe HTML stripping to prevent XSS
+  if (typeof window !== 'undefined') {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  }
+  // Fallback for server-side: simple regex approach (less secure but safe for controlled content)
+  return html.replace(/<[^>]*>/g, '');
+}
+
 export function parseCSV(csvText: string): string[][] {
   const lines = csvText.split(/\r?\n/);
   return lines.map(line => {
